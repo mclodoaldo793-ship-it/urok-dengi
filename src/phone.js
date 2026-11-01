@@ -122,13 +122,12 @@ function game(g) {
       formKey = key; sentOid = null; dirty = false;
       main.innerHTML = `<div class="pg">
         <div id="pgHead"></div>
-        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Кофе захотят <b>около ${g.ev.n} человек</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b></p></div></div>
+        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Кофе захотят <b>${g.ev.n} человек</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b> · ${g.ev.max < 100 ? `дороже <b>${g.ev.max} ₽</b> не купят` : `купят даже за <b>${g.ev.max} ₽</b>`}</p></div></div>
         <div id="pform"></div>
         <div class="pg-send"><button class="btn big" id="pSend">Отправить решение</button><p id="pSt" class="muted center"></p></div>
       </div>`;
       form = coffeeForm($('#pform'), t, g.ev, null, {
-        change() { dirty = true; status(g.teams[me]); },
-        peek() { send('peek', { team: me }); }
+        change() { dirty = true; status(g.teams[me]); }
       });
       $('#pSend').addEventListener('click', () => {
         const v = form.value; sentOid = send('order', { team: me, ...v }); dirty = false; status(S.game.teams[me]);
@@ -140,7 +139,7 @@ function game(g) {
   }
   form = null; formKey = '';
   if (g.phase === 'lobby') {
-    main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки и сколько кофе сварить.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
+    main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
     $('#pUncap').addEventListener('click', () => send('uncap', {}));
   } else if (g.phase === 'reveal' && t.res) {
     const r = t.res, o = g.teams[1 - me].res;
@@ -149,8 +148,8 @@ function game(g) {
     main.innerHTML = `<div class="pg">${head}<div class="card center pres ${v > 0 ? 'win' : ''}">
       <p class="pres-v">${v > 0 ? '🎉 Вы заработали больше соперника' : v < 0 ? 'Соперник заработал больше' : 'В этом раунде ничья'}</p>
       <div class="pres-p ${r.profit >= 0 ? 'up' : 'down'}">${sg(r.profit)}</div>
-      <p>${fmt(r.revenue)} ₽ выручка − ${fmt(r.cost)} ₽ на кофе${r.tax ? ` − ${fmt(r.tax)} ₽ налог` : ''}</p>
-      <p class="muted">${r.cups ? `Продали ${r.sold} из ${r.cups} чашек по ${r.price} ₽` : 'Кофе не варили'}</p>
+      <p>${r.sold} ${plural(r.sold, 'чашка', 'чашки', 'чашек')} × ${r.price - r.unit} ₽ с чашки${r.tax ? ` − ${fmt(r.tax)} ₽ налог` : ''}</p>
+      <p class="muted">Цена ${r.price} ₽, кофе обошёлся в ${r.unit} ₽</p>
       ${o ? `<p class="pres-o">У соперника: <b>${sg(o.profit)}</b></p>` : ''}
     </div></div>`;
   } else if (g.phase === 'over') {

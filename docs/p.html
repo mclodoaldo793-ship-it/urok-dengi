@@ -122,25 +122,29 @@ h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.
 .pres-p.down{color:var(--bad)}
 .pres-o{padding-top:10px;border-top:1px solid var(--line);width:100%;color:var(--muted);font-size:14px}
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
-.cf{display:flex;flex-direction:column;gap:14px;color:var(--cf-ink);container-type:inline-size}
-.cf-pair{display:flex;flex-direction:column;gap:14px}
+.cf{display:flex;flex-direction:column;gap:16px;color:var(--cf-ink);container-type:inline-size}
 .cf-goal{margin:0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 12%,transparent);font-size:16px;line-height:1.35}
 .cf-goal b{color:var(--cf-acc)}
-.cf-sec{display:flex;flex-direction:column;gap:7px}
+.cf-sec{display:flex;flex-direction:column;gap:8px}
 .cf-t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px}
 .cf-t i{font-style:normal;width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:13px;flex:none}
 .cf-t em{font-style:normal;font-weight:600;color:var(--cf-muted)}
 .cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cf button:disabled{cursor:not-allowed}
-.cf-note{margin:0;font-size:14px;line-height:1.35;color:var(--cf-muted)}
+.cf-note{margin:0;font-size:15px;line-height:1.35;color:var(--cf-muted)}
 .cf-note b{color:var(--cf-ink)}
 .cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.cf .cf-p{padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf .cf-p{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-.cf-cups{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.cf-cups button{width:52px;height:46px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:24px;font-weight:800;line-height:1}
-.cf-cups button:disabled{opacity:.35}
-.cf-cups > b{min-width:56px;text-align:center;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.cf .cf-p:disabled{opacity:.4;text-decoration:line-through}
+.cf-p small{font-size:11px;font-weight:700;text-decoration:none;color:var(--cf-muted)}
+/* ready answers: what this price earns if the rival goes cheaper, the same or dearer */
+.cf-outs{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--cf-muted)}
+.cf-outs > div{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
+.cf-o{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 6px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 8%,var(--cf-bg2));border:1px solid var(--cf-line);text-align:center}
+.cf-o small{font-size:13px;font-weight:700;color:var(--cf-muted)}
+.cf-o b{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--cf-good);white-space:nowrap}
+.cf-o span{font-size:13px}
 /* cards: help for you / harm for the rival; each card spells out what it does */
 .cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -155,40 +159,10 @@ h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.
 .cf-c.on.evil{border-color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 16%,var(--cf-bg2))}
 .cf-c:disabled:not(.on){opacity:.35}
 .cf-c.used b{text-decoration:line-through}
-/* forecast: people × share × buy rate = buyers, then the chance to sell every cup */
-.cf-fc{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:12px 14px;border-radius:14px;border:2px solid color-mix(in srgb,var(--cf-acc) 45%,var(--cf-line));background:color-mix(in srgb,var(--cf-acc) 7%,var(--cf-bg2))}
-.cf-fc-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px;font-size:15px}
-.cf-guess{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:4px;width:100%;font-size:13px;color:var(--cf-muted)}
-.cf-guess small{grid-column:1/-1;font-size:13px}
-.cf .cf-guess button{padding:5px 10px;border-radius:999px;border:1.5px solid var(--cf-line);background:transparent;font-size:13px;font-weight:700;color:var(--cf-muted)}
-.cf .cf-guess button.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 20%,transparent);color:var(--cf-ink)}
-.cf .cf-guess button:disabled{opacity:.35}
-.cf-eq{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1.15fr);align-items:start;gap:4px;margin-top:8px;text-align:center}
-.cf-eq > i{font-style:normal;font-size:18px;font-weight:800;line-height:1.3;color:var(--cf-muted)}
-.cf-x{display:flex;flex-direction:column;gap:2px;min-width:0}
-.cf-x b{font-size:20px;font-weight:900;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}
-.cf-x small{font-size:12.5px;line-height:1.25;color:var(--cf-muted)}
-.cf-x.tot b{color:var(--cf-acc)}
-.cf-fc-r{display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:14px;line-height:1.35;color:var(--cf-muted)}
-.cf-fc-r b{color:var(--cf-ink)}
-.cf-odds{--odds:var(--cf-acc);display:flex;align-items:center;gap:10px}
-.cf-odds.good{--odds:var(--cf-good)}
-.cf-odds.evil{--odds:var(--cf-evil)}
-.cf-fc-r .cf-odds b{min-width:2.6em;font-size:32px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--odds)}
-.cf-bar{flex:1;height:12px;border-radius:99px;background:color-mix(in srgb,var(--cf-ink) 12%,transparent);overflow:hidden}
-.cf-bar i{display:block;height:100%;border-radius:inherit;background:var(--odds)}
+@container (min-width:400px){ .cf-o b{font-size:22px} }
 @container (min-width:520px){
   .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .cf-guess{display:flex;width:auto}
-  .cf-guess small{margin-right:2px}
-  .cf .cf-guess button{padding:3px 10px}
-  .cf-eq > i{font-size:22px;line-height:1.2}
-  .cf-x b{font-size:26px;line-height:1.1}
-}
-@container (min-width:760px){
-  .cf-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-  .cf-fc{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px}
-  .cf-fc-r{padding-left:20px;border-left:1px solid var(--cf-line)}
+  .cf-o b{font-size:26px}
 }
 </style>
 </head><body>
@@ -286,158 +260,89 @@ const LIVE_BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com
 const COFFEE = {
   START: 1000,
   PRICES: [40, 60, 80, 100],
-  MAX_CUPS: 80,
-  STEP: 5,
-  /* доля желающих, которые купят кофе по такой цене */
-  W: { 40: 1, 60: .9, 80: .8, 100: .6 },
-  /* сколько людей придёт на самом деле: в новости n, а придёт от n−20% до n+20% */
-  SPREAD: .2,
-  /* какая доля желающих идёт в кофейню, где дешевле; реклама и слух сдвигают её */
-  SHARE: .7, AD: .15, RUMOR: .2,
-  POWER_CAP: 20,
+  AD: 10, RUMOR: 10, DISCOUNT: 10, POWER_CAP: 20,
   TAX: .3,
   EMOJI: ['☕', '🧋', '🍩', '🥐', '🧁', '🍪', '🥤', '🍫'],
   CARDS: {
-    ad:      { e:'📣', n:'Реклама',            good:true,  d:'К вам придёт больше покупателей' },
-    insider: { e:'🕵️', n:'Инсайдер',           good:true,  d:'Узнаете точное число покупателей' },
-    shield:  { e:'🛡️', n:'Охрана',             good:true,  d:'Пакости соперника не сработают' },
-    rumor:   { e:'🪳', n:'Слух про таракана',  good:false, d:'Часть его покупателей уйдёт к вам' },
-    tax:     { e:'🧾', n:'Налоговая проверка', good:false, d:'Соперник отдаст 30% выручки' },
-    power:   { e:'🔌', n:'Отключили свет',     good:false, d:'Соперник сварит не больше 20 чашек' }
+    ad:       { e:'📣', n:'Реклама',            good:true,  d:'К вам придут ещё 10 покупателей' },
+    discount: { e:'🚚', n:'Скидка на зёрна',    good:true,  d:'Чашка обойдётся вам на 10 ₽ дешевле' },
+    shield:   { e:'🛡️', n:'Охрана',             good:true,  d:'Пакости соперника не сработают' },
+    rumor:    { e:'🪳', n:'Слух про таракана',  good:false, d:'10 его покупателей перейдут к вам' },
+    tax:      { e:'🧾', n:'Налоговая проверка', good:false, d:'Соперник отдаст 30% выручки' },
+    power:    { e:'🔌', n:'Отключили свет',     good:false, d:'Соперник продаст не больше 20 чашек' }
   },
-  /* n — сколько людей вообще захотят кофе в этот день (на обе кофейни) */
+  /* n — сколько человек захотят кофе (на обе кофейни), cost — во что обходится чашка, max — дороже никто не купит */
   EVENTS: {
-    normal:   { e:'☕', t:'Обычный понедельник', n:60, cost:20,
-                x:'Пары как всегда. Около 60 человек захотят кофе.' },
-    frost:    { e:'🥶', t:'Мороз −25°', n:90, cost:20,
+    normal:   { e:'☕', t:'Обычный понедельник', n:60, cost:20, max:80,
+                x:'Пары как всегда, обычный поток студентов.' },
+    frost:    { e:'🥶', t:'Мороз −25°', n:90, cost:20, max:80,
                 x:'Все хотят согреться. Покупателей намного больше обычного.' },
-    session:  { e:'📚', t:'Сессия', n:110, cost:20, w:{ 40:1, 60:1, 80:.9, 100:.8 },
-                x:'Студенты не спят ночами. Кофе нужен всем, и даже дорогой их не пугает.' },
-    holidays: { e:'🏖️', t:'Каникулы', n:25, cost:20,
-                x:'Колледж почти пустой. Кофе захотят совсем немногие.' },
-    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:35,
-                x:'Кофе везут из Бразилии и платят за него долларами. Доллар вырос — чашка теперь обходится в 35 ₽.' },
-    rain:     { e:'🌧️', t:'Ливень', n:40, cost:20,
+    session:  { e:'📚', t:'Сессия', n:120, cost:20, max:100,
+                x:'Студенты не спят ночами. Кофе нужен всем, его купят даже за 100 ₽.' },
+    holidays: { e:'🏖️', t:'Каникулы', n:30, cost:20, max:60,
+                x:'Колледж почти пустой, а у тех, кто пришёл, мало денег.' },
+    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:40, max:80,
+                x:'Кофе везут из Бразилии и платят за него долларами. Доллар вырос — чашка теперь обходится в 40 ₽.' },
+    rain:     { e:'🌧️', t:'Ливень', n:42, cost:20, max:80,
                 x:'Никто не хочет выходить из здания. Покупателей меньше обычного.' },
-    stipend:  { e:'💸', t:'Пришла стипендия', n:75, cost:20, w:{ 40:1, 60:1, 80:.9, 100:.7 },
-                x:'У студентов появились деньги. Покупателей больше, и дорогой кофе их не так пугает.' },
-    blogger:  { e:'📱', t:'Блогер против кофе', n:40, cost:20,
-                x:'Популярный блогер сказал, что кофе вреден. Часть студентов поверила.' },
-    cups:     { e:'🥤', t:'Оптовая скидка', n:60, cost:10,
-                x:'Поставщик устроил распродажу стаканчиков и зёрен. Чашка обходится всего в 10 ₽.' },
-    festival: { e:'🎉', t:'День студента', n:95, cost:20,
-                x:'Праздник! В колледже концерт, и кофе хотят почти все.' }
+    stipend:  { e:'💸', t:'Пришла стипендия', n:72, cost:20, max:100,
+                x:'У студентов появились деньги. Покупателей больше, и дорогой кофе их не пугает.' },
+    blogger:  { e:'📱', t:'Блогер против кофе', n:42, cost:20, max:60,
+                x:'Популярный блогер сказал, что кофе вреден. Покупателей меньше, и платить много никто не хочет.' },
+    cups:     { e:'🥤', t:'Оптовая скидка', n:60, cost:10, max:80,
+                x:'Поставщик устроил распродажу зёрен и стаканчиков. Чашка обходится всего в 10 ₽.' },
+    festival: { e:'🎉', t:'День студента', n:90, cost:20, max:100,
+                x:'Праздник! В колледже концерт, кофе хотят почти все.' }
   }
 };
-
-/* ---------- chance: the same maths for the forecast in the form and for the real round ----------
-   N people want coffee, any number in n ± SPREAD equally likely (exactly n once the insider told it).
-   `share` of them come to this shop, and each of those buys with chance w (8 из 10 = 0.8). */
-const coffeeCrowd = n => { const s = Math.round(n * COFFEE.SPREAD); return n - s + Math.floor(Math.random() * (2 * s + 1)); };
-const coffeeBuyers = (people, w) => { let b = 0; for (let j = 0; j < people; j++) if (Math.random() < w) b++; return b; };
-/* -> { lo, hi }: 8 times out of 10 the buyers land in lo..hi;  all: chance to sell every cup;  sold: cups sold on average */
-function coffeeOdds(n, exact, share, w, cups) {
-  const s = exact ? 0 : Math.round(n * COFFEE.SPREAD), k = 2 * s + 1, pmf = [];
-  for (let N = n - s; N <= n + s; N++) {
-    const people = Math.round(N * share);
-    if (w >= 1) { pmf[people] = (pmf[people] || 0) + 1 / k; continue; }
-    let p = Math.pow(1 - w, people);  // binomial: nobody buys, then step to b+1 buyers
-    for (let b = 0; b <= people; b++) { pmf[b] = (pmf[b] || 0) + p / k; p *= (people - b) / (b + 1) * w / (1 - w); }
-  }
-  let acc = 0, lo = null, hi = null, all = 0, sold = 0;
-  for (let b = 0; b < pmf.length; b++) {
-    const p = pmf[b] || 0;
-    acc += p;
-    if (lo == null && acc > .1) lo = b;
-    if (hi == null && acc >= .9) hi = b;
-    if (b >= cups) all += p;
-    sold += Math.min(b, cups) * p;
-  }
-  return { lo, hi: hi ?? pmf.length - 1, all, sold };
-}
+/* the one market rule: the cheaper shop gets 2 of every 3 people, equal prices split in half */
+const coffeeSplit = (n, mine, theirs) => mine < theirs ? Math.round(n * 2 / 3) : mine > theirs ? n - Math.round(n * 2 / 3) : n / 2;
 
 /* ---------- order form: the same on the captain's phone and in the presenter's manual-entry window ---------- */
-/* t: { money, cards:{id:true|false}, peek }  ev: { n, cost, w }  init: last order  on: { change(order), peek() } */
+/* t: { cards:{id:true|false} }  ev: { n, cost, max }  init: last order  on: { change(order) } */
 function coffeeForm(host, t, ev, init, on) {
   const C = COFFEE;
-  const money = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
-  const o = { price: 60, cups: 30, card: null };
-  if (init) ['price', 'cups', 'card'].forEach(k => { if (k in init) o[k] = init[k]; });
-  if (o.card && !t.cards[o.card]) o.card = null;
-  let arm = false;      // Insider needs a second tap: it spends the card for this round
-  let rival = 'same';   // forecast only: what the team expects from the rival's price
-  const maxCups = () => Math.max(0, Math.min(C.MAX_CUPS, Math.floor(t.money / ev.cost / C.STEP) * C.STEP));
-  const fix = () => { o.cups = Math.max(0, Math.min(o.cups, maxCups())); };
-  const pct = p => p > .99 && p < 1 ? '>99%' : p < .01 && p > 0 ? '<1%' : Math.round(p * 100) + '%';
-  /* people × share × buy rate = buyers, then the chance to sell every cup brewed */
-  function forecast(w, peeked) {
-    const top = C.PRICES[C.PRICES.length - 1];
-    const guess = (rival === 'low' && o.price === C.PRICES[0]) || (rival === 'high' && o.price === top) ? 'same' : rival;
-    let share = { low: 1 - C.SHARE, same: .5, high: C.SHARE }[guess];
-    if (o.card === 'ad') share += C.AD;
-    if (o.card === 'rumor') share += C.RUMOR;
-    share = Math.min(.9, Math.max(.1, share));
-    const n = peeked ? t.peek : ev.n, f = coffeeOdds(n, peeked, share, w, o.cups), mean = Math.round(n * share * w);
-    const term = (v, s, cls) => `<span class="cf-x ${cls || ''}"><b>${v}</b><small>${s}</small></span>`;
-    const opt = (k, s) => `<button type="button" class="${guess === k ? 'on' : ''}" data-g="${k}" ${(k === 'low' && o.price === C.PRICES[0]) || (k === 'high' && o.price === top) ? 'disabled' : ''}>${s}</button>`;
-    const odds = f.all >= .7 ? 'good' : f.all >= .4 ? 'acc' : 'evil';
-    const advice = o.cups > f.hi ? 'Скорее всего, часть кофе придётся вылить'
-      : o.cups < f.lo ? 'Скорее всего, кофе не хватит и часть покупателей уйдёт к соперникам'
-      : 'Примерно столько покупателей и придёт';
-    const profit = Math.round(f.sold * o.price - o.cups * ev.cost);
-    return `<div class="cf-fc">
-      <div class="cf-fc-l">
-        <div class="cf-fc-h"><b>Сколько придёт покупателей?</b><span class="cf-guess"><small>Цена у соперника:</small>${opt('low', 'ниже')}${opt('same', 'такая же')}${opt('high', 'выше')}</span></div>
-        <div class="cf-eq">${term((peeked ? '' : '≈') + n, peeked ? 'хотят кофе, точно' : 'хотят кофе')}<i>×</i>${term(Math.round(share * 100) + '%', 'придут к вам' + (o.card === 'ad' ? ' с рекламой' : o.card === 'rumor' ? ' после слуха' : ''))}<i>×</i>${term(Math.round(w * 100) + '%', `купят по ${o.price} ₽`)}<i>=</i>${term('≈' + mean, f.lo === f.hi ? plural(mean, 'покупатель', 'покупателя', 'покупателей') : `обычно от ${f.lo} до ${f.hi}`, 'tot')}</div>
-      </div>
-      <div class="cf-fc-r">${o.cups ? `
-        <span>Шанс продать все ${o.cups} ${plural(o.cups, 'чашку', 'чашки', 'чашек')}</span>
-        <div class="cf-odds ${odds}"><b>${pct(f.all)}</b><span class="cf-bar"><i style="width:${Math.round(f.all * 100)}%"></i></span></div>
-        <span>${advice}</span>
-        <span>В среднем заработаете <b>${profit < 0 ? '−' : '+'}${money(Math.abs(profit))}</b></span>` : '<span>Кофе не варите: ничего не потратите и ничего не заработаете.</span>'}
-      </div>
-    </div>`;
+  const money = n => (n < 0 ? '−' : '+') + String(Math.abs(Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+  const o = { price: 60, card: null };
+  if (init) ['price', 'card'].forEach(k => { if (k in init) o[k] = init[k]; });
+  const fix = () => {
+    if (o.price > ev.max) o.price = ev.max;
+    if (o.card && !t.cards[o.card]) o.card = null;
+  };
+  /* what the team earns at its price for each guess about the rival: ready answers, no maths left for the class */
+  function outcomes(unit) {
+    const extra = (o.card === 'ad' ? C.AD : 0) + (o.card === 'rumor' ? C.RUMOR : 0), cases = [];
+    if (o.price > C.PRICES[0]) cases.push(['Соперник дешевле', o.price - 20]);
+    cases.push(['Цены равные', o.price]);
+    if (o.price < ev.max) cases.push(['Соперник дороже', o.price + 20]);
+    return cases.map(([s, rival]) => {
+      const b = coffeeSplit(ev.n, o.price, rival) + extra;
+      return `<div class="cf-o"><small>${s}</small><b>${money(b * (o.price - unit))}</b><span>${b} ${plural(b, 'покупатель', 'покупателя', 'покупателей')}</span></div>`;
+    }).join('');
   }
-  /* three steps, each is buttons plus one plain line; the forecast reacts to every tap */
   function render() {
     fix();
-    const w = (ev.w || C.W), peeked = t.peek != null, max = maxCups(), ids = Object.keys(C.CARDS);
+    const ids = Object.keys(C.CARDS), unit = ev.cost - (o.card === 'discount' ? C.DISCOUNT : 0);
     const card = id => {
-      const c = C.CARDS[id];
-      const used = !t.cards[id] && !(id === 'insider' && peeked);
-      const sel = id === 'insider' ? peeked : o.card === id;
-      const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
-      const armed = id === 'insider' && arm && !peeked && !dis;
-      const d = used ? 'Уже сыграна' : armed ? 'Нажмите ещё раз — узнаете число' : id === 'insider' && peeked ? `Кофе захотят ровно ${t.peek} ${plural(t.peek, 'человек', 'человека', 'человек')}` : c.d;
-      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${d}</small></button>`;
+      const c = C.CARDS[id], used = !t.cards[id];
+      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${o.card === id ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${used ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'Уже сыграна' : c.d}</small></button>`;
     };
     const col = (good, title) => `<div class="cf-col ${good ? 'good' : 'evil'}"><span class="cf-g">${title}</span>${ids.filter(id => C.CARDS[id].good === good).map(card).join('')}</div>`;
     host.innerHTML = `<div class="cf">
-      <p class="cf-goal">Выберите <b>цену</b> и <b>сколько чашек сварить</b>. Игра посчитает, сколько придёт покупателей и какой шанс продать всё.</p>
-      <div class="cf-pair">
-        <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
-          <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
-          <p class="cf-note">По ${o.price} ₽ кофе купят ${Math.round(w[o.price] * 10)} из 10 желающих</p></div>
-        <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
-          <div class="cf-cups"><button type="button" data-c="-${C.STEP}" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="${C.STEP}" ${o.cups >= max ? 'disabled' : ''} aria-label="Больше">+</button></div>
-          <p class="cf-note">Потратите <b>${money(o.cups * ev.cost)}</b> из ${money(t.money)}${o.cups >= max && max < C.MAX_CUPS ? '. На большее не хватит' : '. Непроданное выльют'}</p></div>
-      </div>
-      ${forecast(w[o.price], peeked)}
-      <div class="cf-sec"><div class="cf-t"><i>3</i><span>Карта <em>· по желанию, каждая — один раз за игру</em></span></div>
+      <p class="cf-goal">Выберите <b>цену чашки</b>. Карту можно не брать.</p>
+      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
+        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}" ${p > ev.max ? 'disabled' : ''}>${p} ₽${p > ev.max ? '<small>не купят</small>' : ''}</button>`).join('')}</div>
+        <p class="cf-note">С каждой чашки останется <b>${o.price - unit} ₽</b>: цена ${o.price} ₽ минус ${unit} ₽ на кофе</p>
+        <div class="cf-outs"><span>Сколько заработаете за раунд:</span><div>${outcomes(unit)}</div></div></div>
+      <div class="cf-sec"><div class="cf-t"><i>2</i><span>Карта <em>· по желанию, каждая — один раз за игру</em></span></div>
         <div class="cf-cards">${col(true, 'Помощь себе')}${col(false, 'Пакость сопернику')}</div></div>
     </div>`;
   }
   host.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b || b.disabled || !host.contains(b)) return;
-    if (b.dataset.g) { rival = b.dataset.g; render(); return; }
-    if (b.dataset.card !== 'insider') arm = false;
     if (b.dataset.p) o.price = +b.dataset.p;
-    else if (b.dataset.c) o.cups = Math.max(0, Math.min(maxCups(), o.cups + +b.dataset.c));
-    else if (b.dataset.card) {
-      const id = b.dataset.card;
-      if (id === 'insider') { if (t.peek == null) { if (arm) on.peek?.(); arm = !arm; render(); } return; }
-      o.card = o.card === id ? null : id;
-    } else return;
+    else if (b.dataset.card) o.card = o.card === b.dataset.card ? null : b.dataset.card;
+    else return;
     render(); on.change?.({ ...o });
   });
   render();
@@ -570,13 +475,12 @@ function game(g) {
       formKey = key; sentOid = null; dirty = false;
       main.innerHTML = `<div class="pg">
         <div id="pgHead"></div>
-        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Кофе захотят <b>около ${g.ev.n} человек</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b></p></div></div>
+        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Кофе захотят <b>${g.ev.n} человек</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b> · ${g.ev.max < 100 ? `дороже <b>${g.ev.max} ₽</b> не купят` : `купят даже за <b>${g.ev.max} ₽</b>`}</p></div></div>
         <div id="pform"></div>
         <div class="pg-send"><button class="btn big" id="pSend">Отправить решение</button><p id="pSt" class="muted center"></p></div>
       </div>`;
       form = coffeeForm($('#pform'), t, g.ev, null, {
-        change() { dirty = true; status(g.teams[me]); },
-        peek() { send('peek', { team: me }); }
+        change() { dirty = true; status(g.teams[me]); }
       });
       $('#pSend').addEventListener('click', () => {
         const v = form.value; sentOid = send('order', { team: me, ...v }); dirty = false; status(S.game.teams[me]);
@@ -588,7 +492,7 @@ function game(g) {
   }
   form = null; formKey = '';
   if (g.phase === 'lobby') {
-    main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки и сколько кофе сварить.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
+    main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
     $('#pUncap').addEventListener('click', () => send('uncap', {}));
   } else if (g.phase === 'reveal' && t.res) {
     const r = t.res, o = g.teams[1 - me].res;
@@ -597,8 +501,8 @@ function game(g) {
     main.innerHTML = `<div class="pg">${head}<div class="card center pres ${v > 0 ? 'win' : ''}">
       <p class="pres-v">${v > 0 ? '🎉 Вы заработали больше соперника' : v < 0 ? 'Соперник заработал больше' : 'В этом раунде ничья'}</p>
       <div class="pres-p ${r.profit >= 0 ? 'up' : 'down'}">${sg(r.profit)}</div>
-      <p>${fmt(r.revenue)} ₽ выручка − ${fmt(r.cost)} ₽ на кофе${r.tax ? ` − ${fmt(r.tax)} ₽ налог` : ''}</p>
-      <p class="muted">${r.cups ? `Продали ${r.sold} из ${r.cups} чашек по ${r.price} ₽` : 'Кофе не варили'}</p>
+      <p>${r.sold} ${plural(r.sold, 'чашка', 'чашки', 'чашек')} × ${r.price - r.unit} ₽ с чашки${r.tax ? ` − ${fmt(r.tax)} ₽ налог` : ''}</p>
+      <p class="muted">Цена ${r.price} ₽, кофе обошёлся в ${r.unit} ₽</p>
       ${o ? `<p class="pres-o">У соперника: <b>${sg(o.profit)}</b></p>` : ''}
     </div></div>`;
   } else if (g.phase === 'over') {

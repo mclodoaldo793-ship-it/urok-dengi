@@ -1,23 +1,27 @@
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
-.cf{display:flex;flex-direction:column;gap:14px;color:var(--cf-ink);container-type:inline-size}
-.cf-pair{display:flex;flex-direction:column;gap:14px}
+.cf{display:flex;flex-direction:column;gap:16px;color:var(--cf-ink);container-type:inline-size}
 .cf-goal{margin:0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 12%,transparent);font-size:16px;line-height:1.35}
 .cf-goal b{color:var(--cf-acc)}
-.cf-sec{display:flex;flex-direction:column;gap:7px}
+.cf-sec{display:flex;flex-direction:column;gap:8px}
 .cf-t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px}
 .cf-t i{font-style:normal;width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:13px;flex:none}
 .cf-t em{font-style:normal;font-weight:600;color:var(--cf-muted)}
 .cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cf button:disabled{cursor:not-allowed}
-.cf-note{margin:0;font-size:14px;line-height:1.35;color:var(--cf-muted)}
+.cf-note{margin:0;font-size:15px;line-height:1.35;color:var(--cf-muted)}
 .cf-note b{color:var(--cf-ink)}
 .cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.cf .cf-p{padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf .cf-p{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-.cf-cups{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.cf-cups button{width:52px;height:46px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:24px;font-weight:800;line-height:1}
-.cf-cups button:disabled{opacity:.35}
-.cf-cups > b{min-width:56px;text-align:center;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.cf .cf-p:disabled{opacity:.4;text-decoration:line-through}
+.cf-p small{font-size:11px;font-weight:700;text-decoration:none;color:var(--cf-muted)}
+/* ready answers: what this price earns if the rival goes cheaper, the same or dearer */
+.cf-outs{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--cf-muted)}
+.cf-outs > div{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
+.cf-o{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 6px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 8%,var(--cf-bg2));border:1px solid var(--cf-line);text-align:center}
+.cf-o small{font-size:13px;font-weight:700;color:var(--cf-muted)}
+.cf-o b{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--cf-good);white-space:nowrap}
+.cf-o span{font-size:13px}
 /* cards: help for you / harm for the rival; each card spells out what it does */
 .cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -32,38 +36,8 @@
 .cf-c.on.evil{border-color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 16%,var(--cf-bg2))}
 .cf-c:disabled:not(.on){opacity:.35}
 .cf-c.used b{text-decoration:line-through}
-/* forecast: people × share × buy rate = buyers, then the chance to sell every cup */
-.cf-fc{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:12px 14px;border-radius:14px;border:2px solid color-mix(in srgb,var(--cf-acc) 45%,var(--cf-line));background:color-mix(in srgb,var(--cf-acc) 7%,var(--cf-bg2))}
-.cf-fc-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px;font-size:15px}
-.cf-guess{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:4px;width:100%;font-size:13px;color:var(--cf-muted)}
-.cf-guess small{grid-column:1/-1;font-size:13px}
-.cf .cf-guess button{padding:5px 10px;border-radius:999px;border:1.5px solid var(--cf-line);background:transparent;font-size:13px;font-weight:700;color:var(--cf-muted)}
-.cf .cf-guess button.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 20%,transparent);color:var(--cf-ink)}
-.cf .cf-guess button:disabled{opacity:.35}
-.cf-eq{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1.15fr);align-items:start;gap:4px;margin-top:8px;text-align:center}
-.cf-eq > i{font-style:normal;font-size:18px;font-weight:800;line-height:1.3;color:var(--cf-muted)}
-.cf-x{display:flex;flex-direction:column;gap:2px;min-width:0}
-.cf-x b{font-size:20px;font-weight:900;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}
-.cf-x small{font-size:12.5px;line-height:1.25;color:var(--cf-muted)}
-.cf-x.tot b{color:var(--cf-acc)}
-.cf-fc-r{display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:14px;line-height:1.35;color:var(--cf-muted)}
-.cf-fc-r b{color:var(--cf-ink)}
-.cf-odds{--odds:var(--cf-acc);display:flex;align-items:center;gap:10px}
-.cf-odds.good{--odds:var(--cf-good)}
-.cf-odds.evil{--odds:var(--cf-evil)}
-.cf-fc-r .cf-odds b{min-width:2.6em;font-size:32px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--odds)}
-.cf-bar{flex:1;height:12px;border-radius:99px;background:color-mix(in srgb,var(--cf-ink) 12%,transparent);overflow:hidden}
-.cf-bar i{display:block;height:100%;border-radius:inherit;background:var(--odds)}
+@container (min-width:400px){ .cf-o b{font-size:22px} }
 @container (min-width:520px){
   .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .cf-guess{display:flex;width:auto}
-  .cf-guess small{margin-right:2px}
-  .cf .cf-guess button{padding:3px 10px}
-  .cf-eq > i{font-size:22px;line-height:1.2}
-  .cf-x b{font-size:26px;line-height:1.1}
-}
-@container (min-width:760px){
-  .cf-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-  .cf-fc{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px}
-  .cf-fc-r{padding-left:20px;border-left:1px solid var(--cf-line)}
+  .cf-o b{font-size:26px}
 }
