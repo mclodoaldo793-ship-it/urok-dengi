@@ -4414,8 +4414,11 @@ const Live = (() => {
   const on = !window.NO_LIVE && 'WebSocket' in window && 'TextEncoder' in window;
   const ABC = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
   const newCode = () => Array.from({ length: 5 }, () => ABC[Math.floor(Math.random() * ABC.length)]).join('');
-  let code = store.get('room');
-  if (!/^[A-Z0-9]{5}$/.test(code || '')) { code = newCode(); store.set('room', code); }
+  /* ?room=ABCDE in the presenter's link fixes the code, so the phone link can be sent out before the lesson */
+  const fixed = (new URLSearchParams(location.search).get('room') || '').toUpperCase();
+  let code = /^[A-Z0-9]{5}$/.test(fixed) ? fixed : store.get('room');
+  if (!/^[A-Z0-9]{5}$/.test(code || '')) code = newCode();
+  store.set('room', code);
   const conns = [], seen = new Map(), dedupe = new Set(), dq = [], handlers = {};
   const id = 'dh' + Math.random().toString(36).slice(2, 12);
   let last = '', timer = 0;
