@@ -8,14 +8,21 @@
 .cf-t em{font-style:normal;font-weight:600;color:var(--cf-muted)}
 .cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cf button:disabled{cursor:not-allowed}
-.cf-note{margin:0;font-size:15px;line-height:1.35;color:var(--cf-muted)}
-.cf-note b{color:var(--cf-ink)}
-.cf-note b.bad{color:var(--cf-evil)}
+/* price − coffee = profit per cup */
+.cf-note{display:flex;align-items:stretch;gap:8px;padding:8px;border-radius:14px;background:var(--cf-bg2);border:1px solid var(--cf-line)}
+.cf-note>i{align-self:center;font-style:normal;font-weight:800;font-size:22px;color:var(--cf-muted)}
+.cf-m{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 4px;border-radius:10px;text-align:center}
+.cf-m b{font-size:22px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf-m small{font-size:12px;font-weight:700;line-height:1.2;color:var(--cf-muted)}
+.cf-m.res{flex-grow:1.5;border:2px solid currentColor}
+.cf-m.res small{color:inherit}
+.cf-m.up{color:var(--cf-good);background:color-mix(in srgb,var(--cf-good) 14%,transparent)}
+.cf-m.zero{color:var(--cf-muted)}
+.cf-m.down{color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 14%,transparent)}
 /* up to 10 prices: 5 per row on a phone, one row when there is room */
 .cf-prices{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .cf .cf-p{display:flex;align-items:center;justify-content:center;padding:10px 2px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-/* ready answers: what this price earns if the rival goes cheaper, the same or dearer */
 /* cards: help for you / harm for the rival; each card spells out what it does */
 .cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -33,5 +40,11 @@
 @container (min-width:520px){
   .cf-prices{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
   .cf .cf-p{font-size:20px}
+  .cf-note{justify-content:center;gap:14px}
+  .cf-m{flex:0 0 auto;min-width:120px;padding:6px 18px}
+  .cf-m.res{flex-grow:0;min-width:200px}
+  .cf-m b{font-size:28px}
+  .cf-m small{font-size:14px}
+  .cf-note>i{font-size:28px}
   .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
 }

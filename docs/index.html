@@ -941,14 +941,21 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .cf-t em{font-style:normal;font-weight:600;color:var(--cf-muted)}
 .cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cf button:disabled{cursor:not-allowed}
-.cf-note{margin:0;font-size:15px;line-height:1.35;color:var(--cf-muted)}
-.cf-note b{color:var(--cf-ink)}
-.cf-note b.bad{color:var(--cf-evil)}
+/* price − coffee = profit per cup */
+.cf-note{display:flex;align-items:stretch;gap:8px;padding:8px;border-radius:14px;background:var(--cf-bg2);border:1px solid var(--cf-line)}
+.cf-note>i{align-self:center;font-style:normal;font-weight:800;font-size:22px;color:var(--cf-muted)}
+.cf-m{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 4px;border-radius:10px;text-align:center}
+.cf-m b{font-size:22px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf-m small{font-size:12px;font-weight:700;line-height:1.2;color:var(--cf-muted)}
+.cf-m.res{flex-grow:1.5;border:2px solid currentColor}
+.cf-m.res small{color:inherit}
+.cf-m.up{color:var(--cf-good);background:color-mix(in srgb,var(--cf-good) 14%,transparent)}
+.cf-m.zero{color:var(--cf-muted)}
+.cf-m.down{color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 14%,transparent)}
 /* up to 10 prices: 5 per row on a phone, one row when there is room */
 .cf-prices{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .cf .cf-p{display:flex;align-items:center;justify-content:center;padding:10px 2px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-/* ready answers: what this price earns if the rival goes cheaper, the same or dearer */
 /* cards: help for you / harm for the rival; each card spells out what it does */
 .cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -966,6 +973,12 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 @container (min-width:520px){
   .cf-prices{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
   .cf .cf-p{font-size:20px}
+  .cf-note{justify-content:center;gap:14px}
+  .cf-m{flex:0 0 auto;min-width:120px;padding:6px 18px}
+  .cf-m.res{flex-grow:0;min-width:200px}
+  .cf-m b{font-size:28px}
+  .cf-m small{font-size:14px}
+  .cf-note>i{font-size:28px}
   .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>
@@ -1784,14 +1797,14 @@ function coffeeForm(host, t, ev, init, on) {
     };
     const col = (good, title) => `<div class="cf-col ${good ? 'good' : 'evil'}"><span class="cf-g">${title}</span>${ids.filter(id => C.CARDS[id].good === good).map(card).join('')}</div>`;
     const left = o.price - unit;
-    const note = left > 0 ? `С каждой чашки останется <b>${left} ₽</b>: цена ${o.price} ₽ минус ${unit} ₽ на кофе`
-      : left === 0 ? `С чашки не останется <b>ничего</b>: цена ${o.price} ₽ и кофе обходится в ${unit} ₽`
-      : `Каждая чашка <b class="bad">в убыток на ${-left} ₽</b>: цена ${o.price} ₽, а кофе обходится в ${unit} ₽`;
+    /* price − coffee = what each cup leaves, as a sum the class can read from the back row */
+    const res = left > 0 ? ['up', `${left} ₽`, 'останется с чашки'] : left === 0 ? ['zero', '0 ₽', 'с чашки ничего'] : ['down', `−${-left} ₽`, 'убыток с чашки'];
+    const note = `<span class="cf-m"><b>${o.price} ₽</b><small>цена</small></span><i>−</i><span class="cf-m"><b>${unit} ₽</b><small>кофе</small></span><i>=</i><span class="cf-m res ${res[0]}"><b>${res[1]}</b><small>${res[2]}</small></span>`;
     host.innerHTML = `<div class="cf">
       <p class="cf-goal">Выберите <b>цену чашки</b>. Карту можно не брать.</p>
       <div class="cf-sec"><div class="cf-t"><i>1</i><span>Цена чашки <em>· сколько готовы платить покупатели, решайте сами</em></span></div>
         <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
-        <p class="cf-note">${note}</p></div>
+        <div class="cf-note">${note}</div></div>
       <div class="cf-sec"><div class="cf-t"><i>2</i><span>Карта <em>· по желанию, каждая — один раз за игру</em></span></div>
         <div class="cf-cards">${col(true, 'Помощь себе')}${col(false, 'Пакость сопернику')}</div></div>
     </div>`;

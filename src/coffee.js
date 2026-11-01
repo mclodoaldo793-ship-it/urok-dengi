@@ -57,14 +57,14 @@ function coffeeForm(host, t, ev, init, on) {
     };
     const col = (good, title) => `<div class="cf-col ${good ? 'good' : 'evil'}"><span class="cf-g">${title}</span>${ids.filter(id => C.CARDS[id].good === good).map(card).join('')}</div>`;
     const left = o.price - unit;
-    const note = left > 0 ? `С каждой чашки останется <b>${left} ₽</b>: цена ${o.price} ₽ минус ${unit} ₽ на кофе`
-      : left === 0 ? `С чашки не останется <b>ничего</b>: цена ${o.price} ₽ и кофе обходится в ${unit} ₽`
-      : `Каждая чашка <b class="bad">в убыток на ${-left} ₽</b>: цена ${o.price} ₽, а кофе обходится в ${unit} ₽`;
+    /* price − coffee = what each cup leaves, as a sum the class can read from the back row */
+    const res = left > 0 ? ['up', `${left} ₽`, 'останется с чашки'] : left === 0 ? ['zero', '0 ₽', 'с чашки ничего'] : ['down', `−${-left} ₽`, 'убыток с чашки'];
+    const note = `<span class="cf-m"><b>${o.price} ₽</b><small>цена</small></span><i>−</i><span class="cf-m"><b>${unit} ₽</b><small>кофе</small></span><i>=</i><span class="cf-m res ${res[0]}"><b>${res[1]}</b><small>${res[2]}</small></span>`;
     host.innerHTML = `<div class="cf">
       <p class="cf-goal">Выберите <b>цену чашки</b>. Карту можно не брать.</p>
       <div class="cf-sec"><div class="cf-t"><i>1</i><span>Цена чашки <em>· сколько готовы платить покупатели, решайте сами</em></span></div>
         <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
-        <p class="cf-note">${note}</p></div>
+        <div class="cf-note">${note}</div></div>
       <div class="cf-sec"><div class="cf-t"><i>2</i><span>Карта <em>· по желанию, каждая — один раз за игру</em></span></div>
         <div class="cf-cards">${col(true, 'Помощь себе')}${col(false, 'Пакость сопернику')}</div></div>
     </div>`;
