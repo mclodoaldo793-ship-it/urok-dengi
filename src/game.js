@@ -36,9 +36,9 @@ const Game = (() => {
 
   /* ---------- rules engine ---------- */
   function clean(t, o) {
-    const e = ev(), price = +o.price;
+    const price = +o.price;
     return {
-      price: C.PRICES.includes(price) && price <= e.max ? price : Math.min(60, e.max),
+      price: C.PRICES.includes(price) ? price : 60,
       card: typeof o.card === 'string' && C.CARDS[o.card] && t.cards[o.card] ? o.card : null
     };
   }
@@ -48,17 +48,19 @@ const Game = (() => {
     const blocked = harm.map((h, i) => !!h && card[i] === 'shield');
     const hit = harm.map((h, i) => blocked[i] ? null : h);
     const p = o.map(x => x.price);
-    /* cheaper shop gets 2 of every 3 people, then the cards move people around */
-    const sold = [0, 1].map(i => coffeeSplit(e.n, p[i], p[1 - i]) + (card[i] === 'ad' ? C.AD : 0));
-    [0, 1].forEach(i => { if (hit[i] === 'rumor') { const m = Math.min(C.RUMOR, sold[i]); sold[i] -= m; sold[1 - i] += m; } });
+    /* above the day's ceiling nobody buys; otherwise the cheaper shop gets 2 of every 3 people, then the cards move people around */
+    const ok = p.map(x => x <= e.max);
+    const sold = [0, 1].map(i => !ok[i] ? 0 : (ok[1 - i] ? coffeeSplit(e.n, p[i], p[1 - i]) : e.n) + (card[i] === 'ad' ? C.AD : 0));
+    const move = (i, m) => { sold[i] -= m; if (ok[1 - i]) sold[1 - i] += m; };  // people who leave a shop only buy if the rival's price is fine
+    [0, 1].forEach(i => { if (hit[i] === 'rumor') move(i, Math.min(C.RUMOR, sold[i])); });
     const cut = [0, 1].map(i => hit[i] === 'power' ? Math.max(0, sold[i] - C.POWER_CAP) : 0);
-    [0, 1].forEach(i => { sold[i] -= cut[i]; sold[1 - i] += cut[i]; });
+    [0, 1].forEach(i => move(i, cut[i]));
     const teams = [0, 1].map(i => {
       const unit = e.cost - (card[i] === 'discount' ? C.DISCOUNT : 0);
       const revenue = sold[i] * p[i], cost = sold[i] * unit, tax = hit[i] === 'tax' ? Math.round(revenue * C.TAX) : 0;
       return {
         price: p[i], sold: sold[i], unit, revenue, cost, tax, profit: revenue - cost - tax, before: T[i].money, after: T[i].money + revenue - cost - tax,
-        card: card[i], hit: hit[i], blocked: blocked[i], blockedCard: blocked[i] ? harm[i] : null, cut: cut[i]
+        card: card[i], hit: hit[i], blocked: blocked[i], blockedCard: blocked[i] ? harm[i] : null, cut: cut[i], over: !ok[i]
       };
     });
     return { round: G.round, ev: G.evs[G.round - 1], N: sold[0] + sold[1], teams };
@@ -201,13 +203,13 @@ const Game = (() => {
     const e = (G.phase === 'orders' || G.phase === 'reveal') ? ev() : null;
     return {
       phase: G.phase, round: G.round, rounds: G.rounds, show: G.phase === 'reveal' && G.res ? G.res.show || 0 : 0,
-      ev: e && { e: e.e, t: e.t, x: e.x, n: e.n, cost: e.cost, max: e.max },
+      ev: e && { e: e.e, t: e.t, x: e.x, cost: e.cost },
       teams: G.teams.map((t, i) => {
         const x = G.phase === 'reveal' && G.res ? G.res.teams[i] : null;
         return {
           name: t.name, emoji: t.emoji, money: t.money, cards: t.cards,
           cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null,
-          res: x && { price: x.price, sold: x.sold, unit: x.unit, revenue: x.revenue, cost: x.cost, tax: x.tax, profit: x.profit, after: x.after, hit: x.hit },
+          res: x && { price: x.price, sold: x.sold, unit: x.unit, revenue: x.revenue, cost: x.cost, tax: x.tax, profit: x.profit, after: x.after, hit: x.hit, over: x.over },
           final: G.phase === 'over' ? t.money : null
         };
       }),
@@ -249,7 +251,7 @@ const Game = (() => {
     scr.innerHTML = `<div class="lobby">
       <div class="lobby-h">
         <h1>☕ Битва кофеен</h1>
-        <p>Две кофейни у колледжа. Новость дня говорит, сколько будет покупателей. Команды тайно выбирают цену чашки. В конце побеждает тот, у кого больше денег.</p>
+        <p>Две кофейни у колледжа. Новость дня намекает, сколько придёт покупателей и сколько они готовы платить. Команды тайно выбирают цену чашки. В конце побеждает тот, у кого больше денег.</p>
       </div>
       <div class="lobby-grid">
         ${tcard(0)}
@@ -271,7 +273,7 @@ const Game = (() => {
     return `<div class="news ${still ? 'still' : ''}">
       <div class="news-top"><span>Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
       <div class="news-body"><div class="news-e">${e.e}</div><div><h2>${e.t}</h2><p>${e.x}</p></div></div>
-      <div class="news-facts"><span>Кофе захотят <b>${e.n} ${plural(e.n, 'человек', 'человека', 'человек')}</b></span><span>Чашка обходится в <b>${e.cost} ₽</b></span><span>${e.max < C.PRICES[C.PRICES.length - 1] ? `Дороже <b>${e.max} ₽</b> никто не купит` : `Купят даже за <b>${e.max} ₽</b>`}</span></div>
+      <div class="news-facts"><span>Чашка обходится в <b>${e.cost} ₽</b></span><span>Сколько придёт людей и сколько они готовы платить — догадайтесь по новости</span></div>
     </div>`;
   }
   function orders() {
@@ -304,6 +306,7 @@ const Game = (() => {
   function notes(r, i) {
     const x = r.teams[i], out = [];
     const ppl = n => `${n} ${plural(n, 'покупатель', 'покупателя', 'покупателей')}`;
+    if (x.over) out.push(['bad', `😬 Слишком дорого: сегодня дороже ${C.EVENTS[r.ev].max} ₽ никто не покупал`]);
     if (x.hit === 'power') out.push(['bad', `🔌 Соперник отключил свет: ${ppl(x.cut)} ушли к нему`]);
     if (x.hit === 'rumor') out.push(['bad', `🪳 Слух про таракана: ${ppl(C.RUMOR)} ушли к соперникам`]);
     if (x.hit === 'tax') out.push(['bad', '🧾 Налоговая забрала 30% выручки']);
@@ -313,11 +316,14 @@ const Game = (() => {
     return out.slice(0, 2);
   }
   function why(r) {
-    const [a, b] = r.teams, out = [];
-    if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
+    const [a, b] = r.teams, out = [], max = C.EVENTS[r.ev].max;
+    if (a.over || b.over) {
+      if (a.over && b.over) out.push(`Сегодня дороже ${max} ₽ никто не покупал, а обе кофейни поставили цену выше. Никто не купил кофе.`);
+      else { const c = a.over ? 0 : 1; out.push(`Сегодня дороже ${max} ₽ никто не покупал. У ${name(c)} цена ${r.teams[c].price} ₽, поэтому все покупатели ушли к ${name(1 - c)}.`); }
+    } else if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
     else { const c = a.price < b.price ? 0 : 1; out.push(`${name(c)} продаёт дешевле: ${r.teams[c].price} ₽ против ${r.teams[1 - c].price} ₽, поэтому к ней пошли 2 из 3 покупателей.`); }
     if (r.ev === 'beans') out.push('Зёрна покупают за границей за доллары. Это мировые деньги.');
-    else if (a.price - a.unit !== b.price - b.unit && a.price >= a.unit && b.price >= b.unit) out.push(`Зато с каждой чашки у ${name(0)} осталось ${a.price - a.unit} ₽, а у ${name(1)} — ${b.price - b.unit} ₽.`);
+    else if (!a.over && !b.over && a.price - a.unit !== b.price - b.unit && a.price >= a.unit && b.price >= b.unit) out.push(`Зато с каждой чашки у ${name(0)} осталось ${a.price - a.unit} ₽, а у ${name(1)} — ${b.price - b.unit} ₽.`);
     r.teams.forEach((x, i) => { if (x.price < x.unit) out.push(`${name(i)} продавала дешевле, чем обходится кофе, и теряла ${x.unit - x.price} ₽ на каждой чашке.`); });
     return out;
   }
@@ -347,7 +353,7 @@ const Game = (() => {
       </div>
       <div class="res-row">${card(0)}${card(1)}</div>
       <div class="cb-wrap">
-        <div class="cb-h">Кофе купили ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')}. Вот куда они пошли:</div>
+        <div class="cb-h">${r.N ? `Кофе купили ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')}. Вот куда они пошли:` : 'Сегодня кофе не купил никто: обе цены оказались слишком высокими.'}</div>
         <div class="cb">${seg(X[0].sold, 't0', esc(T[0].name))}${seg(X[1].sold, 't1', esc(T[1].name))}</div>
       </div>
       <div class="rv-why">${why(r).map(s => `<p>${esc(s)}</p>`).join('')}</div>
@@ -434,8 +440,8 @@ const Game = (() => {
     showModal(`<h3>❔ Правила «Битвы кофеен»</h3>
       <ol class="rules-list">
         <li>У каждой кофейни на старте ${fmt(C.START)} ₽. Раундов — ${G.rounds}.</li>
-        <li>Каждый раунд выходит новость: сколько человек захотят кофе, во что обходится чашка и дороже какой цены никто не купит.</li>
-        <li>Команда тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Дороже, чем сказано в новости, никто не купит.</li>
+        <li>Каждый раунд выходит новость: что происходит в колледже и во что обходится чашка. Сколько придёт покупателей и сколько они готовы платить, команды догадываются сами.</li>
+        <li>Команда тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Если цена слишком высокая для этого дня, к кофейне никто не придёт.</li>
         <li>Кто дешевле, к тому идут 2 из 3 покупателей. Цены равные — покупатели делятся поровну.</li>
         <li>С каждой чашки кофейня получает цену минус стоимость кофе. Дешёвый кофе привлекает людей, но с чашки остаётся меньше.</li>
         <li>За раунд можно сыграть одну карту. Каждая карта — один раз за игру.</li>

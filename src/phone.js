@@ -122,7 +122,7 @@ function game(g) {
       formKey = key; sentOid = null; dirty = false;
       main.innerHTML = `<div class="pg">
         <div id="pgHead"></div>
-        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Кофе захотят <b>${g.ev.n} ${plural(g.ev.n, 'человек', 'человека', 'человек')}</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b> · ${g.ev.max < COFFEE.PRICES[COFFEE.PRICES.length - 1] ? `дороже <b>${g.ev.max} ₽</b> не купят` : `купят даже за <b>${g.ev.max} ₽</b>`}</p></div></div>
+        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">☕ Чашка обходится в <b>${g.ev.cost} ₽</b>. Сколько придёт людей и сколько они готовы платить, догадайтесь по новости.</p></div></div>
         <div id="pform"></div>
         <div class="pg-send"><button class="btn big" id="pSend">Отправить решение</button><p id="pSt" class="muted center"></p></div>
       </div>`;
@@ -159,6 +159,7 @@ function game(g) {
       <div class="pres-p ${r.profit >= 0 ? 'up' : 'down'}">${sg(r.profit)}</div>
       <p>${r.sold} ${plural(r.sold, 'чашка', 'чашки', 'чашек')} × ${r.price - r.unit} ₽ с чашки${r.tax ? ` − ${fmt(r.tax)} ₽ налог` : ''}</p>
       <p class="muted">Цена ${r.price} ₽, кофе обошёлся в ${r.unit} ₽</p>
+      ${r.over ? '<p class="pres-hit">😬 Слишком дорого: по такой цене сегодня никто не покупал</p>' : ''}
       ${bad ? `<p class="pres-hit">😈 Пакость соперника: ${bad.e} ${bad.n}</p>` : ''}
       ${o ? `<p class="pres-o">У соперника: <b>${sg(o.profit)}</b></p>` : ''}
     </div></div>`;
