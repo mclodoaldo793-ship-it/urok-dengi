@@ -1,38 +1,44 @@
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
-.cf{display:flex;flex-direction:column;gap:14px;color:var(--cf-ink)}
+.cf{display:flex;flex-direction:column;gap:14px;color:var(--cf-ink);container-type:inline-size}
+.cf-pair{display:flex;flex-direction:column;gap:14px}
+.cf-goal{margin:0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 12%,transparent);font-size:16px;line-height:1.35}
+.cf-goal b{color:var(--cf-acc)}
 .cf-sec{display:flex;flex-direction:column;gap:7px}
-.cf-t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
-.cf-t i{font-style:normal;width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:12px;flex:none}
+.cf-t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px}
+.cf-t i{font-style:normal;width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:13px;flex:none}
+.cf-t span{margin-left:-4px;font-weight:600;color:var(--cf-muted)}
 .cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cf button:disabled{cursor:not-allowed}
-.cf-note{margin:0;font-size:13px;line-height:1.35;color:var(--cf-muted)}
+.cf-note{margin:0;font-size:14px;line-height:1.35;color:var(--cf-muted)}
 .cf-note b{color:var(--cf-ink)}
-.cf-note.peek{padding:8px 12px;border-radius:10px;border:1px dashed var(--cf-good);color:var(--cf-ink);font-size:14px}
+.cf-note.peek{padding:8px 12px;border-radius:10px;border:1px dashed var(--cf-good);color:var(--cf-ink);font-size:15px}
 .cf-note.peek b{font-size:18px;color:var(--cf-good)}
 .cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .cf .cf-p{padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
 .cf-cups{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cf-cups button{width:52px;height:46px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:24px;font-weight:800;line-height:1}
 .cf-cups button:disabled{opacity:.35}
 .cf-cups > b{min-width:56px;text-align:center;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
-.cf-cups .cf-note{margin-left:6px}
-.cf-cards{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:6px}
-.cf-g{align-self:center;padding-right:4px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.cf-g.good{color:var(--cf-good)}
-.cf-g.evil{color:var(--cf-evil)}
-.cf-c{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:58px;padding:7px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);text-align:center}
-.cf-c span{font-size:24px;line-height:1}
-.cf-c b{font-size:13px;font-weight:800;line-height:1.15}
+/* cards: help for you / harm for the rival; each card spells out what it does */
+.cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cf-g{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.cf-col.good .cf-g{color:var(--cf-good)}
+.cf-col.evil .cf-g{color:var(--cf-evil)}
+.cf-c{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:10px;row-gap:1px;padding:7px 12px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);text-align:left}
+.cf-c span{grid-row:span 2;font-size:30px;line-height:1}
+.cf-c b{font-size:17px;font-weight:800;line-height:1.2}
+.cf-c small{font-size:18px;line-height:1.3;color:color-mix(in srgb,var(--cf-ink) 82%,transparent)}
 .cf-c.on.good{border-color:var(--cf-good);background:color-mix(in srgb,var(--cf-good) 16%,var(--cf-bg2))}
 .cf-c.on.evil{border-color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 16%,var(--cf-bg2))}
 .cf-c:disabled:not(.on){opacity:.35}
 .cf-c.used b{text-decoration:line-through}
-.cf-bank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.cf .cf-b{padding:11px 12px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:15px;font-weight:800}
-.cf-b:disabled{opacity:.45}
-.cf .cf-p.on,.cf .cf-b.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-@media (max-width:420px){
-  .cf-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .cf-g{grid-column:1/-1;padding:4px 0 0}
-  .cf-c b{font-size:12px}
+.cf-sum{margin:0;padding:10px 14px;border-radius:12px;border:2px dashed var(--cf-line);font-size:16px;line-height:1.35}
+.cf-sum b{color:var(--cf-acc)}
+@container (min-width:520px){
+  .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container (min-width:760px){
+  .cf-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 }

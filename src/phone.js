@@ -157,7 +157,7 @@ function game(g) {
     const win = g.winner === me, draw = g.winner === -1;
     main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">${draw ? '🤝' : win ? '🏆' : '🥈'}</div>
       <h1>${draw ? 'Ничья!' : win ? 'Ваша кофейня победила!' : 'Второе место'}</h1>
-      <p class="muted">Итог с учётом кредита и вклада: <b>${fmt(t.final)}&nbsp;₽</b></p></div></div>`;
+      <p class="muted">В кассе в конце игры: <b>${fmt(t.final)}&nbsp;₽</b></p></div></div>`;
   } else watch(g);
 }
 function status(t) {

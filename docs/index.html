@@ -725,6 +725,9 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .news p{font-size:clamp(15px,1.25vw,20px);line-height:1.45}
 .news-facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .news-facts span{padding:7px 12px;border-radius:10px;border:1.5px solid var(--news-line);font-size:clamp(14px,1.1vw,17px)}
+.g-todo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.2vw,14px)}
+.g-todo div{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--g-gold) 35%,transparent);background:color-mix(in srgb,var(--g-gold) 9%,transparent);font-size:clamp(14px,1.2vw,18px);font-weight:700;line-height:1.3}
+.g-todo i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--g-gold);color:var(--g-bg);font-style:normal;font-weight:900}
 .rule-line{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 0;font-size:clamp(13px,1.05vw,16px);color:var(--g-muted)}
 .rule-line span+span::before{content:"·";margin:0 12px;color:var(--g-gold)}
 .ost-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,1.6vw,20px)}
@@ -765,7 +768,6 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .res-n.bad{color:var(--g-evil);background:color-mix(in srgb,var(--g-evil) 14%,var(--g-bg-2))}
 .res-n.good{color:var(--g-ok);background:color-mix(in srgb,var(--g-ok) 12%,var(--g-bg-2))}
 .res-n.warn{color:var(--g-gold-2)}
-.res-b{font-size:clamp(12px,.95vw,14px);color:var(--g-muted)}
 
 /* where the customers went: one bar, the same colours as the teams */
 .cb-wrap{display:flex;flex-direction:column;gap:8px}
@@ -797,6 +799,9 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .g-modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(2,8,5,.74);backdrop-filter:blur(6px)}
 .g-card{width:min(720px,100%);max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px;padding:clamp(16px,2vw,28px);border-radius:24px;background:var(--g-panel);border:1px solid var(--g-line);box-shadow:0 30px 80px -20px #000;animation:cardIn .35s cubic-bezier(.2,.8,.2,1)}
 .g-card h3{font-size:clamp(18px,1.6vw,26px);color:var(--g-gold-2)}
+.g-card.wide{width:min(960px,100%)}
+.g-card-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px}
+.g-card-h .g-hint{font-size:15px}
 .rules-list{display:flex;flex-direction:column;gap:6px;padding-left:20px;font-size:15px;line-height:1.45}
 .cards-list{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;font-size:14px}
 .cards-list li{padding:8px 10px;border-radius:10px;background:var(--g-bg-2);line-height:1.35}
@@ -812,7 +817,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 @media (max-width:640px){
   .g-title{display:none}
   .g-tools .lbl{display:none}
-  .lobby-grid,.res-row,.ost-row{grid-template-columns:minmax(0,1fr)}
+  .lobby-grid,.res-row,.ost-row,.g-todo{grid-template-columns:minmax(0,1fr)}
   .news-body{grid-template-columns:minmax(0,1fr)}
   .cards-list,.rf-grid{grid-template-columns:minmax(0,1fr)}
   .sb-r{display:none}
@@ -839,42 +844,48 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
-.cf{display:flex;flex-direction:column;gap:14px;color:var(--cf-ink)}
+.cf{display:flex;flex-direction:column;gap:14px;color:var(--cf-ink);container-type:inline-size}
+.cf-pair{display:flex;flex-direction:column;gap:14px}
+.cf-goal{margin:0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 12%,transparent);font-size:16px;line-height:1.35}
+.cf-goal b{color:var(--cf-acc)}
 .cf-sec{display:flex;flex-direction:column;gap:7px}
-.cf-t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
-.cf-t i{font-style:normal;width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:12px;flex:none}
+.cf-t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px}
+.cf-t i{font-style:normal;width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:13px;flex:none}
+.cf-t span{margin-left:-4px;font-weight:600;color:var(--cf-muted)}
 .cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cf button:disabled{cursor:not-allowed}
-.cf-note{margin:0;font-size:13px;line-height:1.35;color:var(--cf-muted)}
+.cf-note{margin:0;font-size:14px;line-height:1.35;color:var(--cf-muted)}
 .cf-note b{color:var(--cf-ink)}
-.cf-note.peek{padding:8px 12px;border-radius:10px;border:1px dashed var(--cf-good);color:var(--cf-ink);font-size:14px}
+.cf-note.peek{padding:8px 12px;border-radius:10px;border:1px dashed var(--cf-good);color:var(--cf-ink);font-size:15px}
 .cf-note.peek b{font-size:18px;color:var(--cf-good)}
 .cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .cf .cf-p{padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
 .cf-cups{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cf-cups button{width:52px;height:46px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:24px;font-weight:800;line-height:1}
 .cf-cups button:disabled{opacity:.35}
 .cf-cups > b{min-width:56px;text-align:center;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
-.cf-cups .cf-note{margin-left:6px}
-.cf-cards{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:6px}
-.cf-g{align-self:center;padding-right:4px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.cf-g.good{color:var(--cf-good)}
-.cf-g.evil{color:var(--cf-evil)}
-.cf-c{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:58px;padding:7px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);text-align:center}
-.cf-c span{font-size:24px;line-height:1}
-.cf-c b{font-size:13px;font-weight:800;line-height:1.15}
+/* cards: help for you / harm for the rival; each card spells out what it does */
+.cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cf-g{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.cf-col.good .cf-g{color:var(--cf-good)}
+.cf-col.evil .cf-g{color:var(--cf-evil)}
+.cf-c{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:10px;row-gap:1px;padding:7px 12px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);text-align:left}
+.cf-c span{grid-row:span 2;font-size:30px;line-height:1}
+.cf-c b{font-size:17px;font-weight:800;line-height:1.2}
+.cf-c small{font-size:18px;line-height:1.3;color:color-mix(in srgb,var(--cf-ink) 82%,transparent)}
 .cf-c.on.good{border-color:var(--cf-good);background:color-mix(in srgb,var(--cf-good) 16%,var(--cf-bg2))}
 .cf-c.on.evil{border-color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 16%,var(--cf-bg2))}
 .cf-c:disabled:not(.on){opacity:.35}
 .cf-c.used b{text-decoration:line-through}
-.cf-bank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.cf .cf-b{padding:11px 12px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:15px;font-weight:800}
-.cf-b:disabled{opacity:.45}
-.cf .cf-p.on,.cf .cf-b.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-@media (max-width:420px){
-  .cf-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .cf-g{grid-column:1/-1;padding:4px 0 0}
-  .cf-c b{font-size:12px}
+.cf-sum{margin:0;padding:10px 14px;border-radius:12px;border:2px dashed var(--cf-line);font-size:16px;line-height:1.35}
+.cf-sum b{color:var(--cf-acc)}
+@container (min-width:520px){
+  .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container (min-width:760px){
+  .cf-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 }
 </style>
 </head><body>
@@ -1420,12 +1431,11 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
           <div class="rule card"><span class="rule-ico">📱</span><div><h3>Тайное решение</h3><p class="txt">Капитан на телефоне выбирает цену чашки и сколько кофе сварить. Соперники не видят.</p></div></div>
           <div class="rule card"><span class="rule-ico">🧍</span><div><h3>Покупатели</h3><p class="txt">Идут туда, где дешевле. Но слишком дешёвый кофе почти не приносит денег, а дорогой купят не все.</p></div></div>
           <div class="rule card"><span class="rule-ico">🗑️</span><div><h3>Не перестарайтесь</h3><p class="txt">Каждая чашка стоит денег. Непроданный кофе выливают — деньги ушли в раковину.</p></div></div>
-          <div class="rule card"><span class="rule-ico">🃏</span><div><h3>Помощь и пакости</h3><p class="txt">У команды 3 карты-помощи и 3 пакости, каждая на одну игру. И ещё банк: кредит и вклад.</p></div></div>
+          <div class="rule card"><span class="rule-ico">🃏</span><div><h3>Помощь и пакости</h3><p class="txt">У команды 3 карты-помощи и 3 пакости. Каждую можно сыграть один раз за игру.</p></div></div>
         </div>
         <div class="shop-teaser">
           <span class="chip good">📣 Реклама</span><span class="chip good">🕵️ Инсайдер</span><span class="chip good">🛡️ Охрана</span>
           <span class="chip evil">🪳 Слух про таракана</span><span class="chip evil">🧾 Налоговая проверка</span><span class="chip evil">🔌 Отключили свет</span>
-          <span class="chip">💳 Кредит</span><span class="chip">🏦 Вклад</span>
         </div>
         <div class="cta-row">
           <button class="btn btn-gold" data-action="open-game">☕ Открыть игру</button>
@@ -1640,18 +1650,16 @@ const COFFEE = {
   STEP: 10,
   /* доля желающих, которые купят кофе по такой цене */
   W: { 40: 1, 60: .9, 80: .75, 100: .6 },
-  LOAN: { now: 600, back: 800 },
-  DEPOSIT: { now: 500, back: 650 },
   POWER_CAP: 20,
   TAX: .3,
   EMOJI: ['☕', '🧋', '🍩', '🥐', '🧁', '🍪', '🥤', '🍫'],
   CARDS: {
-    ad:      { e:'📣', n:'Реклама',            good:true,  d:'К вам придёт больше покупателей.' },
-    insider: { e:'🕵️', n:'Инсайдер',           good:true,  d:'Капитан сразу узнаёт точное число покупателей.' },
-    shield:  { e:'🛡️', n:'Охрана',             good:true,  d:'Пакости соперника в этом раунде не сработают.' },
-    rumor:   { e:'🪳', n:'Слух про таракана',  good:false, d:'Часть покупателей соперника уйдёт к вам.' },
-    tax:     { e:'🧾', n:'Налоговая проверка', good:false, d:'Соперник отдаст 30% своей выручки.' },
-    power:   { e:'🔌', n:'Отключили свет',     good:false, d:'Соперник сварит не больше 20 чашек.' }
+    ad:      { e:'📣', n:'Реклама',            good:true,  d:'К вам придёт больше покупателей' },
+    insider: { e:'🕵️', n:'Инсайдер',           good:true,  d:'Узнаете точное число покупателей' },
+    shield:  { e:'🛡️', n:'Охрана',             good:true,  d:'Пакости соперника не сработают' },
+    rumor:   { e:'🪳', n:'Слух про таракана',  good:false, d:'Часть его покупателей уйдёт к вам' },
+    tax:     { e:'🧾', n:'Налоговая проверка', good:false, d:'Соперник отдаст 30% выручки' },
+    power:   { e:'🔌', n:'Отключили свет',     good:false, d:'Соперник сварит не больше 20 чашек' }
   },
   /* n — сколько людей вообще захотят кофе в этот день (на обе кофейни) */
   EVENTS: {
@@ -1663,7 +1671,7 @@ const COFFEE = {
                 x:'Студенты не спят ночами. Кофе нужен всем, и даже дорогой их не пугает.' },
     holidays: { e:'🏖️', t:'Каникулы', n:25, cost:20, lvl:'очень мало',
                 x:'Колледж почти пустой. Кофе захотят совсем немногие.' },
-    beans:    { e:'🇧🇷', t:'Зёрна подорожали', n:60, cost:35, lvl:'как обычно',
+    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:35, lvl:'как обычно',
                 x:'Кофе везут из Бразилии и платят за него долларами. Доллар вырос — чашка теперь обходится в 35 ₽.' },
     rain:     { e:'🌧️', t:'Ливень', n:40, cost:20, lvl:'меньше обычного',
                 x:'Никто не хочет выходить из здания. Покупателей меньше обычного.' },
@@ -1679,55 +1687,48 @@ const COFFEE = {
 };
 
 /* ---------- order form: the same on the captain's phone and in the presenter's manual-entry window ---------- */
-/* t: { money, cards:{id:true|false}, loan, dep (already taken?), peek }  ev: { cost, w }  init: last order  on: { change(order), peek() } */
+/* t: { money, cards:{id:true|false}, peek }  ev: { cost, w }  init: last order  on: { change(order), peek() } */
 function coffeeForm(host, t, ev, init, on) {
   const C = COFFEE, w = ev.w || C.W;
   const money = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
-  const o = { price: 60, cups: 30, card: null, loan: false, dep: false, ...(init || {}) };
-  if (t.loan) o.loan = false;
-  if (t.dep) o.dep = false;
+  const o = { price: 60, cups: 30, card: null };
+  if (init) ['price', 'cups', 'card'].forEach(k => { if (k in init) o[k] = init[k]; });
   if (o.card && !t.cards[o.card]) o.card = null;
   let arm = false;  // Insider needs a second tap: it spends the card for this round
-  const budget = () => t.money + (o.loan ? C.LOAN.now : 0) - (o.dep ? C.DEPOSIT.now : 0);
-  const maxCups = () => Math.max(0, Math.min(C.MAX_CUPS, Math.floor(budget() / ev.cost / C.STEP) * C.STEP));
-  function fix() {
-    if (budget() < 0) o.dep = false;
-    o.cups = Math.max(0, Math.min(o.cups, maxCups()));
-  }
-  /* every section is buttons plus one plain line that explains the current choice */
+  const maxCups = () => Math.max(0, Math.min(C.MAX_CUPS, Math.floor(t.money / ev.cost / C.STEP) * C.STEP));
+  const fix = () => { o.cups = Math.max(0, Math.min(o.cups, maxCups())); };
+  /* three steps, each is buttons plus one plain line; the last line repeats the whole decision */
   function render() {
     fix();
-    const peeked = t.peek != null, max = maxCups();
+    const peeked = t.peek != null, max = maxCups(), ids = Object.keys(C.CARDS);
     const card = id => {
       const c = C.CARDS[id];
       const used = !t.cards[id] && !(id === 'insider' && peeked);
       const sel = id === 'insider' ? peeked : o.card === id;
       const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
       const armed = id === 'insider' && arm && !peeked && !dis;
-      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''} title="${c.d}"><span>${c.e}</span><b>${c.n}</b></button>`;
+      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'Уже сыграна' : c.d}</small></button>`;
     };
-    const ids = Object.keys(C.CARDS);
-    let note = 'Можно без карты. Каждая карта — один раз за игру.';
+    const col = (good, title) => `<div class="cf-col ${good ? 'good' : 'evil'}"><span class="cf-g">${title}</span>${ids.filter(id => C.CARDS[id].good === good).map(card).join('')}</div>`;
+    let note = 'За раунд можно сыграть одну карту. Каждая карта — один раз за игру.';
     if (peeked) note = `🕵️ Кофе захотят <b>${t.peek}</b> человек на обе кофейни`;
     else if (arm) note = 'Нажмите «Инсайдер» ещё раз, и вы узнаете число покупателей. Это и будет карта раунда.';
-    else if (o.card) note = `${C.CARDS[o.card].e} ${C.CARDS[o.card].d}`;
-    const bank = [
-      t.loan ? `Кредит уже взят: в конце вернёте ${money(C.LOAN.back)}` : o.loan ? `Кредит: +${money(C.LOAN.now)} сейчас, в конце вернёте ${money(C.LOAN.back)}` : '',
-      t.dep ? `Вклад открыт: в конце получите ${money(C.DEPOSIT.back)}` : o.dep ? `Вклад: отдаёте ${money(C.DEPOSIT.now)} сейчас, в конце получите ${money(C.DEPOSIT.back)}` : ''
-    ].filter(Boolean).join('<br>') || 'По желанию. Кредит и вклад — по одному разу за игру.';
+    else if (o.card) note = `Карта «${C.CARDS[o.card].n}» сработает в этом раунде. Нажмите на неё ещё раз, чтобы отменить.`;
+    const played = peeked ? 'insider' : o.card;
     host.innerHTML = `<div class="cf">
-      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
-        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
-        <p class="cf-note">По ${o.price} ₽ кофе купят ${Math.round(w[o.price] * 10)} из 10 желающих</p></div>
-      <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
-        <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= max ? 'disabled' : ''} aria-label="Больше">+</button>
-          <span class="cf-note">Потратите <b>${money(o.cups * ev.cost)}</b> из ${money(budget())}${o.cups >= max && max < C.MAX_CUPS ? '. На большее не хватит' : ''}</span></div></div>
-      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта раунда</div>
-        <div class="cf-cards"><span class="cf-g good">Помощь</span>${ids.filter(id => C.CARDS[id].good).map(card).join('')}<span class="cf-g evil">Пакость</span>${ids.filter(id => !C.CARDS[id].good).map(card).join('')}</div>
+      <p class="cf-goal">Выберите <b>цену</b> и <b>сколько чашек сварить</b>. Карту можно не брать.</p>
+      <div class="cf-pair">
+        <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
+          <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
+          <p class="cf-note">По ${o.price} ₽ кофе купят ${Math.round(w[o.price] * 10)} из 10 желающих</p></div>
+        <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
+          <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= max ? 'disabled' : ''} aria-label="Больше">+</button></div>
+          <p class="cf-note">Потратите <b>${money(o.cups * ev.cost)}</b> из ${money(t.money)}${o.cups >= max && max < C.MAX_CUPS ? '. На большее не хватит' : '. Непроданное выльют'}</p></div>
+      </div>
+      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта <span>· по желанию</span></div>
+        <div class="cf-cards">${col(true, 'Помощь себе')}${col(false, 'Пакость сопернику')}</div>
         <p class="cf-note ${peeked ? 'peek' : ''}">${note}</p></div>
-      <div class="cf-sec"><div class="cf-t"><i>4</i>Банк</div>
-        <div class="cf-bank"><button type="button" class="cf-b ${o.loan ? 'on' : ''}" data-bank="loan" ${t.loan ? 'disabled' : ''}>💳 ${t.loan ? 'Кредит взят' : 'Кредит'}</button><button type="button" class="cf-b ${o.dep ? 'on' : ''}" data-bank="dep" ${t.dep || (!o.dep && t.money + (o.loan ? C.LOAN.now : 0) < C.DEPOSIT.now) ? 'disabled' : ''}>🏦 ${t.dep ? 'Вклад открыт' : 'Вклад'}</button></div>
-        <p class="cf-note">${bank}</p></div>
+      <p class="cf-sum">Ваше решение: <b>${o.price} ₽</b> за чашку · <b>${o.cups}</b> ${plural(o.cups, 'чашка', 'чашки', 'чашек')} · ${played ? `${C.CARDS[played].e} <b>${C.CARDS[played].n}</b>` : 'без карты'}</p>
     </div>`;
   }
   host.addEventListener('click', e => {
@@ -1739,8 +1740,7 @@ function coffeeForm(host, t, ev, init, on) {
       const id = b.dataset.card;
       if (id === 'insider') { if (t.peek == null) { if (arm) on.peek?.(); arm = !arm; render(); } return; }
       o.card = o.card === id ? null : id;
-    } else if (b.dataset.bank) o[b.dataset.bank] = !o[b.dataset.bank];
-    else return;
+    } else return;
     render(); on.change?.({ ...o });
   });
   render();
@@ -5017,7 +5017,7 @@ const Game = (() => {
         emoji: prev?.teams[i].emoji || ['☕', '🧋'][i],
         cap: prev?.teams[i].cap || null,
         money: C.START, cards: Object.fromEntries(CARD_IDS.map(k => [k, true])),
-        loan:false, dep:false, order:null, peek:null, hist:[]
+        order:null, peek:null, hist:[]
       }))
     };
   }
@@ -5030,8 +5030,7 @@ const Game = (() => {
   const ev = () => C.EVENTS[G.evs[G.round - 1]] || C.EVENTS.normal;
   const W = (e, p) => (e.w || C.W)[p];
   const name = i => `«${G.teams[i].name}»`;
-  const finalMoney = i => { const t = G.teams[i]; return t.money - (t.loan ? C.LOAN.back : 0) + (t.dep ? C.DEPOSIT.back : 0); };
-  const winner = () => { const a = finalMoney(0), b = finalMoney(1); return a === b ? -1 : a > b ? 0 : 1; };
+  const winner = () => { const [a, b] = G.teams.map(t => t.money); return a === b ? -1 : a > b ? 0 : 1; };
   function plan(n) {
     const pool = shuffle(Object.keys(C.EVENTS).filter(k => k !== 'normal')).slice(0, n - 1);
     if (!pool.includes('beans')) pool[1 + Math.floor(Math.random() * (pool.length - 1))] = 'beans';
@@ -5043,13 +5042,10 @@ const Game = (() => {
     const e = ev();
     const r = {
       price: C.PRICES.includes(+o.price) ? +o.price : 60,
-      card: typeof o.card === 'string' && o.card !== 'insider' && C.CARDS[o.card] && t.cards[o.card] && t.peek == null ? o.card : null,
-      loan: !!o.loan && !t.loan, dep: !!o.dep && !t.dep
+      card: typeof o.card === 'string' && o.card !== 'insider' && C.CARDS[o.card] && t.cards[o.card] && t.peek == null ? o.card : null
     };
-    if (t.money + (r.loan ? C.LOAN.now : 0) - (r.dep ? C.DEPOSIT.now : 0) < 0) r.dep = false;
-    const budget = t.money + (r.loan ? C.LOAN.now : 0) - (r.dep ? C.DEPOSIT.now : 0);
     r.cups = clamp(Math.round((+o.cups || 0) / C.STEP) * C.STEP, 0, C.MAX_CUPS);
-    r.cups = Math.min(r.cups, Math.floor(budget / e.cost / C.STEP) * C.STEP);
+    r.cups = Math.max(0, Math.min(r.cups, Math.floor(t.money / e.cost / C.STEP) * C.STEP));
     return r;
   }
   function settle() {
@@ -5074,12 +5070,11 @@ const Game = (() => {
     const sold = [sold0[0] + moved[1], sold0[1] + moved[0]];
     const teams = [0, 1].map(i => {
       const revenue = sold[i] * p[i], cost = cups[i] * e.cost, tax = hit[i] === 'tax' ? Math.round(revenue * C.TAX) : 0;
-      const bank = (o[i].loan ? C.LOAN.now : 0) - (o[i].dep ? C.DEPOSIT.now : 0);
       return {
         price: p[i], ordered: o[i].cups, cups: cups[i], sold: sold[i], poured: cups[i] - sold[i],
-        revenue, cost, tax, profit: revenue - cost - tax, bank, before: T[i].money, after: T[i].money + bank + revenue - cost - tax,
+        revenue, cost, tax, profit: revenue - cost - tax, before: T[i].money, after: T[i].money + revenue - cost - tax,
         card: card[i], hit: hit[i], blocked: blocked[i], blockedCard: blocked[i] ? harm[i] : null,
-        loan: o[i].loan, dep: o[i].dep, short: left[i] - moved[i], lost: moved[i], w: w[i], interested: inter[i]
+        short: left[i] - moved[i], lost: moved[i], w: w[i], interested: inter[i]
       };
     });
     return { round: G.round, ev: G.evs[G.round - 1], N, walked: N - sold[0] - sold[1], teams };
@@ -5097,8 +5092,6 @@ const Game = (() => {
       const t = G.teams[i];
       t.money = x.after;
       if (x.card && x.card !== 'insider') t.cards[x.card] = false;
-      if (x.loan) t.loan = true;
-      if (x.dep) t.dep = true;
       t.hist.push({ round: r.round, profit: x.profit, sold: x.sold, poured: x.poured, price: x.price });
     });
     G.res = r; G.phase = 'reveal';
@@ -5152,10 +5145,10 @@ const Game = (() => {
       teams: G.teams.map((t, i) => {
         const x = G.phase === 'reveal' && G.res ? G.res.teams[i] : null;
         return {
-          name: t.name, emoji: t.emoji, money: t.money, cards: t.cards, loan: t.loan, dep: t.dep,
+          name: t.name, emoji: t.emoji, money: t.money, cards: t.cards,
           cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null, peek: t.peek,
-          res: x && { price: x.price, cups: x.cups, sold: x.sold, poured: x.poured, revenue: x.revenue, cost: x.cost, tax: x.tax, bank: x.bank, profit: x.profit, after: x.after, hit: x.hit },
-          final: G.phase === 'over' ? finalMoney(i) : null
+          res: x && { price: x.price, cups: x.cups, sold: x.sold, poured: x.poured, revenue: x.revenue, cost: x.cost, tax: x.tax, profit: x.profit, after: x.after, hit: x.hit },
+          final: G.phase === 'over' ? t.money : null
         };
       }),
       winner: G.phase === 'over' ? winner() : null
@@ -5178,7 +5171,7 @@ const Game = (() => {
     const m = $('#gMeta');
     if (G.phase === 'lobby') { m.innerHTML = '<span class="sb-r">Подготовка</span>'; return; }
     const T = G.teams, done = G.phase === 'over';
-    const cash = T.map((t, i) => done ? finalMoney(i) : t.money);
+    const cash = T.map(t => t.money);
     const lead = cash[0] === cash[1] ? -1 : cash[0] > cash[1] ? 0 : 1;
     const num = i => { const from = anim && G.res ? G.res.teams[i].before : cash[i]; return `<b><span data-count="${from}" data-to="${cash[i]}">${fmt(from)}</span>&nbsp;₽</b>`; };
     m.innerHTML = `<span class="sb t0 ${lead === 0 ? 'lead' : ''}" title="Деньги в кассе"><i>${T[0].emoji}</i><span class="sb-n">${esc(T[0].name)}</span>${num(0)}</span>
@@ -5232,13 +5225,16 @@ const Game = (() => {
         <div class="ost-foot"><span class="cap-st live-only" data-capst="${i}"></span><button class="lnk" data-manual="${i}">${ok ? 'изменить на экране' : 'ввести на экране'}</button></div>
       </div>`;
     };
+    const todo = ['Читаем новость: сколько будет покупателей', 'Команда решает: цена чашки и сколько сварить',
+      Live.enabled ? 'Капитан тайно отправляет решение с телефона' : 'Капитан тайно вводит решение на экране'];
     scr.innerHTML = `<div class="stage">
       ${newsCard(e)}
+      <div class="g-todo">${todo.map((s, k) => `<div><i>${k + 1}</i><span>${s}</span></div>`).join('')}</div>
       <div class="rule-line"><span>Кто дешевле, к тому идут 7 из 10</span><span>За ${top} ₽ кофе берут только ${Math.round(W(e, top) * 10)} из 10</span><span>Лишний кофе выливают</span></div>
       <div class="ost-row">${st(0)}${st(1)}</div>
       <div class="center-act">
         <button class="g-btn gold big" id="gReveal" ${both ? '' : 'disabled'}>Вскрыть решения</button>
-        <p class="g-hint">${both ? 'Обе команды готовы!' : Live.enabled ? 'Капитаны тайно отправляют решение с телефона.' : 'Капитаны по очереди вводят решение на экране, соперники отворачиваются.'}</p>
+        <p class="g-hint">${both ? 'Обе команды готовы!' : 'Когда обе команды будут готовы, ведущий вскрывает решения.'}</p>
       </div>
     </div>`;
     updateCaps();
@@ -5282,8 +5278,6 @@ const Game = (() => {
         <div class="res-f">${fmt(x.revenue)} ₽ выручка − ${fmt(x.cost)} ₽ на кофе${x.tax ? ` − ${fmt(x.tax)} ₽ налог` : ''}</div>
         <div class="res-s">${x.cups ? `Продали ${x.sold} из ${x.cups} ${plural(x.cups, 'чашки', 'чашек', 'чашек')} по ${x.price} ₽` : 'Кофе не варили'}</div>
         ${notes(r, i).map(([c, s]) => `<div class="res-n ${c}">${s}</div>`).join('')}
-        ${x.loan ? '<div class="res-b">💳 Взяли кредит: +600 ₽ сейчас, вернуть 800 ₽ в конце</div>' : ''}
-        ${x.dep ? '<div class="res-b">🏦 Отнесли 500 ₽ на вклад, в конце получат 650 ₽</div>' : ''}
       </div>`;
     };
     const seg = (n, cls, label) => n > 0 ? `<div class="cb-s ${cls}" style="flex:${n} 1 0"><b>${n}</b><span>${label}</span></div>` : '';
@@ -5324,20 +5318,18 @@ const Game = (() => {
   function over() {
     const wi = winner(), T = G.teams;
     const card = i => {
-      const t = T[i], adj = [];
-      if (t.loan) adj.push(`вернули кредит ${fmt(C.LOAN.back)} ₽`);
-      if (t.dep) adj.push(`забрали вклад ${fmt(C.DEPOSIT.back)} ₽`);
+      const t = T[i];
       return `<div class="res t${i} ${wi === i ? 'win' : ''}">
         <div class="res-h"><span class="res-e">${t.emoji}</span><b>${esc(t.name)}</b><span class="res-tag">победители</span></div>
-        <div class="res-p">${fmt(finalMoney(i))} ₽</div>
-        <div class="res-s">${adj.length ? `В кассе было ${fmt(t.money)} ₽, ${adj.join(', ')}` : `Столько в кассе после ${G.rounds} раундов`}</div>
+        <div class="res-p">${fmt(t.money)} ₽</div>
+        <div class="res-s">Столько в кассе после ${G.rounds} раундов</div>
       </div>`;
     };
     const FN = [
       ['📏', 'Мера стоимости', 'вы назначали цену чашки и сравнивали её с ценой соперника'],
       ['🔄', 'Средство обращения', 'покупатель отдавал деньги и сразу получал кофе'],
-      ['🧾', 'Средство платежа', 'налог и возврат кредита: деньги отдают, а товар не получают'],
-      ['🐷', 'Средство накопления', 'вклад: отложили деньги сейчас, получили больше потом'],
+      ['🧾', 'Средство платежа', 'налоговая проверка: деньги отдают, а товар взамен не получают'],
+      ['🐷', 'Средство накопления', 'выручка копилась в кассе, и на неё варили кофе в следующих раундах'],
       ['🌍', 'Мировые деньги', 'зёрна из Бразилии покупают за доллары']
     ];
     scr.innerHTML = `<div class="over">
@@ -5362,14 +5354,13 @@ const Game = (() => {
   }
 
   /* ---------- modals ---------- */
-  function showModal(html) { modal.innerHTML = `<div class="g-card">${html}</div>`; modal.hidden = false; }
+  function showModal(html, cls) { modal.innerHTML = `<div class="g-card ${cls || ''}">${html}</div>`; modal.hidden = false; }
   function closeModal() { modal.hidden = true; modal.innerHTML = ''; form = null; formTeam = -1; }
   function manual(i) {
     const t = G.teams[i];
-    showModal(`<h3>✍️ Решение команды ${esc(name(i))}</h3>
-      <p class="g-hint">Соперники, отвернитесь от экрана 🙈</p>
+    showModal(`<div class="g-card-h"><h3>✍️ Решение команды ${esc(name(i))}</h3><span class="g-hint">🙈 Соперники, отвернитесь от экрана</span></div>
       <div id="gForm"></div>
-      <div class="cta-row end"><button class="g-btn" data-close>Отмена</button><button class="g-btn gold" id="gSave">Сохранить решение</button></div>`);
+      <div class="cta-row end"><button class="g-btn" data-close>Отмена</button><button class="g-btn gold" id="gSave">Сохранить решение</button></div>`, 'wide');
     formTeam = i;
     form = coffeeForm($('#gForm'), t, ev(), t.order, {
       peek() { if (peek(i)) { refreshForm(); render(); SFX.coin(); } }
@@ -5377,7 +5368,7 @@ const Game = (() => {
   }
   function refreshForm() { if (form && formTeam >= 0) form.update(G.teams[formTeam], ev()); }
   function rules() {
-    const cards = CARD_IDS.map(id => { const c = C.CARDS[id]; return `<li class="${c.good ? 'good' : 'evil'}"><b>${c.e} ${c.n}</b> — ${c.d}</li>`; }).join('');
+    const cards = CARD_IDS.map(id => { const c = C.CARDS[id]; return `<li class="${c.good ? 'good' : 'evil'}"><b>${c.e} ${c.n}</b> — ${c.d.toLowerCase()}.</li>`; }).join('');
     showModal(`<h3>❔ Правила «Битвы кофеен»</h3>
       <ol class="rules-list">
         <li>У каждой кофейни на старте ${fmt(C.START)} ₽. Раундов — ${G.rounds}.</li>
@@ -5389,7 +5380,6 @@ const Game = (() => {
         <li>За раунд можно сыграть одну карту. Каждая карта — один раз за игру.</li>
       </ol>
       <ul class="cards-list">${cards}</ul>
-      <p class="g-hint">💳 Кредит: +600 ₽ сейчас, вернуть 800 ₽ в конце. 🏦 Вклад: отдать 500 ₽ сейчас, получить 650 ₽ в конце.</p>
       <div class="cta-row end"><button class="g-btn gold" data-close>Понятно</button></div>`);
   }
   function confirmNew() {

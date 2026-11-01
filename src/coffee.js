@@ -6,18 +6,16 @@ const COFFEE = {
   STEP: 10,
   /* доля желающих, которые купят кофе по такой цене */
   W: { 40: 1, 60: .9, 80: .75, 100: .6 },
-  LOAN: { now: 600, back: 800 },
-  DEPOSIT: { now: 500, back: 650 },
   POWER_CAP: 20,
   TAX: .3,
   EMOJI: ['☕', '🧋', '🍩', '🥐', '🧁', '🍪', '🥤', '🍫'],
   CARDS: {
-    ad:      { e:'📣', n:'Реклама',            good:true,  d:'К вам придёт больше покупателей.' },
-    insider: { e:'🕵️', n:'Инсайдер',           good:true,  d:'Капитан сразу узнаёт точное число покупателей.' },
-    shield:  { e:'🛡️', n:'Охрана',             good:true,  d:'Пакости соперника в этом раунде не сработают.' },
-    rumor:   { e:'🪳', n:'Слух про таракана',  good:false, d:'Часть покупателей соперника уйдёт к вам.' },
-    tax:     { e:'🧾', n:'Налоговая проверка', good:false, d:'Соперник отдаст 30% своей выручки.' },
-    power:   { e:'🔌', n:'Отключили свет',     good:false, d:'Соперник сварит не больше 20 чашек.' }
+    ad:      { e:'📣', n:'Реклама',            good:true,  d:'К вам придёт больше покупателей' },
+    insider: { e:'🕵️', n:'Инсайдер',           good:true,  d:'Узнаете точное число покупателей' },
+    shield:  { e:'🛡️', n:'Охрана',             good:true,  d:'Пакости соперника не сработают' },
+    rumor:   { e:'🪳', n:'Слух про таракана',  good:false, d:'Часть его покупателей уйдёт к вам' },
+    tax:     { e:'🧾', n:'Налоговая проверка', good:false, d:'Соперник отдаст 30% выручки' },
+    power:   { e:'🔌', n:'Отключили свет',     good:false, d:'Соперник сварит не больше 20 чашек' }
   },
   /* n — сколько людей вообще захотят кофе в этот день (на обе кофейни) */
   EVENTS: {
@@ -29,7 +27,7 @@ const COFFEE = {
                 x:'Студенты не спят ночами. Кофе нужен всем, и даже дорогой их не пугает.' },
     holidays: { e:'🏖️', t:'Каникулы', n:25, cost:20, lvl:'очень мало',
                 x:'Колледж почти пустой. Кофе захотят совсем немногие.' },
-    beans:    { e:'🇧🇷', t:'Зёрна подорожали', n:60, cost:35, lvl:'как обычно',
+    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:35, lvl:'как обычно',
                 x:'Кофе везут из Бразилии и платят за него долларами. Доллар вырос — чашка теперь обходится в 35 ₽.' },
     rain:     { e:'🌧️', t:'Ливень', n:40, cost:20, lvl:'меньше обычного',
                 x:'Никто не хочет выходить из здания. Покупателей меньше обычного.' },
@@ -45,55 +43,48 @@ const COFFEE = {
 };
 
 /* ---------- order form: the same on the captain's phone and in the presenter's manual-entry window ---------- */
-/* t: { money, cards:{id:true|false}, loan, dep (already taken?), peek }  ev: { cost, w }  init: last order  on: { change(order), peek() } */
+/* t: { money, cards:{id:true|false}, peek }  ev: { cost, w }  init: last order  on: { change(order), peek() } */
 function coffeeForm(host, t, ev, init, on) {
   const C = COFFEE, w = ev.w || C.W;
   const money = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
-  const o = { price: 60, cups: 30, card: null, loan: false, dep: false, ...(init || {}) };
-  if (t.loan) o.loan = false;
-  if (t.dep) o.dep = false;
+  const o = { price: 60, cups: 30, card: null };
+  if (init) ['price', 'cups', 'card'].forEach(k => { if (k in init) o[k] = init[k]; });
   if (o.card && !t.cards[o.card]) o.card = null;
   let arm = false;  // Insider needs a second tap: it spends the card for this round
-  const budget = () => t.money + (o.loan ? C.LOAN.now : 0) - (o.dep ? C.DEPOSIT.now : 0);
-  const maxCups = () => Math.max(0, Math.min(C.MAX_CUPS, Math.floor(budget() / ev.cost / C.STEP) * C.STEP));
-  function fix() {
-    if (budget() < 0) o.dep = false;
-    o.cups = Math.max(0, Math.min(o.cups, maxCups()));
-  }
-  /* every section is buttons plus one plain line that explains the current choice */
+  const maxCups = () => Math.max(0, Math.min(C.MAX_CUPS, Math.floor(t.money / ev.cost / C.STEP) * C.STEP));
+  const fix = () => { o.cups = Math.max(0, Math.min(o.cups, maxCups())); };
+  /* three steps, each is buttons plus one plain line; the last line repeats the whole decision */
   function render() {
     fix();
-    const peeked = t.peek != null, max = maxCups();
+    const peeked = t.peek != null, max = maxCups(), ids = Object.keys(C.CARDS);
     const card = id => {
       const c = C.CARDS[id];
       const used = !t.cards[id] && !(id === 'insider' && peeked);
       const sel = id === 'insider' ? peeked : o.card === id;
       const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
       const armed = id === 'insider' && arm && !peeked && !dis;
-      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''} title="${c.d}"><span>${c.e}</span><b>${c.n}</b></button>`;
+      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'Уже сыграна' : c.d}</small></button>`;
     };
-    const ids = Object.keys(C.CARDS);
-    let note = 'Можно без карты. Каждая карта — один раз за игру.';
+    const col = (good, title) => `<div class="cf-col ${good ? 'good' : 'evil'}"><span class="cf-g">${title}</span>${ids.filter(id => C.CARDS[id].good === good).map(card).join('')}</div>`;
+    let note = 'За раунд можно сыграть одну карту. Каждая карта — один раз за игру.';
     if (peeked) note = `🕵️ Кофе захотят <b>${t.peek}</b> человек на обе кофейни`;
     else if (arm) note = 'Нажмите «Инсайдер» ещё раз, и вы узнаете число покупателей. Это и будет карта раунда.';
-    else if (o.card) note = `${C.CARDS[o.card].e} ${C.CARDS[o.card].d}`;
-    const bank = [
-      t.loan ? `Кредит уже взят: в конце вернёте ${money(C.LOAN.back)}` : o.loan ? `Кредит: +${money(C.LOAN.now)} сейчас, в конце вернёте ${money(C.LOAN.back)}` : '',
-      t.dep ? `Вклад открыт: в конце получите ${money(C.DEPOSIT.back)}` : o.dep ? `Вклад: отдаёте ${money(C.DEPOSIT.now)} сейчас, в конце получите ${money(C.DEPOSIT.back)}` : ''
-    ].filter(Boolean).join('<br>') || 'По желанию. Кредит и вклад — по одному разу за игру.';
+    else if (o.card) note = `Карта «${C.CARDS[o.card].n}» сработает в этом раунде. Нажмите на неё ещё раз, чтобы отменить.`;
+    const played = peeked ? 'insider' : o.card;
     host.innerHTML = `<div class="cf">
-      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
-        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
-        <p class="cf-note">По ${o.price} ₽ кофе купят ${Math.round(w[o.price] * 10)} из 10 желающих</p></div>
-      <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
-        <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= max ? 'disabled' : ''} aria-label="Больше">+</button>
-          <span class="cf-note">Потратите <b>${money(o.cups * ev.cost)}</b> из ${money(budget())}${o.cups >= max && max < C.MAX_CUPS ? '. На большее не хватит' : ''}</span></div></div>
-      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта раунда</div>
-        <div class="cf-cards"><span class="cf-g good">Помощь</span>${ids.filter(id => C.CARDS[id].good).map(card).join('')}<span class="cf-g evil">Пакость</span>${ids.filter(id => !C.CARDS[id].good).map(card).join('')}</div>
+      <p class="cf-goal">Выберите <b>цену</b> и <b>сколько чашек сварить</b>. Карту можно не брать.</p>
+      <div class="cf-pair">
+        <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
+          <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
+          <p class="cf-note">По ${o.price} ₽ кофе купят ${Math.round(w[o.price] * 10)} из 10 желающих</p></div>
+        <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
+          <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= max ? 'disabled' : ''} aria-label="Больше">+</button></div>
+          <p class="cf-note">Потратите <b>${money(o.cups * ev.cost)}</b> из ${money(t.money)}${o.cups >= max && max < C.MAX_CUPS ? '. На большее не хватит' : '. Непроданное выльют'}</p></div>
+      </div>
+      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта <span>· по желанию</span></div>
+        <div class="cf-cards">${col(true, 'Помощь себе')}${col(false, 'Пакость сопернику')}</div>
         <p class="cf-note ${peeked ? 'peek' : ''}">${note}</p></div>
-      <div class="cf-sec"><div class="cf-t"><i>4</i>Банк</div>
-        <div class="cf-bank"><button type="button" class="cf-b ${o.loan ? 'on' : ''}" data-bank="loan" ${t.loan ? 'disabled' : ''}>💳 ${t.loan ? 'Кредит взят' : 'Кредит'}</button><button type="button" class="cf-b ${o.dep ? 'on' : ''}" data-bank="dep" ${t.dep || (!o.dep && t.money + (o.loan ? C.LOAN.now : 0) < C.DEPOSIT.now) ? 'disabled' : ''}>🏦 ${t.dep ? 'Вклад открыт' : 'Вклад'}</button></div>
-        <p class="cf-note">${bank}</p></div>
+      <p class="cf-sum">Ваше решение: <b>${o.price} ₽</b> за чашку · <b>${o.cups}</b> ${plural(o.cups, 'чашка', 'чашки', 'чашек')} · ${played ? `${C.CARDS[played].e} <b>${C.CARDS[played].n}</b>` : 'без карты'}</p>
     </div>`;
   }
   host.addEventListener('click', e => {
@@ -105,8 +96,7 @@ function coffeeForm(host, t, ev, init, on) {
       const id = b.dataset.card;
       if (id === 'insider') { if (t.peek == null) { if (arm) on.peek?.(); arm = !arm; render(); } return; }
       o.card = o.card === id ? null : id;
-    } else if (b.dataset.bank) o[b.dataset.bank] = !o[b.dataset.bank];
-    else return;
+    } else return;
     render(); on.change?.({ ...o });
   });
   render();
