@@ -62,7 +62,16 @@ const SFX = (() => {
     trade() { tone(660, .08, { type:'triangle', vol:.07 }); tone(990, .16, { type:'triangle', vol:.07, at:.08 }); },
     no() { tone(320, .11, { type:'square', vol:.045 }); tone(240, .2, { type:'square', vol:.045, at:.11 }); },
     beep(low) { tone(low ? 520 : 880, .06, { type:'square', vol:.04 }); },
-    whoosh() { noise(.35, { vol:.07, freq:900 }); }
+    whoosh() { noise(.35, { vol:.07, freq:900 }); },
+    /* coffee battle: the reveal show and the card effects */
+    vs() { noise(.4, { vol:.08, freq:700 }); tone(196, .35, { type:'square', vol:.06, at:.25 }); tone(294, .5, { type:'square', vol:.06, at:.42 }); },
+    horn() { [392, 523, 659].forEach((f, i) => tone(f, .2, { type:'sawtooth', vol:.045, at:i * .11 })); tone(784, .55, { type:'square', vol:.05, at:.33 }); },
+    truck() { noise(1, { vol:.07, freq:160 }); tone(80, 1, { type:'sawtooth', vol:.035, to:130 }); tone(440, .12, { type:'square', vol:.05, at:.55 }); tone(440, .16, { type:'square', vol:.05, at:.72 }); },
+    roach() { for (let i = 0; i < 12; i++) noise(.04, { vol:.05, at:i * .06, freq:2800 + (i % 3) * 900 }); },
+    stamp() { tone(120, .3, { type:'square', vol:.12, to:45 }); noise(.18, { vol:.14, freq:260 }); },
+    zap() { tone(1500, .55, { type:'sawtooth', vol:.06, to:55 }); noise(.3, { vol:.07, freq:2600 }); tone(60, .4, { type:'square', vol:.05, at:.45 }); },
+    drum(d = 1.4) { const n = Math.round(d / .055); for (let i = 0; i < n; i++) noise(.05, { vol:.035 + i / n * .05, at:i * .055, freq:220 }); noise(.9, { vol:.11, at:d, freq:5200 }); },
+    boom() { noise(.6, { vol:.1, freq:160 }); tone(70, .5, { type:'sine', vol:.12, to:40 }); }
   };
 })();
 
@@ -82,9 +91,31 @@ const Confetti = (() => {
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
+  /* firework: a ring of glowing sparks in the given colours */
+  function spark({ x, y, colors, n = 70 }) {
+    if (reduced) return;
+    if (!raf) size();
+    for (let i = 0; i < n; i++) {
+      const a = i / n * Math.PI * 2 + Math.random() * .2, s = 3 + Math.random() * 6;
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 2 + Math.random() * 2.5, kind: 'spark', c1: colors[i % colors.length], life: 0 });
+    }
+    if (!raf) raf = requestAnimationFrame(loop);
+  }
+  function fireworks(colors, { shots = 7, gap = 320 } = {}) {
+    for (let k = 0; k < shots; k++) setTimeout(() => {
+      spark({ x: innerWidth * (.15 + Math.random() * .7), y: innerHeight * (.12 + Math.random() * .35), colors });
+      SFX.boom();
+    }, k * gap);
+  }
   function loop() {
     cx.clearRect(0, 0, innerWidth, innerHeight);
     for (const p of parts) {
+      if (p.kind === 'spark') {
+        p.vy += .07; p.vx *= .97; p.vy *= .97; p.x += p.vx; p.y += p.vy; p.life++;
+        cx.globalAlpha = Math.max(0, 1 - p.life / 90); cx.fillStyle = p.c1;
+        cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 7); cx.fill(); cx.globalAlpha = 1;
+        continue;
+      }
       p.vy += .32; p.vx *= .985; p.vy *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
       cx.save(); cx.translate(p.x, p.y);
       if (p.kind === 'coin') {
@@ -97,10 +128,10 @@ const Confetti = (() => {
       }
       cx.restore();
     }
-    parts = parts.filter(p => p.y < innerHeight + 60 && p.life < 420);
+    parts = parts.filter(p => p.y < innerHeight + 60 && p.life < (p.kind === 'spark' ? 90 : 420));
     if (parts.length) raf = requestAnimationFrame(loop); else { raf = 0; cx.clearRect(0, 0, innerWidth, innerHeight); }
   }
-  return { burst };
+  return { burst, spark, fireworks };
 })();
 
 /* ---------- guilloche rosettes (banknote ornament) ---------- */

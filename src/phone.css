@@ -99,8 +99,6 @@ h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.
 .pg-facts b{font-family:var(--font-body);font-size:14px;color:var(--ink)}
 #pform{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 14px}
 .pg-send{display:flex;flex-direction:column;gap:8px;position:sticky;bottom:0;padding:10px 0 12px;background:linear-gradient(transparent,var(--bg) 30%)}
-.pg-draft{padding:10px 14px;border-radius:14px;background:var(--surface-2);font-size:14px;line-height:1.35;color:var(--ink-2)}
-.pg-capst{font-weight:700}
 .claim{display:flex;flex-direction:column;gap:10px;width:100%}
 .score{display:flex;flex-direction:column;gap:8px;width:100%}
 .score div{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:14px;background:var(--surface-2);font-weight:700}
@@ -117,3 +115,18 @@ h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.
 .pres-p.up{color:var(--ok)}
 .pres-p.down{color:var(--bad)}
 .pres-o{padding-top:10px;border-top:1px solid var(--line);width:100%;color:var(--muted);font-size:14px}
+.pres-hit{font-weight:700;color:var(--bad)}
+.pres.win{animation:winGlow 1.6s ease-in-out 3}
+.pres.hit{animation:pshake .5s ease 2}
+.pres.win.hit{animation:pshake .5s ease 2,winGlow 1.6s ease-in-out 1s 3}
+.big-e.drum{animation:drumHit .14s ease-in-out infinite}
+.big-e.champ{font-size:84px;animation:champ 1.2s ease-in-out infinite}
+@keyframes winGlow{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--ok) 30%,transparent),0 0 40px -6px var(--ok)}}
+@keyframes pshake{20%{transform:translateX(-10px) rotate(-1deg)}40%{transform:translateX(8px) rotate(1deg)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+@keyframes drumHit{50%{transform:scale(1.08) rotate(-4deg)}}
+@keyframes champ{50%{transform:translateY(-8px) scale(1.08) rotate(4deg)}}
+/* emoji rain for the winners */
+.party{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden}
+.party i{position:absolute;top:-50px;font-style:normal;line-height:1;animation:fall linear both}
+@keyframes fall{to{transform:translateY(calc(100vh + 80px)) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.pres.win,.pres.hit,.pres.win.hit,.big-e.drum,.big-e.champ{animation:none}}

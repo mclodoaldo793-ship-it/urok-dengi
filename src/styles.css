@@ -427,7 +427,6 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .pmeta{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
 .pmeta:empty{display:none}
 .no-live .live-only,.no-live .pmeta,.no-live .poll .pn{display:none!important}
-body:not(.no-live) .solo-only{display:none!important}
 
 /* ---------- live: phones ---------- */
 .live-btn{height:38px;padding:0 12px;border-radius:11px;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:15px;color:var(--ink)}
@@ -679,8 +678,6 @@ body:not(.no-live) .solo-only{display:none!important}
 .lemoji{display:flex;flex-wrap:wrap;gap:6px}
 .lemoji button{width:42px;height:42px;border-radius:12px;border:1px solid var(--g-line);background:var(--g-bg-2);font-size:22px;cursor:pointer}
 .lemoji button.on{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 24%,var(--g-bg-2))}
-.lplayers{font-size:16px;font-weight:800;margin-top:auto}
-.lplayers + .lcap{margin-top:0}
 .lcap{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
 .cap-st{font-size:13px;font-weight:700;color:var(--g-muted)}
 .cap-st.ok{color:var(--g-ok)}
@@ -841,3 +838,90 @@ body:not(.no-live) .solo-only{display:none!important}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* ---------- coffee battle: the reveal show (prices face off, then each card's effect) ---------- */
+.fx{position:absolute;inset:0;z-index:55;overflow:hidden;cursor:pointer;background:radial-gradient(900px 560px at 50% 42%,var(--g-glow) 0%,transparent 70%),var(--g-bg);animation:fxIn .3s ease}
+.fx.out{animation:fxOut .35s ease forwards;pointer-events:none}
+@keyframes fxIn{from{opacity:0}}
+@keyframes fxOut{to{opacity:0}}
+.fx-stage,.fx-scene{position:absolute;inset:0}
+.fx-skip{position:absolute;right:16px;bottom:16px;z-index:3;padding:8px 16px;border-radius:99px;border:1px solid var(--g-line);background:var(--g-panel);color:var(--g-muted);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.fx-count{position:absolute;top:clamp(16px,5vh,44px);left:50%;transform:translateX(-50%);z-index:2;padding:6px 18px;border-radius:99px;background:var(--g-panel);border:1px solid var(--g-line);color:var(--g-gold);font-weight:800;font-size:clamp(14px,1.3vw,19px);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;animation:fxIn .35s ease}
+.fx-side{position:absolute;top:0;bottom:0;width:50%;display:grid;place-items:center;overflow:hidden}
+.fx-side.s0{left:0}
+.fx-side.s1{right:0}
+.fx-side::before{content:"";position:absolute;inset:0;background:radial-gradient(closest-side,color-mix(in srgb,var(--tc) 26%,transparent),transparent);animation:fxIn .4s ease}
+.fx-big{position:relative;z-index:1;font-size:clamp(90px,17vh,180px);line-height:1;animation:pop .45s cubic-bezier(.2,1.5,.4,1) backwards}
+.fx-cap{position:absolute;z-index:2;left:50%;bottom:clamp(36px,9vh,90px);transform:translateX(-50%);width:min(980px,calc(100% - 32px));display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;animation:capIn .45s cubic-bezier(.2,.8,.2,1) .2s backwards}
+@keyframes capIn{from{transform:translate(-50%,30px);opacity:0}}
+.fx-cap b{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.2vw,60px);line-height:1.1;color:var(--g-ink)}
+.fx-cap span{font-size:clamp(18px,1.9vw,28px);font-weight:700;color:var(--g-ink);text-wrap:balance}
+.fx-cap.good b{color:var(--g-ok)}
+.fx-cap.evil b{color:var(--g-evil)}
+/* prices face off */
+.fx-vs{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(12px,3vw,48px);padding:0 clamp(16px,5vw,90px)}
+.fx-team{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;padding:clamp(18px,3vw,40px);border-radius:28px;background:var(--g-panel);border:3px solid var(--tc);box-shadow:0 0 70px -12px var(--tc)}
+.fx-team.t0{animation:fromL .55s cubic-bezier(.2,.9,.3,1.2) backwards}
+.fx-team.t1{animation:fromR .55s cubic-bezier(.2,.9,.3,1.2) backwards}
+@keyframes fromL{from{transform:translateX(-120%) rotate(-8deg);opacity:0}}
+@keyframes fromR{from{transform:translateX(120%) rotate(8deg);opacity:0}}
+.fx-team span{font-size:clamp(50px,9vh,96px);line-height:1}
+.fx-team b{font-family:var(--font-display);font-size:clamp(20px,2.4vw,34px);color:var(--tc);text-align:center;overflow-wrap:anywhere}
+.fx-team em{font-style:normal;font-family:var(--font-display);font-weight:800;font-size:clamp(48px,7vw,112px);line-height:1;color:var(--g-ink);white-space:nowrap;animation:flipIn .5s ease .7s backwards}
+.fx-x{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,5vw,84px);color:var(--g-gold);text-shadow:0 0 34px var(--g-gold);animation:vsPop .5s cubic-bezier(.2,1.6,.4,1) .4s backwards}
+@keyframes vsPop{from{transform:scale(3) rotate(-20deg);opacity:0}}
+/* advertising: the megaphone shouts, people come running */
+.fx-ring{position:absolute;left:50%;top:50%;width:170px;height:170px;margin:-85px 0 0 -85px;border-radius:50%;border:5px solid var(--tc);opacity:0;animation:ring 1.3s ease-out var(--d,0s) infinite}
+.fx-ring.flash{border-color:#fff;animation:ring .7s ease-out .55s 1 forwards}
+@keyframes ring{from{transform:scale(.4);opacity:1}to{transform:scale(3.2);opacity:0}}
+.fx-shout{animation:pop .45s cubic-bezier(.2,1.5,.4,1),wobble .28s ease-in-out .45s 5}
+@keyframes wobble{50%{transform:rotate(-12deg) scale(1.08)}}
+.fx-p{position:absolute;left:50%;top:50%;z-index:1;margin:-.5em 0 0 -.5em;font-style:normal;font-size:clamp(28px,5vh,46px);line-height:1;transform:translate(var(--x1),var(--y1));animation:comeIn .9s cubic-bezier(.3,.7,.3,1) var(--d) backwards}
+@keyframes comeIn{from{transform:translate(var(--x0),var(--y0)) scale(.6);opacity:0}}
+/* discount: a supply truck drives in */
+.fx-truck{position:absolute;top:36%;z-index:1;font-size:clamp(100px,17vh,180px);line-height:1}
+.fx-truck::after{content:"💨";position:absolute;left:100%;bottom:0;font-size:.45em;opacity:.8}
+.fx-truck.go0{left:105%;animation:driveL 1.3s cubic-bezier(.25,.7,.3,1) forwards}
+.fx-truck.go1{left:-25%;transform:scaleX(-1);animation:driveR 1.3s cubic-bezier(.25,.7,.3,1) forwards}
+@keyframes driveL{to{left:14%}}
+@keyframes driveR{to{left:64%}}
+.fx-tag{position:relative;z-index:2;margin-top:-34vh;padding:.15em .5em;border-radius:16px;background:var(--g-ok);color:var(--g-bg);font-family:var(--font-display);font-weight:800;font-size:clamp(36px,5vw,72px);animation:stampIn .45s cubic-bezier(.3,1.4,.5,1) 1.15s backwards}
+/* rumor: cockroaches everywhere, buyers walk away */
+.fx-roach{position:absolute;top:var(--y);left:-12%;z-index:1;font-style:normal;font-size:clamp(30px,5.5vh,56px);line-height:1;transform:rotate(var(--r));animation:scurry var(--t) linear var(--d) both}
+@keyframes scurry{to{left:108%}}
+.fx-walk{position:absolute;top:58%;z-index:2;display:flex;gap:2px;font-size:clamp(28px,5vh,46px);line-height:1;animation:1.3s ease-in-out .8s both}
+.fx-walk i{font-style:normal;display:inline-block}
+.fx-walk.w0{left:16%;animation-name:walkR}
+.fx-walk.w0 i{transform:scaleX(-1)}
+.fx-walk.w1{left:60%;animation-name:walkL}
+@keyframes walkR{to{left:62%}}
+@keyframes walkL{to{left:16%}}
+/* tax: the inspector's stamp slams down, money flies away */
+.fx-stamp{position:relative;z-index:1;padding:.2em .55em;border:6px solid var(--g-bad);border-radius:16px;color:var(--g-bad);background:color-mix(in srgb,var(--g-bad) 12%,transparent);font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.4vw,68px);line-height:1.05;text-align:center;transform:rotate(-12deg);animation:slam .45s cubic-bezier(.3,1.4,.5,1) .3s backwards}
+@keyframes slam{from{transform:scale(2.6) rotate(-24deg);opacity:0}}
+.fx-tax .fx-side{animation:shake .45s ease .7s}
+.fx-money{position:absolute;left:50%;top:55%;z-index:2;font-style:normal;font-size:clamp(30px,5vh,48px);animation:flyUp 1.3s ease-out var(--d) both}
+@keyframes flyUp{from{transform:translate(0,0);opacity:0}15%{opacity:1}to{transform:translate(var(--x),-58vh) rotate(var(--r));opacity:0}}
+/* power cut: the lights flicker and go out */
+.fx-power .fx-side::after{content:"";position:absolute;inset:0;background:#000;animation:blackout 1.5s steps(1) .2s both}
+@keyframes blackout{0%{opacity:0}12%{opacity:.9}20%{opacity:.15}28%{opacity:.95}36%{opacity:.3}46%,100%{opacity:.9}}
+.fx-bulb{z-index:2;animation:pop .45s cubic-bezier(.2,1.5,.4,1),bulbOff 1.5s steps(1) .2s forwards}
+@keyframes bulbOff{12%{filter:brightness(.3)}20%{filter:none}28%,100%{filter:grayscale(1) brightness(.35)}}
+.fx-bolt{position:absolute;left:58%;top:30%;z-index:3;font-style:normal;font-size:clamp(50px,9vh,90px);animation:zap .9s steps(2) .2s 2 both}
+@keyframes zap{0%{opacity:1;transform:scale(1.3) rotate(-10deg)}50%{opacity:0}100%{opacity:1;transform:scale(.9) rotate(8deg)}}
+/* guard: a harm card flies in and bounces off the shield */
+.fx-guard{filter:drop-shadow(0 0 30px color-mix(in srgb,var(--tc) 80%,transparent));animation:pop .45s cubic-bezier(.2,1.5,.4,1) .3s backwards,pulse 1s ease-in-out .8s infinite}
+.fx-missile{position:absolute;top:38%;z-index:3;font-size:clamp(70px,12vh,130px);line-height:1;animation:1.5s cubic-bezier(.45,0,.55,1) forwards}
+.fx-missile.m0{left:80%;animation-name:hitL}
+.fx-missile.m1{left:10%;animation-name:hitR}
+@keyframes hitL{40%{left:30%;top:38%;transform:rotate(-15deg)}100%{left:95%;top:-25%;transform:rotate(600deg) scale(.4);opacity:0}}
+@keyframes hitR{40%{left:58%;top:38%;transform:rotate(15deg)}100%{left:-5%;top:-25%;transform:rotate(-600deg) scale(.4);opacity:0}}
+/* the final drumroll */
+.fx-drum{position:absolute;inset:0;display:grid;place-items:center}
+.fx-drum .fx-big{animation:pop .45s cubic-bezier(.2,1.5,.4,1),drumHit .12s ease-in-out .45s infinite}
+@keyframes drumHit{50%{transform:scale(1.06) rotate(-3deg)}}
+/* final screen: light rays behind the trophy, the winners glow */
+.over-h .trophy{position:relative;isolation:isolate}
+.over-h .trophy::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:4.2em;height:4.2em;margin:-2.1em 0 0 -2.1em;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--g-gold) 40%,transparent) 0 9deg,transparent 9deg 18deg);-webkit-mask:radial-gradient(closest-side,#000 25%,transparent);mask:radial-gradient(closest-side,#000 25%,transparent);animation:spin 14s linear infinite}
+.over .res.win{animation:glow 2.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.over-h .trophy::before,.over .res.win{animation:none}}

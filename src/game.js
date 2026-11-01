@@ -8,7 +8,6 @@ const Game = (() => {
   function fresh(prev) {
     return {
       phase:'lobby', round:0, rounds: prev?.rounds || 6, evs:[], res:null,
-      members: prev?.members || {},   // phone id -> team the player picked
       teams:[0, 1].map(i => ({
         name: prev?.teams[i].name || ['Кофейня А', 'Кофейня Б'][i],
         emoji: prev?.teams[i].emoji || ['☕', '🧋'][i],
@@ -24,7 +23,6 @@ const Game = (() => {
     G = s && s.teams && s.teams.length === 2 && s.phase ? s : fresh();
     if (G.res && G.res.teams[0].unit === undefined) G = fresh(G);  // a game saved under the old cups-and-chances rules
     if (G.phase === 'reveal' && !G.res) G.phase = 'orders';
-    if (!G.members || typeof G.members !== 'object') G.members = {};
     G.teams.forEach(t => CARD_IDS.forEach(k => { if (!(k in t.cards)) t.cards[k] = true; }));  // games saved before a card was added
   }
   const ev = () => C.EVENTS[G.evs[G.round - 1]] || C.EVENTS.normal;
@@ -80,8 +78,94 @@ const Game = (() => {
       if (x.card) t.cards[x.card] = false;
       t.hist.push({ round: r.round, profit: x.profit, sold: x.sold, price: x.price });
     });
+    r.show = reduced ? 0 : SHOW.vs + (scenes(r).length - 1) * SHOW.card;   // phones wait this long before showing the result
     G.res = r; G.phase = 'reveal';
     save(); render(true);
+  }
+
+  /* ---------- the show: both prices face off, then every card played, one scene after another ---------- */
+  const SHOW = { vs: 1800, card: 2100, drum: 1900 };
+  let show = null;
+  function scenes(r) {
+    const X = r.teams, out = [{ k: 'vs' }];
+    X.forEach((x, i) => { if (x.card === 'ad' || x.card === 'discount') out.push({ k: x.card, i }); });
+    X.forEach((x, i) => { const h = X[1 - i].card; if (h && !C.CARDS[h].good) out.push(x.blocked ? { k: 'block', i, h } : { k: h, i }); });
+    X.forEach((x, i) => { if (x.card === 'shield' && !x.blocked) out.push({ k: 'shield', i }); });
+    return out;
+  }
+  const SOUND = {
+    vs: () => SFX.vs(), drum: () => SFX.drum(1.6),
+    ad: () => setTimeout(SFX.horn, 150), discount: () => SFX.truck(),
+    rumor: () => { SFX.roach(); setTimeout(SFX.roach, 750); },
+    tax: () => { setTimeout(SFX.stamp, 300); setTimeout(SFX.evil, 650); },
+    power: () => setTimeout(SFX.zap, 200),
+    block: () => { SFX.whoosh(); setTimeout(SFX.shield, 600); },
+    shield: () => SFX.shield()
+  };
+  function sceneHtml(s, r, k, total) {
+    const T = G.teams, X = r ? r.teams : [], nm = i => esc(name(i)), i = s.i;
+    const rep = (n, f) => Array.from({ length: n }, (_, j) => f(j)).join('');
+    const rnd = (a, b) => (a + Math.random() * (b - a)).toFixed(1);
+    const ppl = n => `${n} ${plural(n, 'покупателя', 'покупателей', 'покупателей')}`;
+    const cap = (cls, t, d) => `<div class="fx-cap ${cls}"><b>${t}</b><span>${d}</span></div>`;
+    const side = (j, inner) => `<div class="fx-side s${j} t${j}">${inner}</div>`;
+    const ring = j => `<i class="fx-ring" style="--d:${j * .35}s"></i>`;
+    const walk = n => n > 0 ? `<div class="fx-walk w${i}">${rep(Math.min(n, 6), () => '<i>🚶</i>')}</div>` : '';
+    const top = s.k === 'vs' ? 'Вскрываем решения!' : s.k === 'drum' ? '' : `Карта ${k} из ${total}`;
+    let html = '';
+    if (s.k === 'vs') html = `<div class="fx-vs">${[0, 1].map(j => `<div class="fx-team t${j}"><span>${T[j].emoji}</span><b>${esc(T[j].name)}</b><em>${X[j].price}&nbsp;₽</em></div>`).join('<div class="fx-x">VS</div>')}</div>`;
+    else if (s.k === 'drum') html = '<div class="fx-drum"><div class="fx-big">🥁</div></div>' + cap('', 'Считаем деньги в кассах…', 'И побеждает…');
+    else if (s.k === 'ad') html = side(i, rep(3, ring) + '<div class="fx-big fx-shout">📣</div>' + rep(C.AD, j => {
+        const a = j / C.AD * 6.283, R = 140 + (j % 2) * 50;
+        return `<i class="fx-p" style="--x0:${(Math.cos(a) * 55).toFixed(1)}vw;--y0:${(Math.sin(a) * 55).toFixed(1)}vh;--x1:${(Math.cos(a) * R).toFixed(0)}px;--y1:${(Math.sin(a) * R * .75).toFixed(0)}px;--d:${(.35 + j * .07).toFixed(2)}s">🧍</i>`;
+      })) + cap('good', '📣 Реклама', `${nm(i)} — ещё ${ppl(C.AD)} пришли по рекламе`);
+    else if (s.k === 'discount') html = `<span class="fx-truck go${i}">🚚</span>` + side(i, `<div class="fx-tag">−${C.DISCOUNT}&nbsp;₽</div>`)
+      + cap('good', '🚚 Скидка на зёрна', `${nm(i)} — чашка обходится на ${C.DISCOUNT} ₽ дешевле`);
+    else if (s.k === 'rumor') html = side(i, rep(14, () => `<i class="fx-roach" style="--y:${rnd(6, 88)}%;--t:${rnd(.7, 1.3)}s;--d:${rnd(0, 1)}s;--r:${rnd(70, 110)}deg">🪳</i>`)) + walk(C.RUMOR)
+      + cap('evil', '🪳 Слух про таракана', `Слух от ${nm(1 - i)}: ${nm(i)} теряет ${ppl(C.RUMOR)}`);
+    else if (s.k === 'tax') html = side(i, '<div class="fx-stamp">НАЛОГОВАЯ<br>ПРОВЕРКА</div>' + rep(9, j => `<i class="fx-money" style="--x:${rnd(-22, 22)}vw;--r:${rnd(-120, 120)}deg;--d:${(.55 + j * .09).toFixed(2)}s">💸</i>`))
+      + cap('evil', '🧾 Налоговая проверка', `${nm(i)} отдаёт 30% выручки`);
+    else if (s.k === 'power') html = side(i, '<div class="fx-big fx-bulb">💡</div><i class="fx-bolt">⚡</i>') + walk(X[i].cut)
+      + cap('evil', '🔌 Отключили свет', `${nm(i)} продаст не больше ${C.POWER_CAP} чашек`);
+    else if (s.k === 'block') html = `<span class="fx-missile m${i}">${C.CARDS[s.h].e}</span>` + side(i, '<i class="fx-ring flash"></i><div class="fx-big fx-guard">🛡️</div>')
+      + cap('good', '🛡️ Охрана сработала!', `${nm(i)} отбивает «${C.CARDS[s.h].n}»`);
+    else if (s.k === 'shield') html = side(i, rep(2, ring) + '<div class="fx-big fx-guard">🛡️</div>')
+      + cap('good', '🛡️ Охрана', `${nm(i)} под охраной, но пакостей не было`);
+    return `<div class="fx-scene fx-${s.k}">${top ? `<div class="fx-count">${top}</div>` : ''}${html}</div>`;
+  }
+  /* plays scenes over the game screen; a click skips to the end */
+  function runShow(list, r, done) {
+    stopShow();
+    const fx = document.createElement('div');
+    fx.className = 'fx';
+    fx.innerHTML = '<div class="fx-stage"></div><button class="fx-skip" type="button">Пропустить →</button>';
+    root.appendChild(fx);
+    const stage = fx.firstChild, timers = [], total = list.length - 1;
+    let t = 0;
+    list.forEach((s, k) => {
+      timers.push(setTimeout(() => { stage.innerHTML = sceneHtml(s, r, k, total); SOUND[s.k]?.(); }, t));
+      t += SHOW[s.k] || SHOW.card;
+    });
+    const end = () => {
+      if (show !== cur) return;
+      stopShow(); done();
+    };
+    const cur = { fx, timers, end };
+    timers.push(setTimeout(end, t));
+    fx.addEventListener('click', end);
+    show = cur;
+  }
+  function stopShow() {
+    if (!show) return;
+    const { fx, timers } = show; show = null;
+    timers.forEach(clearTimeout);
+    fx.classList.add('out'); setTimeout(() => fx.remove(), 350);
+  }
+  function finale() {
+    const wi = winner(), team = j => cssVar(j ? '--team-b' : '--team-a'), gold = cssVar('--g-gold') || '#F2C14E';
+    const colors = wi < 0 ? [team(0), team(1), gold] : [team(wi), gold, '#FFFFFF'];
+    const party = () => { if (G.phase !== 'over') return; Confetti.burst({ n:220 }); Confetti.fireworks(colors); SFX.fanfare(); };
+    reduced ? party() : runShow([{ k: 'drum' }], null, party);
   }
   function next() {
     if (G.phase !== 'reveal') return;
@@ -100,22 +184,11 @@ const Game = (() => {
   /* ---------- phones ---------- */
   const team = m => (m.team === 0 || m.team === 1) ? m.team : -1;
   const rerender = () => { if (!isOpen) return; G.phase === 'lobby' ? updateCaps() : render(); };
-  /* players on phones pick a team; a captain of the other team who switches stops being captain */
-  function joinTeam(c, i) {
-    if (G.members[c] === i) return false;
-    if (i < 0) delete G.members[c]; else G.members[c] = i;
-    G.teams.forEach((x, k) => { if (k !== i && x.cap === c) x.cap = null; });
-    return true;
-  }
-  const players = i => Object.keys(G.members).filter(c => G.members[c] === i && Live.alive(c)).length;
-  Live.on('team', m => { if (G && joinTeam(m.c, m.team === -1 ? -1 : team(m))) { save(); rerender(); Live.refresh(); } });
-  Live.on('hi', m => { const i = team(m); if (G && i >= 0 && joinTeam(m.c, i)) { save(); rerender(); Live.refresh(); } });
   Live.on('cap', m => {
     const i = team(m); if (i < 0) return;
     const t = G.teams[i];
     if (t.cap && t.cap !== m.c && Live.alive(t.cap)) return;
     G.teams.forEach(x => { if (x.cap === m.c) x.cap = null; });
-    G.members[m.c] = i;
     t.cap = m.c; save(); SFX.coin(); rerender(); Live.refresh();
   });
   Live.on('uncap', m => { G.teams.forEach(x => { if (x.cap === m.c) x.cap = null; }); save(); rerender(); Live.refresh(); });
@@ -127,13 +200,13 @@ const Game = (() => {
     if (!G) return null;
     const e = (G.phase === 'orders' || G.phase === 'reveal') ? ev() : null;
     return {
-      phase: G.phase, round: G.round, rounds: G.rounds,
+      phase: G.phase, round: G.round, rounds: G.rounds, show: G.phase === 'reveal' && G.res ? G.res.show || 0 : 0,
       ev: e && { e: e.e, t: e.t, x: e.x, n: e.n, cost: e.cost, max: e.max },
       teams: G.teams.map((t, i) => {
         const x = G.phase === 'reveal' && G.res ? G.res.teams[i] : null;
         return {
           name: t.name, emoji: t.emoji, money: t.money, cards: t.cards,
-          cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null, n: players(i),
+          cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null,
           res: x && { price: x.price, sold: x.sold, unit: x.unit, revenue: x.revenue, cost: x.cost, tax: x.tax, profit: x.profit, after: x.after, hit: x.hit },
           final: G.phase === 'over' ? t.money : null
         };
@@ -145,12 +218,11 @@ const Game = (() => {
   /* ---------- rendering ---------- */
   const capState = i => {
     const c = G.teams[i].cap;
-    return c ? (Live.alive(c) ? 'Капитан на связи' : 'Капитан отключился') : 'Капитана пока нет';
+    return c ? (Live.alive(c) ? 'Телефон на связи' : 'Телефон отключился') : 'Телефон не подключён';
   };
   function updateCaps() {
     $$('[data-capst]', scr).forEach(el => { const c = G.teams[+el.dataset.capst].cap; el.textContent = capState(+el.dataset.capst); el.classList.toggle('ok', !!c && Live.alive(c)); });
     $$('[data-capreset]', scr).forEach(b => { b.hidden = !G.teams[+b.dataset.capreset].cap; });
-    $$('[data-cnt]', scr).forEach(el => { const n = players(+el.dataset.cnt); el.textContent = n ? `👥 ${n} ${plural(n, 'игрок', 'игрока', 'игроков')}` : '👥 Пока никого'; });
     const q = $('#gJoinQr');
     if (q && Live.enabled && q.dataset.code !== Live.code) { q.innerHTML = Live.qr(Live.phoneUrl()); q.dataset.code = Live.code; $('#gJoinCode').textContent = 'код ' + Live.code; }
   }
@@ -172,17 +244,16 @@ const Game = (() => {
     const tcard = i => `<div class="lcard t${i}">
         <div class="lcard-top"><span class="lcard-e">${T[i].emoji}</span><input class="lname" data-name="${i}" maxlength="22" value="${esc(T[i].name)}" aria-label="Название команды"></div>
         <div class="lemoji">${C.EMOJI.map(e => `<button class="${e === T[i].emoji ? 'on' : ''}" data-emoji="${i}" data-e="${e}" aria-label="Значок ${e}">${e}</button>`).join('')}</div>
-        <div class="lplayers live-only" data-cnt="${i}"></div>
         <div class="lcap live-only"><span class="cap-st" data-capst="${i}"></span><button class="g-btn ghost sm" data-capreset="${i}">сбросить</button></div>
       </div>`;
     scr.innerHTML = `<div class="lobby">
       <div class="lobby-h">
         <h1>☕ Битва кофеен</h1>
-        <p>Две кофейни у колледжа. Новость дня говорит, сколько будет покупателей. Капитаны тайно выбирают цену чашки. В конце побеждает тот, у кого больше денег.</p>
+        <p>Две кофейни у колледжа. Новость дня говорит, сколько будет покупателей. Команды тайно выбирают цену чашки. В конце побеждает тот, у кого больше денег.</p>
       </div>
       <div class="lobby-grid">
         ${tcard(0)}
-        <div class="ljoin live-only"><div class="ljoin-qr" id="gJoinQr"></div><b>Сканируйте все</b><span>и выберите свою команду</span><span class="mono" id="gJoinCode"></span></div>
+        <div class="ljoin live-only"><div class="ljoin-qr" id="gJoinQr"></div><b>Каждая команда сканирует</b><span>одним телефоном</span><span class="mono" id="gJoinCode"></span></div>
         ${tcard(1)}
       </div>
       <div class="lobby-foot">
@@ -215,7 +286,7 @@ const Game = (() => {
       </div>`;
     };
     const todo = ['Читаем новость', 'Команда выбирает цену чашки и, если хочет, карту',
-      Live.enabled ? 'Капитан тайно отправляет решение с телефона' : 'Капитан тайно вводит решение на экране'];
+      Live.enabled ? 'Команда тайно отправляет решение с телефона' : 'Команда тайно вводит решение на экране'];
     scr.innerHTML = `<div class="stage">
       ${newsCard(e)}
       <div class="g-todo">${todo.map((s, k) => `<div><i>${k + 1}</i><span>${s}</span></div>`).join('')}</div>
@@ -269,7 +340,7 @@ const Game = (() => {
     };
     const seg = (n, cls, label) => n > 0 ? `<div class="cb-s ${cls}" style="flex:${n} 1 0"><b>${n}</b><span>${label}</span></div>` : '';
     const last = G.round >= G.rounds;
-    scr.innerHTML = `<div class="rv ${anim ? 'anim' : ''}">
+    scr.innerHTML = `<div class="rv">
       <div class="rv-top">
         <div class="rv-meta">Раунд ${r.round} · ${e.e} ${e.t}</div>
         <h2 class="rv-h">${head}</h2>
@@ -282,12 +353,17 @@ const Game = (() => {
       <div class="rv-why">${why(r).map(s => `<p>${esc(s)}</p>`).join('')}</div>
       <div class="center-act"><button class="g-btn gold big" id="gNext">${last ? 'Итоги игры →' : 'Следующий раунд →'}</button></div>
     </div>`;
-    if (anim) {
+    if (anim) runShow(reduced ? [] : scenes(r), r, () => {
+      if (G.phase !== 'reveal') return;
+      $('.rv', scr)?.classList.add('anim');
       setTimeout(() => { if (G.phase === 'reveal') { SFX.cash(); countUp(); } }, 700);
-      setTimeout(() => { const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (c && G.phase === 'reveal') c.classList.add('win'); }, 1700);
-      if (X.some(x => x.hit)) setTimeout(SFX.evil, 500);
-      else if (X.some(x => x.blocked)) setTimeout(SFX.shield, 500);
-    }
+      setTimeout(() => {
+        const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (!c || G.phase !== 'reveal') return;
+        c.classList.add('win');
+        const b = c.getBoundingClientRect();
+        Confetti.burst({ x: b.left + b.width / 2, y: b.top + b.height * .35, n: 90, spread: .75 }); SFX.coin();
+      }, 1700);
+    });
   }
   function countUp() {
     $$('[data-count]', root).forEach(el => {
@@ -330,11 +406,12 @@ const Game = (() => {
   let lastPhase = null;
   function render(anim) {
     if (!isOpen) return;
+    if (show && !anim && G.phase === 'reveal') { Live.refresh(); return; }   // don't spoil the result under a running show
     meta(anim);
     if (G.phase === 'lobby') lobby();
     else if (G.phase === 'orders') orders();
     else if (G.phase === 'reveal') revealView(anim);
-    else { over(); if (lastPhase !== 'over') { Confetti.burst({ n:220 }); SFX.fanfare(); } }
+    else { over(); if (lastPhase !== 'over') finale(); }
     lastPhase = G.phase;
     if (!modal.hidden && formTeam >= 0) refreshForm();
     Live.refresh();
@@ -358,7 +435,7 @@ const Game = (() => {
       <ol class="rules-list">
         <li>У каждой кофейни на старте ${fmt(C.START)} ₽. Раундов — ${G.rounds}.</li>
         <li>Каждый раунд выходит новость: сколько человек захотят кофе, во что обходится чашка и дороже какой цены никто не купит.</li>
-        <li>Капитан тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Дороже, чем сказано в новости, никто не купит.</li>
+        <li>Команда тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Дороже, чем сказано в новости, никто не купит.</li>
         <li>Кто дешевле, к тому идут 2 из 3 покупателей. Цены равные — покупатели делятся поровну.</li>
         <li>С каждой чашки кофейня получает цену минус стоимость кофе. Дешёвый кофе привлекает людей, но с чашки остаётся меньше.</li>
         <li>За раунд можно сыграть одну карту. Каждая карта — один раз за игру.</li>
@@ -367,7 +444,7 @@ const Game = (() => {
       <div class="cta-row end"><button class="g-btn gold" data-close>Понятно</button></div>`);
   }
   function confirmNew() {
-    showModal(`<h3>Начать новую игру?</h3><p>Деньги и карты обнулятся. Названия команд и капитаны останутся.</p>
+    showModal(`<h3>Начать новую игру?</h3><p>Деньги и карты обнулятся. Названия команд и телефоны останутся.</p>
       <div class="cta-row end"><button class="g-btn" data-close>Отмена</button><button class="g-btn gold" id="gNewYes">Начать заново</button></div>`);
   }
 
@@ -408,7 +485,7 @@ const Game = (() => {
     render(); SFX.whoosh();
   }
   function close() {
-    isOpen = false; root.hidden = true; closeModal(); document.body.classList.remove('game-open');
+    isOpen = false; root.hidden = true; closeModal(); stopShow(); document.body.classList.remove('game-open');
     Live.refresh();
   }
   load();

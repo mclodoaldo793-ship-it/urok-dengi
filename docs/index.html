@@ -433,7 +433,6 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .pmeta{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
 .pmeta:empty{display:none}
 .no-live .live-only,.no-live .pmeta,.no-live .poll .pn{display:none!important}
-body:not(.no-live) .solo-only{display:none!important}
 
 /* ---------- live: phones ---------- */
 .live-btn{height:38px;padding:0 12px;border-radius:11px;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:15px;color:var(--ink)}
@@ -685,8 +684,6 @@ body:not(.no-live) .solo-only{display:none!important}
 .lemoji{display:flex;flex-wrap:wrap;gap:6px}
 .lemoji button{width:42px;height:42px;border-radius:12px;border:1px solid var(--g-line);background:var(--g-bg-2);font-size:22px;cursor:pointer}
 .lemoji button.on{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 24%,var(--g-bg-2))}
-.lplayers{font-size:16px;font-weight:800;margin-top:auto}
-.lplayers + .lcap{margin-top:0}
 .lcap{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
 .cap-st{font-size:13px;font-weight:700;color:var(--g-muted)}
 .cap-st.ok{color:var(--g-ok)}
@@ -847,6 +844,93 @@ body:not(.no-live) .solo-only{display:none!important}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* ---------- coffee battle: the reveal show (prices face off, then each card's effect) ---------- */
+.fx{position:absolute;inset:0;z-index:55;overflow:hidden;cursor:pointer;background:radial-gradient(900px 560px at 50% 42%,var(--g-glow) 0%,transparent 70%),var(--g-bg);animation:fxIn .3s ease}
+.fx.out{animation:fxOut .35s ease forwards;pointer-events:none}
+@keyframes fxIn{from{opacity:0}}
+@keyframes fxOut{to{opacity:0}}
+.fx-stage,.fx-scene{position:absolute;inset:0}
+.fx-skip{position:absolute;right:16px;bottom:16px;z-index:3;padding:8px 16px;border-radius:99px;border:1px solid var(--g-line);background:var(--g-panel);color:var(--g-muted);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.fx-count{position:absolute;top:clamp(16px,5vh,44px);left:50%;transform:translateX(-50%);z-index:2;padding:6px 18px;border-radius:99px;background:var(--g-panel);border:1px solid var(--g-line);color:var(--g-gold);font-weight:800;font-size:clamp(14px,1.3vw,19px);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;animation:fxIn .35s ease}
+.fx-side{position:absolute;top:0;bottom:0;width:50%;display:grid;place-items:center;overflow:hidden}
+.fx-side.s0{left:0}
+.fx-side.s1{right:0}
+.fx-side::before{content:"";position:absolute;inset:0;background:radial-gradient(closest-side,color-mix(in srgb,var(--tc) 26%,transparent),transparent);animation:fxIn .4s ease}
+.fx-big{position:relative;z-index:1;font-size:clamp(90px,17vh,180px);line-height:1;animation:pop .45s cubic-bezier(.2,1.5,.4,1) backwards}
+.fx-cap{position:absolute;z-index:2;left:50%;bottom:clamp(36px,9vh,90px);transform:translateX(-50%);width:min(980px,calc(100% - 32px));display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;animation:capIn .45s cubic-bezier(.2,.8,.2,1) .2s backwards}
+@keyframes capIn{from{transform:translate(-50%,30px);opacity:0}}
+.fx-cap b{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.2vw,60px);line-height:1.1;color:var(--g-ink)}
+.fx-cap span{font-size:clamp(18px,1.9vw,28px);font-weight:700;color:var(--g-ink);text-wrap:balance}
+.fx-cap.good b{color:var(--g-ok)}
+.fx-cap.evil b{color:var(--g-evil)}
+/* prices face off */
+.fx-vs{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(12px,3vw,48px);padding:0 clamp(16px,5vw,90px)}
+.fx-team{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;padding:clamp(18px,3vw,40px);border-radius:28px;background:var(--g-panel);border:3px solid var(--tc);box-shadow:0 0 70px -12px var(--tc)}
+.fx-team.t0{animation:fromL .55s cubic-bezier(.2,.9,.3,1.2) backwards}
+.fx-team.t1{animation:fromR .55s cubic-bezier(.2,.9,.3,1.2) backwards}
+@keyframes fromL{from{transform:translateX(-120%) rotate(-8deg);opacity:0}}
+@keyframes fromR{from{transform:translateX(120%) rotate(8deg);opacity:0}}
+.fx-team span{font-size:clamp(50px,9vh,96px);line-height:1}
+.fx-team b{font-family:var(--font-display);font-size:clamp(20px,2.4vw,34px);color:var(--tc);text-align:center;overflow-wrap:anywhere}
+.fx-team em{font-style:normal;font-family:var(--font-display);font-weight:800;font-size:clamp(48px,7vw,112px);line-height:1;color:var(--g-ink);white-space:nowrap;animation:flipIn .5s ease .7s backwards}
+.fx-x{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,5vw,84px);color:var(--g-gold);text-shadow:0 0 34px var(--g-gold);animation:vsPop .5s cubic-bezier(.2,1.6,.4,1) .4s backwards}
+@keyframes vsPop{from{transform:scale(3) rotate(-20deg);opacity:0}}
+/* advertising: the megaphone shouts, people come running */
+.fx-ring{position:absolute;left:50%;top:50%;width:170px;height:170px;margin:-85px 0 0 -85px;border-radius:50%;border:5px solid var(--tc);opacity:0;animation:ring 1.3s ease-out var(--d,0s) infinite}
+.fx-ring.flash{border-color:#fff;animation:ring .7s ease-out .55s 1 forwards}
+@keyframes ring{from{transform:scale(.4);opacity:1}to{transform:scale(3.2);opacity:0}}
+.fx-shout{animation:pop .45s cubic-bezier(.2,1.5,.4,1),wobble .28s ease-in-out .45s 5}
+@keyframes wobble{50%{transform:rotate(-12deg) scale(1.08)}}
+.fx-p{position:absolute;left:50%;top:50%;z-index:1;margin:-.5em 0 0 -.5em;font-style:normal;font-size:clamp(28px,5vh,46px);line-height:1;transform:translate(var(--x1),var(--y1));animation:comeIn .9s cubic-bezier(.3,.7,.3,1) var(--d) backwards}
+@keyframes comeIn{from{transform:translate(var(--x0),var(--y0)) scale(.6);opacity:0}}
+/* discount: a supply truck drives in */
+.fx-truck{position:absolute;top:36%;z-index:1;font-size:clamp(100px,17vh,180px);line-height:1}
+.fx-truck::after{content:"💨";position:absolute;left:100%;bottom:0;font-size:.45em;opacity:.8}
+.fx-truck.go0{left:105%;animation:driveL 1.3s cubic-bezier(.25,.7,.3,1) forwards}
+.fx-truck.go1{left:-25%;transform:scaleX(-1);animation:driveR 1.3s cubic-bezier(.25,.7,.3,1) forwards}
+@keyframes driveL{to{left:14%}}
+@keyframes driveR{to{left:64%}}
+.fx-tag{position:relative;z-index:2;margin-top:-34vh;padding:.15em .5em;border-radius:16px;background:var(--g-ok);color:var(--g-bg);font-family:var(--font-display);font-weight:800;font-size:clamp(36px,5vw,72px);animation:stampIn .45s cubic-bezier(.3,1.4,.5,1) 1.15s backwards}
+/* rumor: cockroaches everywhere, buyers walk away */
+.fx-roach{position:absolute;top:var(--y);left:-12%;z-index:1;font-style:normal;font-size:clamp(30px,5.5vh,56px);line-height:1;transform:rotate(var(--r));animation:scurry var(--t) linear var(--d) both}
+@keyframes scurry{to{left:108%}}
+.fx-walk{position:absolute;top:58%;z-index:2;display:flex;gap:2px;font-size:clamp(28px,5vh,46px);line-height:1;animation:1.3s ease-in-out .8s both}
+.fx-walk i{font-style:normal;display:inline-block}
+.fx-walk.w0{left:16%;animation-name:walkR}
+.fx-walk.w0 i{transform:scaleX(-1)}
+.fx-walk.w1{left:60%;animation-name:walkL}
+@keyframes walkR{to{left:62%}}
+@keyframes walkL{to{left:16%}}
+/* tax: the inspector's stamp slams down, money flies away */
+.fx-stamp{position:relative;z-index:1;padding:.2em .55em;border:6px solid var(--g-bad);border-radius:16px;color:var(--g-bad);background:color-mix(in srgb,var(--g-bad) 12%,transparent);font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.4vw,68px);line-height:1.05;text-align:center;transform:rotate(-12deg);animation:slam .45s cubic-bezier(.3,1.4,.5,1) .3s backwards}
+@keyframes slam{from{transform:scale(2.6) rotate(-24deg);opacity:0}}
+.fx-tax .fx-side{animation:shake .45s ease .7s}
+.fx-money{position:absolute;left:50%;top:55%;z-index:2;font-style:normal;font-size:clamp(30px,5vh,48px);animation:flyUp 1.3s ease-out var(--d) both}
+@keyframes flyUp{from{transform:translate(0,0);opacity:0}15%{opacity:1}to{transform:translate(var(--x),-58vh) rotate(var(--r));opacity:0}}
+/* power cut: the lights flicker and go out */
+.fx-power .fx-side::after{content:"";position:absolute;inset:0;background:#000;animation:blackout 1.5s steps(1) .2s both}
+@keyframes blackout{0%{opacity:0}12%{opacity:.9}20%{opacity:.15}28%{opacity:.95}36%{opacity:.3}46%,100%{opacity:.9}}
+.fx-bulb{z-index:2;animation:pop .45s cubic-bezier(.2,1.5,.4,1),bulbOff 1.5s steps(1) .2s forwards}
+@keyframes bulbOff{12%{filter:brightness(.3)}20%{filter:none}28%,100%{filter:grayscale(1) brightness(.35)}}
+.fx-bolt{position:absolute;left:58%;top:30%;z-index:3;font-style:normal;font-size:clamp(50px,9vh,90px);animation:zap .9s steps(2) .2s 2 both}
+@keyframes zap{0%{opacity:1;transform:scale(1.3) rotate(-10deg)}50%{opacity:0}100%{opacity:1;transform:scale(.9) rotate(8deg)}}
+/* guard: a harm card flies in and bounces off the shield */
+.fx-guard{filter:drop-shadow(0 0 30px color-mix(in srgb,var(--tc) 80%,transparent));animation:pop .45s cubic-bezier(.2,1.5,.4,1) .3s backwards,pulse 1s ease-in-out .8s infinite}
+.fx-missile{position:absolute;top:38%;z-index:3;font-size:clamp(70px,12vh,130px);line-height:1;animation:1.5s cubic-bezier(.45,0,.55,1) forwards}
+.fx-missile.m0{left:80%;animation-name:hitL}
+.fx-missile.m1{left:10%;animation-name:hitR}
+@keyframes hitL{40%{left:30%;top:38%;transform:rotate(-15deg)}100%{left:95%;top:-25%;transform:rotate(600deg) scale(.4);opacity:0}}
+@keyframes hitR{40%{left:58%;top:38%;transform:rotate(15deg)}100%{left:-5%;top:-25%;transform:rotate(-600deg) scale(.4);opacity:0}}
+/* the final drumroll */
+.fx-drum{position:absolute;inset:0;display:grid;place-items:center}
+.fx-drum .fx-big{animation:pop .45s cubic-bezier(.2,1.5,.4,1),drumHit .12s ease-in-out .45s infinite}
+@keyframes drumHit{50%{transform:scale(1.06) rotate(-3deg)}}
+/* final screen: light rays behind the trophy, the winners glow */
+.over-h .trophy{position:relative;isolation:isolate}
+.over-h .trophy::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:4.2em;height:4.2em;margin:-2.1em 0 0 -2.1em;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--g-gold) 40%,transparent) 0 9deg,transparent 9deg 18deg);-webkit-mask:radial-gradient(closest-side,#000 25%,transparent);mask:radial-gradient(closest-side,#000 25%,transparent);animation:spin 14s linear infinite}
+.over .res.win{animation:glow 2.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.over-h .trophy::before,.over .res.win{animation:none}}
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
 .cf{display:flex;flex-direction:column;gap:16px;color:var(--cf-ink);container-type:inline-size}
 .cf-goal{margin:0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 12%,transparent);font-size:16px;line-height:1.35}
@@ -1432,9 +1516,9 @@ body:not(.no-live) .solo-only{display:none!important}
           <p class="lead">Две команды открывают кофейни у колледжа. Кто к концу игры заработает больше денег, тот и победил.</p>
         </header>
         <div class="rules">
-          <div class="rule card"><span class="rule-ico">☕</span><div><h3>Две кофейни</h3><p class="txt"><span class="live-only">Каждый выбирает команду на телефоне.</span><span class="solo-only">Делимся на две команды и выбираем капитанов.</span> У каждой кофейни на старте 1 000 ₽.</p></div></div>
+          <div class="rule card"><span class="rule-ico">☕</span><div><h3>Две кофейни</h3><p class="txt">Делимся на две команды, у каждой один телефон. На старте у кофейни 1 000 ₽.</p></div></div>
           <div class="rule card"><span class="rule-ico">📰</span><div><h3>Новость дня</h3><p class="txt">Каждый раунд выходит новость: мороз, сессия, каникулы. Она говорит, сколько будет покупателей и дороже какой цены никто не купит.</p></div></div>
-          <div class="rule card"><span class="rule-ico">📱</span><div><h3>Одно решение</h3><p class="txt">Капитан тайно выбирает только цену чашки: от 30 до 120 ₽, шаг 10 ₽.</p></div></div>
+          <div class="rule card"><span class="rule-ico">📱</span><div><h3>Одно решение</h3><p class="txt">Команда тайно выбирает только цену чашки: от 30 до 120 ₽, шаг 10 ₽.</p></div></div>
           <div class="rule card"><span class="rule-ico">🧍</span><div><h3>Покупатели</h3><p class="txt">Кто дешевле, к тому идут 2 из 3. Цены равные — поровну.</p></div></div>
           <div class="rule card"><span class="rule-ico">⚔️</span><div><h3>Ценовая война</h3><p class="txt">С дешёвой чашки остаётся мало денег. Если обе кофейни снижают цену, обе зарабатывают меньше.</p></div></div>
           <div class="rule card"><span class="rule-ico">🃏</span><div><h3>Помощь и пакости</h3><p class="txt">У команды 3 карты-помощи и 3 пакости. Каждую можно сыграть один раз за игру.</p></div></div>
@@ -1449,8 +1533,8 @@ body:not(.no-live) .solo-only{display:none!important}
         </div>
       </div>
       <aside class="notes"><ul>
-        <li>Все сканируют QR-код в игре или открывают ссылку и выбирают команду. В каждой команде один игрок нажимает «Стать капитаном». На экране видно, сколько игроков в каждой команде. Без телефонов решения можно ввести вручную на экране.</li>
-        <li>Главное правило: <b>решения тайные</b>. Команда шепчется, капитан вводит.</li>
+        <li>Разделите группу на две команды. Каждая команда одним телефоном сканирует QR-код в игре (или открывает ссылку) и нажимает свою кофейню. Без телефонов решения можно ввести вручную на экране.</li>
+        <li>Главное правило: <b>решения тайные</b>. Команда шепчется и отправляет решение со своего телефона.</li>
         <li>Команде не нужно ничего считать: в окне решения под ценой сразу написано, сколько она заработает, если соперник поставит цену ниже, такую же или выше.</li>
         <li>Вопрос для обсуждения после 2–3 раундов: почему, когда обе кофейни снижают цену, обе зарабатывают меньше? Это ценовая война.</li>
         <li>Если команды сбивают цену по 10 ₽ и дошли до дна, подскажите: иногда выгоднее резко поднять цену до потолка. Покупателей станет меньше, но с каждой чашки останется намного больше.</li>
@@ -1522,7 +1606,7 @@ body:not(.no-live) .solo-only{display:none!important}
     <div class="g-title">☕ Битва кофеен</div>
     <div class="g-meta" id="gMeta"></div>
     <div class="g-tools">
-      <button class="g-btn live-only" id="gLive" aria-label="QR-код для игроков">📱 <span class="lbl">QR</span></button>
+      <button class="g-btn live-only" id="gLive" aria-label="QR-код для команд">📱 <span class="lbl">QR</span></button>
       <button class="g-btn" id="gSound" aria-label="Звук">🔊</button>
       <button class="g-btn" id="gRules">❔ <span class="lbl">Правила</span></button>
       <button class="g-btn" id="gNew">↺ <span class="lbl">Новая</span></button>
@@ -1814,7 +1898,16 @@ const SFX = (() => {
     trade() { tone(660, .08, { type:'triangle', vol:.07 }); tone(990, .16, { type:'triangle', vol:.07, at:.08 }); },
     no() { tone(320, .11, { type:'square', vol:.045 }); tone(240, .2, { type:'square', vol:.045, at:.11 }); },
     beep(low) { tone(low ? 520 : 880, .06, { type:'square', vol:.04 }); },
-    whoosh() { noise(.35, { vol:.07, freq:900 }); }
+    whoosh() { noise(.35, { vol:.07, freq:900 }); },
+    /* coffee battle: the reveal show and the card effects */
+    vs() { noise(.4, { vol:.08, freq:700 }); tone(196, .35, { type:'square', vol:.06, at:.25 }); tone(294, .5, { type:'square', vol:.06, at:.42 }); },
+    horn() { [392, 523, 659].forEach((f, i) => tone(f, .2, { type:'sawtooth', vol:.045, at:i * .11 })); tone(784, .55, { type:'square', vol:.05, at:.33 }); },
+    truck() { noise(1, { vol:.07, freq:160 }); tone(80, 1, { type:'sawtooth', vol:.035, to:130 }); tone(440, .12, { type:'square', vol:.05, at:.55 }); tone(440, .16, { type:'square', vol:.05, at:.72 }); },
+    roach() { for (let i = 0; i < 12; i++) noise(.04, { vol:.05, at:i * .06, freq:2800 + (i % 3) * 900 }); },
+    stamp() { tone(120, .3, { type:'square', vol:.12, to:45 }); noise(.18, { vol:.14, freq:260 }); },
+    zap() { tone(1500, .55, { type:'sawtooth', vol:.06, to:55 }); noise(.3, { vol:.07, freq:2600 }); tone(60, .4, { type:'square', vol:.05, at:.45 }); },
+    drum(d = 1.4) { const n = Math.round(d / .055); for (let i = 0; i < n; i++) noise(.05, { vol:.035 + i / n * .05, at:i * .055, freq:220 }); noise(.9, { vol:.11, at:d, freq:5200 }); },
+    boom() { noise(.6, { vol:.1, freq:160 }); tone(70, .5, { type:'sine', vol:.12, to:40 }); }
   };
 })();
 
@@ -1834,9 +1927,31 @@ const Confetti = (() => {
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
+  /* firework: a ring of glowing sparks in the given colours */
+  function spark({ x, y, colors, n = 70 }) {
+    if (reduced) return;
+    if (!raf) size();
+    for (let i = 0; i < n; i++) {
+      const a = i / n * Math.PI * 2 + Math.random() * .2, s = 3 + Math.random() * 6;
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 2 + Math.random() * 2.5, kind: 'spark', c1: colors[i % colors.length], life: 0 });
+    }
+    if (!raf) raf = requestAnimationFrame(loop);
+  }
+  function fireworks(colors, { shots = 7, gap = 320 } = {}) {
+    for (let k = 0; k < shots; k++) setTimeout(() => {
+      spark({ x: innerWidth * (.15 + Math.random() * .7), y: innerHeight * (.12 + Math.random() * .35), colors });
+      SFX.boom();
+    }, k * gap);
+  }
   function loop() {
     cx.clearRect(0, 0, innerWidth, innerHeight);
     for (const p of parts) {
+      if (p.kind === 'spark') {
+        p.vy += .07; p.vx *= .97; p.vy *= .97; p.x += p.vx; p.y += p.vy; p.life++;
+        cx.globalAlpha = Math.max(0, 1 - p.life / 90); cx.fillStyle = p.c1;
+        cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 7); cx.fill(); cx.globalAlpha = 1;
+        continue;
+      }
       p.vy += .32; p.vx *= .985; p.vy *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
       cx.save(); cx.translate(p.x, p.y);
       if (p.kind === 'coin') {
@@ -1849,10 +1964,10 @@ const Confetti = (() => {
       }
       cx.restore();
     }
-    parts = parts.filter(p => p.y < innerHeight + 60 && p.life < 420);
+    parts = parts.filter(p => p.y < innerHeight + 60 && p.life < (p.kind === 'spark' ? 90 : 420));
     if (parts.length) raf = requestAnimationFrame(loop); else { raf = 0; cx.clearRect(0, 0, innerWidth, innerHeight); }
   }
-  return { burst };
+  return { burst, spark, fireworks };
 })();
 
 /* ---------- guilloche rosettes (banknote ornament) ---------- */
@@ -5016,7 +5131,6 @@ const Game = (() => {
   function fresh(prev) {
     return {
       phase:'lobby', round:0, rounds: prev?.rounds || 6, evs:[], res:null,
-      members: prev?.members || {},   // phone id -> team the player picked
       teams:[0, 1].map(i => ({
         name: prev?.teams[i].name || ['Кофейня А', 'Кофейня Б'][i],
         emoji: prev?.teams[i].emoji || ['☕', '🧋'][i],
@@ -5032,7 +5146,6 @@ const Game = (() => {
     G = s && s.teams && s.teams.length === 2 && s.phase ? s : fresh();
     if (G.res && G.res.teams[0].unit === undefined) G = fresh(G);  // a game saved under the old cups-and-chances rules
     if (G.phase === 'reveal' && !G.res) G.phase = 'orders';
-    if (!G.members || typeof G.members !== 'object') G.members = {};
     G.teams.forEach(t => CARD_IDS.forEach(k => { if (!(k in t.cards)) t.cards[k] = true; }));  // games saved before a card was added
   }
   const ev = () => C.EVENTS[G.evs[G.round - 1]] || C.EVENTS.normal;
@@ -5088,8 +5201,94 @@ const Game = (() => {
       if (x.card) t.cards[x.card] = false;
       t.hist.push({ round: r.round, profit: x.profit, sold: x.sold, price: x.price });
     });
+    r.show = reduced ? 0 : SHOW.vs + (scenes(r).length - 1) * SHOW.card;   // phones wait this long before showing the result
     G.res = r; G.phase = 'reveal';
     save(); render(true);
+  }
+
+  /* ---------- the show: both prices face off, then every card played, one scene after another ---------- */
+  const SHOW = { vs: 1800, card: 2100, drum: 1900 };
+  let show = null;
+  function scenes(r) {
+    const X = r.teams, out = [{ k: 'vs' }];
+    X.forEach((x, i) => { if (x.card === 'ad' || x.card === 'discount') out.push({ k: x.card, i }); });
+    X.forEach((x, i) => { const h = X[1 - i].card; if (h && !C.CARDS[h].good) out.push(x.blocked ? { k: 'block', i, h } : { k: h, i }); });
+    X.forEach((x, i) => { if (x.card === 'shield' && !x.blocked) out.push({ k: 'shield', i }); });
+    return out;
+  }
+  const SOUND = {
+    vs: () => SFX.vs(), drum: () => SFX.drum(1.6),
+    ad: () => setTimeout(SFX.horn, 150), discount: () => SFX.truck(),
+    rumor: () => { SFX.roach(); setTimeout(SFX.roach, 750); },
+    tax: () => { setTimeout(SFX.stamp, 300); setTimeout(SFX.evil, 650); },
+    power: () => setTimeout(SFX.zap, 200),
+    block: () => { SFX.whoosh(); setTimeout(SFX.shield, 600); },
+    shield: () => SFX.shield()
+  };
+  function sceneHtml(s, r, k, total) {
+    const T = G.teams, X = r ? r.teams : [], nm = i => esc(name(i)), i = s.i;
+    const rep = (n, f) => Array.from({ length: n }, (_, j) => f(j)).join('');
+    const rnd = (a, b) => (a + Math.random() * (b - a)).toFixed(1);
+    const ppl = n => `${n} ${plural(n, 'покупателя', 'покупателей', 'покупателей')}`;
+    const cap = (cls, t, d) => `<div class="fx-cap ${cls}"><b>${t}</b><span>${d}</span></div>`;
+    const side = (j, inner) => `<div class="fx-side s${j} t${j}">${inner}</div>`;
+    const ring = j => `<i class="fx-ring" style="--d:${j * .35}s"></i>`;
+    const walk = n => n > 0 ? `<div class="fx-walk w${i}">${rep(Math.min(n, 6), () => '<i>🚶</i>')}</div>` : '';
+    const top = s.k === 'vs' ? 'Вскрываем решения!' : s.k === 'drum' ? '' : `Карта ${k} из ${total}`;
+    let html = '';
+    if (s.k === 'vs') html = `<div class="fx-vs">${[0, 1].map(j => `<div class="fx-team t${j}"><span>${T[j].emoji}</span><b>${esc(T[j].name)}</b><em>${X[j].price}&nbsp;₽</em></div>`).join('<div class="fx-x">VS</div>')}</div>`;
+    else if (s.k === 'drum') html = '<div class="fx-drum"><div class="fx-big">🥁</div></div>' + cap('', 'Считаем деньги в кассах…', 'И побеждает…');
+    else if (s.k === 'ad') html = side(i, rep(3, ring) + '<div class="fx-big fx-shout">📣</div>' + rep(C.AD, j => {
+        const a = j / C.AD * 6.283, R = 140 + (j % 2) * 50;
+        return `<i class="fx-p" style="--x0:${(Math.cos(a) * 55).toFixed(1)}vw;--y0:${(Math.sin(a) * 55).toFixed(1)}vh;--x1:${(Math.cos(a) * R).toFixed(0)}px;--y1:${(Math.sin(a) * R * .75).toFixed(0)}px;--d:${(.35 + j * .07).toFixed(2)}s">🧍</i>`;
+      })) + cap('good', '📣 Реклама', `${nm(i)} — ещё ${ppl(C.AD)} пришли по рекламе`);
+    else if (s.k === 'discount') html = `<span class="fx-truck go${i}">🚚</span>` + side(i, `<div class="fx-tag">−${C.DISCOUNT}&nbsp;₽</div>`)
+      + cap('good', '🚚 Скидка на зёрна', `${nm(i)} — чашка обходится на ${C.DISCOUNT} ₽ дешевле`);
+    else if (s.k === 'rumor') html = side(i, rep(14, () => `<i class="fx-roach" style="--y:${rnd(6, 88)}%;--t:${rnd(.7, 1.3)}s;--d:${rnd(0, 1)}s;--r:${rnd(70, 110)}deg">🪳</i>`)) + walk(C.RUMOR)
+      + cap('evil', '🪳 Слух про таракана', `Слух от ${nm(1 - i)}: ${nm(i)} теряет ${ppl(C.RUMOR)}`);
+    else if (s.k === 'tax') html = side(i, '<div class="fx-stamp">НАЛОГОВАЯ<br>ПРОВЕРКА</div>' + rep(9, j => `<i class="fx-money" style="--x:${rnd(-22, 22)}vw;--r:${rnd(-120, 120)}deg;--d:${(.55 + j * .09).toFixed(2)}s">💸</i>`))
+      + cap('evil', '🧾 Налоговая проверка', `${nm(i)} отдаёт 30% выручки`);
+    else if (s.k === 'power') html = side(i, '<div class="fx-big fx-bulb">💡</div><i class="fx-bolt">⚡</i>') + walk(X[i].cut)
+      + cap('evil', '🔌 Отключили свет', `${nm(i)} продаст не больше ${C.POWER_CAP} чашек`);
+    else if (s.k === 'block') html = `<span class="fx-missile m${i}">${C.CARDS[s.h].e}</span>` + side(i, '<i class="fx-ring flash"></i><div class="fx-big fx-guard">🛡️</div>')
+      + cap('good', '🛡️ Охрана сработала!', `${nm(i)} отбивает «${C.CARDS[s.h].n}»`);
+    else if (s.k === 'shield') html = side(i, rep(2, ring) + '<div class="fx-big fx-guard">🛡️</div>')
+      + cap('good', '🛡️ Охрана', `${nm(i)} под охраной, но пакостей не было`);
+    return `<div class="fx-scene fx-${s.k}">${top ? `<div class="fx-count">${top}</div>` : ''}${html}</div>`;
+  }
+  /* plays scenes over the game screen; a click skips to the end */
+  function runShow(list, r, done) {
+    stopShow();
+    const fx = document.createElement('div');
+    fx.className = 'fx';
+    fx.innerHTML = '<div class="fx-stage"></div><button class="fx-skip" type="button">Пропустить →</button>';
+    root.appendChild(fx);
+    const stage = fx.firstChild, timers = [], total = list.length - 1;
+    let t = 0;
+    list.forEach((s, k) => {
+      timers.push(setTimeout(() => { stage.innerHTML = sceneHtml(s, r, k, total); SOUND[s.k]?.(); }, t));
+      t += SHOW[s.k] || SHOW.card;
+    });
+    const end = () => {
+      if (show !== cur) return;
+      stopShow(); done();
+    };
+    const cur = { fx, timers, end };
+    timers.push(setTimeout(end, t));
+    fx.addEventListener('click', end);
+    show = cur;
+  }
+  function stopShow() {
+    if (!show) return;
+    const { fx, timers } = show; show = null;
+    timers.forEach(clearTimeout);
+    fx.classList.add('out'); setTimeout(() => fx.remove(), 350);
+  }
+  function finale() {
+    const wi = winner(), team = j => cssVar(j ? '--team-b' : '--team-a'), gold = cssVar('--g-gold') || '#F2C14E';
+    const colors = wi < 0 ? [team(0), team(1), gold] : [team(wi), gold, '#FFFFFF'];
+    const party = () => { if (G.phase !== 'over') return; Confetti.burst({ n:220 }); Confetti.fireworks(colors); SFX.fanfare(); };
+    reduced ? party() : runShow([{ k: 'drum' }], null, party);
   }
   function next() {
     if (G.phase !== 'reveal') return;
@@ -5108,22 +5307,11 @@ const Game = (() => {
   /* ---------- phones ---------- */
   const team = m => (m.team === 0 || m.team === 1) ? m.team : -1;
   const rerender = () => { if (!isOpen) return; G.phase === 'lobby' ? updateCaps() : render(); };
-  /* players on phones pick a team; a captain of the other team who switches stops being captain */
-  function joinTeam(c, i) {
-    if (G.members[c] === i) return false;
-    if (i < 0) delete G.members[c]; else G.members[c] = i;
-    G.teams.forEach((x, k) => { if (k !== i && x.cap === c) x.cap = null; });
-    return true;
-  }
-  const players = i => Object.keys(G.members).filter(c => G.members[c] === i && Live.alive(c)).length;
-  Live.on('team', m => { if (G && joinTeam(m.c, m.team === -1 ? -1 : team(m))) { save(); rerender(); Live.refresh(); } });
-  Live.on('hi', m => { const i = team(m); if (G && i >= 0 && joinTeam(m.c, i)) { save(); rerender(); Live.refresh(); } });
   Live.on('cap', m => {
     const i = team(m); if (i < 0) return;
     const t = G.teams[i];
     if (t.cap && t.cap !== m.c && Live.alive(t.cap)) return;
     G.teams.forEach(x => { if (x.cap === m.c) x.cap = null; });
-    G.members[m.c] = i;
     t.cap = m.c; save(); SFX.coin(); rerender(); Live.refresh();
   });
   Live.on('uncap', m => { G.teams.forEach(x => { if (x.cap === m.c) x.cap = null; }); save(); rerender(); Live.refresh(); });
@@ -5135,13 +5323,13 @@ const Game = (() => {
     if (!G) return null;
     const e = (G.phase === 'orders' || G.phase === 'reveal') ? ev() : null;
     return {
-      phase: G.phase, round: G.round, rounds: G.rounds,
+      phase: G.phase, round: G.round, rounds: G.rounds, show: G.phase === 'reveal' && G.res ? G.res.show || 0 : 0,
       ev: e && { e: e.e, t: e.t, x: e.x, n: e.n, cost: e.cost, max: e.max },
       teams: G.teams.map((t, i) => {
         const x = G.phase === 'reveal' && G.res ? G.res.teams[i] : null;
         return {
           name: t.name, emoji: t.emoji, money: t.money, cards: t.cards,
-          cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null, n: players(i),
+          cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null,
           res: x && { price: x.price, sold: x.sold, unit: x.unit, revenue: x.revenue, cost: x.cost, tax: x.tax, profit: x.profit, after: x.after, hit: x.hit },
           final: G.phase === 'over' ? t.money : null
         };
@@ -5153,12 +5341,11 @@ const Game = (() => {
   /* ---------- rendering ---------- */
   const capState = i => {
     const c = G.teams[i].cap;
-    return c ? (Live.alive(c) ? 'Капитан на связи' : 'Капитан отключился') : 'Капитана пока нет';
+    return c ? (Live.alive(c) ? 'Телефон на связи' : 'Телефон отключился') : 'Телефон не подключён';
   };
   function updateCaps() {
     $$('[data-capst]', scr).forEach(el => { const c = G.teams[+el.dataset.capst].cap; el.textContent = capState(+el.dataset.capst); el.classList.toggle('ok', !!c && Live.alive(c)); });
     $$('[data-capreset]', scr).forEach(b => { b.hidden = !G.teams[+b.dataset.capreset].cap; });
-    $$('[data-cnt]', scr).forEach(el => { const n = players(+el.dataset.cnt); el.textContent = n ? `👥 ${n} ${plural(n, 'игрок', 'игрока', 'игроков')}` : '👥 Пока никого'; });
     const q = $('#gJoinQr');
     if (q && Live.enabled && q.dataset.code !== Live.code) { q.innerHTML = Live.qr(Live.phoneUrl()); q.dataset.code = Live.code; $('#gJoinCode').textContent = 'код ' + Live.code; }
   }
@@ -5180,17 +5367,16 @@ const Game = (() => {
     const tcard = i => `<div class="lcard t${i}">
         <div class="lcard-top"><span class="lcard-e">${T[i].emoji}</span><input class="lname" data-name="${i}" maxlength="22" value="${esc(T[i].name)}" aria-label="Название команды"></div>
         <div class="lemoji">${C.EMOJI.map(e => `<button class="${e === T[i].emoji ? 'on' : ''}" data-emoji="${i}" data-e="${e}" aria-label="Значок ${e}">${e}</button>`).join('')}</div>
-        <div class="lplayers live-only" data-cnt="${i}"></div>
         <div class="lcap live-only"><span class="cap-st" data-capst="${i}"></span><button class="g-btn ghost sm" data-capreset="${i}">сбросить</button></div>
       </div>`;
     scr.innerHTML = `<div class="lobby">
       <div class="lobby-h">
         <h1>☕ Битва кофеен</h1>
-        <p>Две кофейни у колледжа. Новость дня говорит, сколько будет покупателей. Капитаны тайно выбирают цену чашки. В конце побеждает тот, у кого больше денег.</p>
+        <p>Две кофейни у колледжа. Новость дня говорит, сколько будет покупателей. Команды тайно выбирают цену чашки. В конце побеждает тот, у кого больше денег.</p>
       </div>
       <div class="lobby-grid">
         ${tcard(0)}
-        <div class="ljoin live-only"><div class="ljoin-qr" id="gJoinQr"></div><b>Сканируйте все</b><span>и выберите свою команду</span><span class="mono" id="gJoinCode"></span></div>
+        <div class="ljoin live-only"><div class="ljoin-qr" id="gJoinQr"></div><b>Каждая команда сканирует</b><span>одним телефоном</span><span class="mono" id="gJoinCode"></span></div>
         ${tcard(1)}
       </div>
       <div class="lobby-foot">
@@ -5223,7 +5409,7 @@ const Game = (() => {
       </div>`;
     };
     const todo = ['Читаем новость', 'Команда выбирает цену чашки и, если хочет, карту',
-      Live.enabled ? 'Капитан тайно отправляет решение с телефона' : 'Капитан тайно вводит решение на экране'];
+      Live.enabled ? 'Команда тайно отправляет решение с телефона' : 'Команда тайно вводит решение на экране'];
     scr.innerHTML = `<div class="stage">
       ${newsCard(e)}
       <div class="g-todo">${todo.map((s, k) => `<div><i>${k + 1}</i><span>${s}</span></div>`).join('')}</div>
@@ -5277,7 +5463,7 @@ const Game = (() => {
     };
     const seg = (n, cls, label) => n > 0 ? `<div class="cb-s ${cls}" style="flex:${n} 1 0"><b>${n}</b><span>${label}</span></div>` : '';
     const last = G.round >= G.rounds;
-    scr.innerHTML = `<div class="rv ${anim ? 'anim' : ''}">
+    scr.innerHTML = `<div class="rv">
       <div class="rv-top">
         <div class="rv-meta">Раунд ${r.round} · ${e.e} ${e.t}</div>
         <h2 class="rv-h">${head}</h2>
@@ -5290,12 +5476,17 @@ const Game = (() => {
       <div class="rv-why">${why(r).map(s => `<p>${esc(s)}</p>`).join('')}</div>
       <div class="center-act"><button class="g-btn gold big" id="gNext">${last ? 'Итоги игры →' : 'Следующий раунд →'}</button></div>
     </div>`;
-    if (anim) {
+    if (anim) runShow(reduced ? [] : scenes(r), r, () => {
+      if (G.phase !== 'reveal') return;
+      $('.rv', scr)?.classList.add('anim');
       setTimeout(() => { if (G.phase === 'reveal') { SFX.cash(); countUp(); } }, 700);
-      setTimeout(() => { const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (c && G.phase === 'reveal') c.classList.add('win'); }, 1700);
-      if (X.some(x => x.hit)) setTimeout(SFX.evil, 500);
-      else if (X.some(x => x.blocked)) setTimeout(SFX.shield, 500);
-    }
+      setTimeout(() => {
+        const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (!c || G.phase !== 'reveal') return;
+        c.classList.add('win');
+        const b = c.getBoundingClientRect();
+        Confetti.burst({ x: b.left + b.width / 2, y: b.top + b.height * .35, n: 90, spread: .75 }); SFX.coin();
+      }, 1700);
+    });
   }
   function countUp() {
     $$('[data-count]', root).forEach(el => {
@@ -5338,11 +5529,12 @@ const Game = (() => {
   let lastPhase = null;
   function render(anim) {
     if (!isOpen) return;
+    if (show && !anim && G.phase === 'reveal') { Live.refresh(); return; }   // don't spoil the result under a running show
     meta(anim);
     if (G.phase === 'lobby') lobby();
     else if (G.phase === 'orders') orders();
     else if (G.phase === 'reveal') revealView(anim);
-    else { over(); if (lastPhase !== 'over') { Confetti.burst({ n:220 }); SFX.fanfare(); } }
+    else { over(); if (lastPhase !== 'over') finale(); }
     lastPhase = G.phase;
     if (!modal.hidden && formTeam >= 0) refreshForm();
     Live.refresh();
@@ -5366,7 +5558,7 @@ const Game = (() => {
       <ol class="rules-list">
         <li>У каждой кофейни на старте ${fmt(C.START)} ₽. Раундов — ${G.rounds}.</li>
         <li>Каждый раунд выходит новость: сколько человек захотят кофе, во что обходится чашка и дороже какой цены никто не купит.</li>
-        <li>Капитан тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Дороже, чем сказано в новости, никто не купит.</li>
+        <li>Команда тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Дороже, чем сказано в новости, никто не купит.</li>
         <li>Кто дешевле, к тому идут 2 из 3 покупателей. Цены равные — покупатели делятся поровну.</li>
         <li>С каждой чашки кофейня получает цену минус стоимость кофе. Дешёвый кофе привлекает людей, но с чашки остаётся меньше.</li>
         <li>За раунд можно сыграть одну карту. Каждая карта — один раз за игру.</li>
@@ -5375,7 +5567,7 @@ const Game = (() => {
       <div class="cta-row end"><button class="g-btn gold" data-close>Понятно</button></div>`);
   }
   function confirmNew() {
-    showModal(`<h3>Начать новую игру?</h3><p>Деньги и карты обнулятся. Названия команд и капитаны останутся.</p>
+    showModal(`<h3>Начать новую игру?</h3><p>Деньги и карты обнулятся. Названия команд и телефоны останутся.</p>
       <div class="cta-row end"><button class="g-btn" data-close>Отмена</button><button class="g-btn gold" id="gNewYes">Начать заново</button></div>`);
   }
 
@@ -5416,7 +5608,7 @@ const Game = (() => {
     render(); SFX.whoosh();
   }
   function close() {
-    isOpen = false; root.hidden = true; closeModal(); document.body.classList.remove('game-open');
+    isOpen = false; root.hidden = true; closeModal(); stopShow(); document.body.classList.remove('game-open');
     Live.refresh();
   }
   load();
