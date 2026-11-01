@@ -628,7 +628,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   --cf-bg:var(--g-panel);--cf-bg2:var(--g-bg-2);--cf-ink:var(--g-ink);--cf-muted:var(--g-muted);--cf-line:var(--g-line);--cf-acc:var(--g-gold);--cf-acc-ink:var(--g-bg);--cf-good:var(--g-ok);--cf-evil:var(--g-evil)}
 .g-top{display:flex;align-items:center;gap:12px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--g-line)}
 .g-title{font-family:var(--font-display);font-weight:800;letter-spacing:.03em;text-transform:uppercase;font-size:clamp(13px,1.3vw,20px);color:var(--g-gold-2);white-space:nowrap}
-.g-meta{font-family:var(--font-mono);font-size:13px;color:var(--g-muted);margin-left:auto;white-space:nowrap;font-variant-numeric:tabular-nums}
+.g-meta{margin-inline:auto;display:flex;align-items:center;gap:clamp(6px,1vw,14px);min-width:0}
 .g-tools{display:flex;gap:6px}
 .g-btn{border:1px solid var(--g-line);background:var(--g-panel);color:var(--g-ink);border-radius:11px;padding:8px 13px;cursor:pointer;font:700 14px var(--font-body);white-space:nowrap;transition:background .2s,border-color .2s,transform .15s}
 .g-btn:hover:not(:disabled){background:var(--g-panel-2);border-color:var(--g-gold)}
@@ -672,105 +672,100 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .seg button{min-width:42px;height:38px;border-radius:10px;border:0;background:transparent;color:var(--g-ink);font-weight:800;font-size:15px;cursor:pointer}
 .seg button.on{background:var(--g-gold);color:var(--g-bg)}
 
-/* board: team | centre | team */
-.board3{display:grid;grid-template-columns:minmax(210px,.78fr) minmax(0,1.6fr) minmax(210px,.78fr);gap:clamp(12px,1.6vw,22px);align-items:stretch;width:min(1500px,100%);margin:0 auto;min-height:100%}
-.tpanel{--tc:var(--team-a);position:relative;display:flex;flex-direction:column;gap:12px;padding:clamp(14px,1.4vw,20px);border-radius:22px;background:var(--g-panel);border:2px solid color-mix(in srgb,var(--tc) 50%,transparent)}
-.tpanel.t1{--tc:var(--team-b)}
-.tp-head{display:flex;align-items:center;gap:10px;min-width:0}
-.tp-e{font-size:clamp(30px,3vw,44px);line-height:1}
-.tp-head b{font-family:var(--font-display);font-size:clamp(15px,1.3vw,21px);line-height:1.15;overflow-wrap:anywhere;color:var(--tc)}
-.tp-money{display:flex;flex-direction:column;font-family:var(--font-display);font-weight:800;font-size:clamp(26px,2.6vw,42px);line-height:1.05;font-variant-numeric:tabular-nums}
-.tp-money small{font-family:var(--font-body);font-size:12px;font-weight:700;color:var(--g-muted);text-transform:uppercase;letter-spacing:.1em}
-.tp-status{padding:10px 12px;border-radius:12px;background:var(--g-bg-2);font-weight:800;font-size:15px;color:var(--g-muted)}
-.tp-status:not(.ok){animation:blink 1.8s ease-in-out infinite}
-.tp-status.ok{color:var(--g-ok);background:color-mix(in srgb,var(--g-ok) 14%,var(--g-bg-2))}
-.tp-cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
-.tp-card{display:grid;place-items:center;aspect-ratio:1;border-radius:10px;font-size:clamp(15px,1.3vw,21px);background:var(--g-bg-2);border:1px solid var(--g-line)}
-.tp-card.good{border-color:color-mix(in srgb,var(--g-ok) 50%,transparent)}
-.tp-card.evil{border-color:color-mix(in srgb,var(--g-evil) 50%,transparent)}
-.tp-card.used{opacity:.22;filter:grayscale(1)}
-.tp-bank{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--g-muted)}
-.tp-bank .on{color:var(--g-gold)}
-.tp-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-.center{display:flex;flex-direction:column;gap:clamp(12px,2vh,20px);min-width:0}
-.news{background:var(--news-bg);color:var(--news-ink);border-radius:18px;padding:clamp(14px,1.6vw,24px);box-shadow:0 24px 60px -30px #000;animation:cardIn .5s cubic-bezier(.2,.8,.2,1)}
+/* header score: both coffee shops, the leader outlined in gold */
+.sb{display:flex;align-items:center;gap:8px;min-width:0;padding:5px 12px;border-radius:12px;border:1.5px solid transparent}
+.sb i{font-style:normal;font-size:clamp(18px,1.6vw,24px);line-height:1}
+.sb-n{font-weight:700;font-size:14px;color:var(--g-muted);overflow:hidden;text-overflow:ellipsis;max-width:14ch}
+.sb b{font-family:var(--font-display);font-weight:800;font-size:clamp(16px,1.6vw,24px);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sb.t0 b{color:var(--team-a)}
+.sb.t1 b{color:var(--team-b)}
+.sb.lead{border-color:var(--g-gold);background:color-mix(in srgb,var(--g-gold) 9%,transparent)}
+.sb-r{font-family:var(--font-mono);font-size:12px;color:var(--g-muted);white-space:nowrap}
+.game:not([data-phase="lobby"]) .g-title{display:none}
+
+/* shared: one centred column, vertically centred on tall screens */
+.stage,.rv,.over{width:min(1060px,100%);min-height:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2.4vh,26px)}
+.center-act{display:flex;flex-direction:column;align-items:center;gap:8px}
+.t0{--tc:var(--team-a)}
+.t1{--tc:var(--team-b)}
+
+/* orders */
+.news{background:var(--news-bg);color:var(--news-ink);border-radius:18px;padding:clamp(16px,2vw,28px);box-shadow:0 24px 60px -30px #000;animation:cardIn .5s cubic-bezier(.2,.8,.2,1)}
+.news.still{animation:none}
 .news-top{display:flex;justify-content:space-between;gap:10px;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding-bottom:10px;border-bottom:2px solid var(--news-ink);margin-bottom:14px}
 .news-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(12px,1.6vw,22px);align-items:center}
 .news-e{font-size:clamp(56px,6vw,96px);line-height:1}
 .news h2{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,2.6vw,42px);line-height:1.1;margin-bottom:6px;color:var(--news-ink)}
 .news p{font-size:clamp(15px,1.25vw,20px);line-height:1.45}
 .news-facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.news-facts span{padding:7px 12px;border-radius:10px;border:1.5px solid var(--news-line);font-size:clamp(13px,1.05vw,16px)}
-.news.still{animation:none}
-.tips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.tip{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:16px;background:var(--g-panel);border:1px solid var(--g-line)}
-.tip span{font-size:24px;line-height:1}
-.tip b{font-size:clamp(14px,1.05vw,17px);color:var(--g-ink)}
-.tip small{font-size:clamp(12px,.9vw,14px);line-height:1.4;color:var(--g-muted)}
-.center-act{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:auto}
+.news-facts span{padding:7px 12px;border-radius:10px;border:1.5px solid var(--news-line);font-size:clamp(14px,1.1vw,17px)}
+.rule-line{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 0;font-size:clamp(13px,1.05vw,16px);color:var(--g-muted)}
+.rule-line span+span::before{content:"·";margin:0 12px;color:var(--g-gold)}
+.ost-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,1.6vw,20px)}
+.ost{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px 14px;padding:14px 18px;border-radius:18px;background:var(--g-panel);border:1px solid var(--g-line);border-left:5px solid var(--tc)}
+.ost-e{font-size:clamp(28px,2.6vw,38px);line-height:1}
+.ost-t{min-width:0}
+.ost-t b{display:block;font-family:var(--font-display);font-size:clamp(16px,1.4vw,22px);line-height:1.2;color:var(--tc);overflow-wrap:anywhere}
+.ost-t span{font-size:clamp(14px,1.15vw,18px);font-weight:700;color:var(--g-muted)}
+.ost:not(.ok) .ost-t span{animation:blink 1.8s ease-in-out infinite}
+.ost.ok .ost-t span{color:var(--g-ok)}
+.ost-mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;border:2px dashed var(--g-line)}
+.ost.ok .ost-mark{border:0;background:var(--g-ok);color:var(--g-bg)}
+.ost-foot{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:18px}
+.ost-foot .cap-st{font-size:12px}
+.lnk{margin-left:auto;background:none;border:0;padding:0;color:var(--g-muted);font:600 13px var(--font-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lnk:hover{color:var(--g-ink)}
 
-/* reveal */
-.choice{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.choice div{display:flex;flex-direction:column;padding:8px 10px;border-radius:12px;background:var(--g-bg-2)}
-.choice small{font-size:11px;color:var(--g-muted);text-transform:uppercase;letter-spacing:.1em;font-weight:700}
-.choice b{font-family:var(--font-display);font-size:clamp(18px,1.6vw,26px)}
-.rcard{padding:8px 12px;border-radius:12px;font-weight:800;font-size:14px;text-align:center;background:var(--g-bg-2);color:var(--g-muted)}
-.rcard.good{color:var(--g-ok);background:color-mix(in srgb,var(--g-ok) 14%,var(--g-bg-2))}
-.rcard.evil{color:var(--g-evil);background:color-mix(in srgb,var(--g-evil) 16%,var(--g-bg-2))}
-.rres{display:flex;flex-direction:column;gap:2px}
-.rr{display:flex;justify-content:space-between;gap:8px;font-size:clamp(12px,.95vw,14px);padding:4px 2px;border-bottom:1px dashed var(--g-line)}
-.rr span{color:var(--g-muted)}
-.rr b{font-variant-numeric:tabular-nums;white-space:nowrap}
-.rr.plus b{color:var(--g-ok)}
-.rr.minus b{color:var(--g-bad)}
-.rr.total{border-bottom:0;padding-top:6px;font-size:clamp(14px,1.1vw,17px)}
-.rr.total span{color:var(--g-ink);font-weight:800}
-.rstamp{align-self:center;transform:rotate(-3deg);padding:6px 12px;border-radius:10px;border:3px solid currentColor;font-family:var(--font-display);font-weight:800;font-size:clamp(13px,1.1vw,17px);text-transform:uppercase;background:var(--g-bg);box-shadow:0 10px 30px -10px #000;animation:stampIn .5s cubic-bezier(.2,1.4,.4,1) .5s backwards}
-.rstamp.evil{color:var(--g-evil)}
-.rstamp.good{color:var(--g-ok)}
-.rev-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.rev-head span{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--g-muted);font-weight:700}
-.rev-head b{font-family:var(--font-display);font-size:clamp(18px,1.8vw,30px)}
-.crowd{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.bin{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:18px;background:var(--g-panel);border:1px solid var(--g-line);min-height:clamp(120px,22vh,210px)}
-.bin.t0{border-color:color-mix(in srgb,var(--team-a) 45%,transparent)}
-.bin.t1{border-color:color-mix(in srgb,var(--team-b) 45%,transparent)}
-.bin-h{font-size:13px;font-weight:800;color:var(--g-muted)}
-.dots{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;flex:1}
-.dots i{width:clamp(9px,.9vw,13px);aspect-ratio:1;border-radius:50%;background:var(--g-muted)}
-.dots i.a{background:var(--team-a)}
-.dots i.b{background:var(--team-b)}
-.dots i.x{background:color-mix(in srgb,var(--g-muted) 50%,transparent)}
-.anim .dots i{animation:dotIn .35s cubic-bezier(.2,1.5,.4,1) var(--d) backwards}
-@keyframes dotIn{0%{transform:scale(0) translateY(-14px);opacity:0}100%{transform:none;opacity:1}}
-.bin>b{font-family:var(--font-display);font-size:clamp(22px,2.2vw,36px);line-height:1}
-.bin.t0>b{color:var(--team-a)}
-.bin.t1>b{color:var(--team-b)}
-.expl{list-style:none;display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:16px;background:var(--g-bg-2);border:1px solid var(--g-line);font-size:clamp(13px,1.05vw,16px);line-height:1.4}
-.expl li{padding-left:14px;position:relative;text-wrap:pretty}
-.expl li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--g-gold)}
-.anim .expl{animation:cardIn .5s ease 1.2s backwards}
+/* round result: who earned more is the first thing you see */
+.rv-top{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.rv-meta{font-size:clamp(13px,1.05vw,16px);color:var(--g-muted)}
+.rv-h,.over-h h1{font-family:var(--font-display);font-weight:800;font-size:clamp(26px,3.2vw,48px);line-height:1.1;text-wrap:balance;color:var(--g-ink)}
+.rv-h span,.over-h h1 span{color:var(--tc)}
+.anim .rv-h{animation:cardIn .5s cubic-bezier(.2,.8,.2,1) 1.6s backwards}
+.res-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2vw,24px)}
+.res{container-type:inline-size;display:flex;flex-direction:column;gap:6px;padding:clamp(16px,2vw,28px);border-radius:22px;background:var(--g-panel);border:2px solid var(--g-line);transition:border-color .4s,box-shadow .4s}
+.res.win{border-color:var(--tc);box-shadow:0 0 0 5px color-mix(in srgb,var(--tc) 16%,transparent)}
+.res-h{display:flex;align-items:center;gap:10px;min-width:0}
+.res-e{font-size:clamp(26px,2.4vw,36px);line-height:1}
+.res-h b{font-family:var(--font-display);font-size:clamp(16px,1.5vw,24px);line-height:1.2;color:var(--tc);overflow-wrap:anywhere}
+.res-tag{display:none;margin-left:auto;padding:5px 12px;border-radius:99px;background:var(--tc);color:var(--g-bg);font-weight:800;font-size:clamp(12px,1vw,15px);white-space:nowrap}
+.res.win .res-tag{display:inline-block;animation:pop .45s cubic-bezier(.2,1.5,.4,1)}
+.res-p{margin:6px 0 2px;font-family:var(--font-display);font-weight:800;font-size:clamp(34px,14cqi,96px);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.res-p.up{color:var(--g-ok)}
+.res-p.down{color:var(--g-bad)}
+.res-f{font-size:clamp(15px,1.25vw,20px)}
+.res-s{font-size:clamp(13px,1.05vw,17px);color:var(--g-muted)}
+.res-n{margin-top:4px;padding:8px 12px;border-radius:12px;font-weight:700;font-size:clamp(13px,1.05vw,16px);line-height:1.35;background:var(--g-bg-2)}
+.res-n.bad{color:var(--g-evil);background:color-mix(in srgb,var(--g-evil) 14%,var(--g-bg-2))}
+.res-n.good{color:var(--g-ok);background:color-mix(in srgb,var(--g-ok) 12%,var(--g-bg-2))}
+.res-n.warn{color:var(--g-gold-2)}
+.res-b{font-size:clamp(12px,.95vw,14px);color:var(--g-muted)}
+
+/* where the customers went: one bar, the same colours as the teams */
+.cb-wrap{display:flex;flex-direction:column;gap:8px}
+.cb-h{font-size:clamp(14px,1.1vw,17px);color:var(--g-muted);text-align:center}
+.cb{display:flex;gap:4px;height:clamp(44px,6vh,58px)}
+.cb-s{min-width:44px;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:12px;overflow:hidden;white-space:nowrap;background:var(--tc);color:var(--g-bg);font-weight:700;font-size:clamp(12px,1vw,15px)}
+.cb-s b{font-family:var(--font-display);font-size:clamp(18px,1.8vw,28px)}
+.cb-s span{overflow:hidden;text-overflow:ellipsis}
+.cb-s{container-type:inline-size}
+@container (max-width:130px){.cb-s span{display:none}}
+.cb-s.t1{flex-direction:row-reverse}
+.cb-s.x{justify-content:center;background:var(--g-panel-2);color:var(--g-muted)}
+.anim .cb-s{animation:grow .7s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes grow{from{flex-grow:0;opacity:.2}}
+.rv-why{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;font-size:clamp(14px,1.15vw,18px);color:var(--g-ink);text-wrap:balance}
+.anim .rv-why{animation:cardIn .5s ease 2s backwards}
 
 /* game over */
-.over{width:min(1180px,100%);margin:0 auto;display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)}
-.over-h{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
-.trophy{font-size:clamp(60px,8vw,110px);line-height:1;animation:pop .6s cubic-bezier(.2,1.5,.4,1)}
-.over-h h1{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,3.2vw,48px);line-height:1.1;text-wrap:balance;color:var(--g-gold-2)}
-.over-teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2vw,24px)}
-.ocard{--tc:var(--team-a);display:flex;flex-direction:column;gap:12px;padding:clamp(14px,1.6vw,22px);border-radius:22px;background:var(--g-panel);border:2px solid color-mix(in srgb,var(--tc) 40%,transparent)}
-.ocard.t1{--tc:var(--team-b)}
-.ocard.win{border-color:var(--tc);animation:glow 2.4s ease-in-out infinite}
-.crown{margin-left:auto;font-size:28px}
-.ostats{display:flex;flex-wrap:wrap;gap:8px}
-.ostats span{padding:6px 10px;border-radius:10px;background:var(--g-bg-2);font-size:13px;color:var(--g-muted)}
-.ostats b{color:var(--g-ink)}
-.reflect{padding:clamp(14px,1.6vw,22px);border-radius:22px;background:var(--g-panel);border:1px solid var(--g-line)}
-.reflect h3{margin-bottom:12px;color:var(--g-gold-2)}
-.rf-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-.rf{display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:14px;background:var(--g-bg-2)}
-.rf span{font-size:28px;line-height:1}
-.rf b{font-size:14px;line-height:1.2}
-.rf small{font-size:12px;color:var(--g-muted);line-height:1.35}
+.over-h{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.trophy{font-size:clamp(52px,6vw,84px);line-height:1;animation:pop .6s cubic-bezier(.2,1.5,.4,1)}
+.reflect{display:flex;flex-direction:column;gap:12px}
+.reflect h3{text-align:center;font-size:clamp(15px,1.3vw,20px);color:var(--g-gold-2)}
+.rf-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(10px,1.4vw,18px)}
+.rf{display:flex;flex-direction:column;gap:4px;padding-top:10px;border-top:2px solid var(--g-line)}
+.rf b{font-size:clamp(13px,1.05vw,16px);line-height:1.25}
+.rf small{font-size:clamp(12px,.9vw,14px);color:var(--g-muted);line-height:1.35}
 
 /* modal */
 .g-modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;background:rgba(2,8,5,.74);backdrop-filter:blur(6px)}
@@ -783,19 +778,19 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .cards-list li.evil b{color:var(--g-evil)}
 
 @media (max-width:1050px){
-  .board3{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .board3 .center{grid-column:1/-1;order:-1}
   .lobby-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .ljoin{grid-column:1/-1;order:3}
-  .rf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rf-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .sb-n{display:none}
 }
 @media (max-width:640px){
   .g-title{display:none}
   .g-tools .lbl{display:none}
-  .board3,.lobby-grid,.over-teams,.crowd{grid-template-columns:minmax(0,1fr)}
+  .lobby-grid,.res-row,.ost-row{grid-template-columns:minmax(0,1fr)}
   .news-body{grid-template-columns:minmax(0,1fr)}
-  .cards-list,.rf-grid,.tips{grid-template-columns:minmax(0,1fr)}
-  .bin{min-height:0}
+  .cards-list,.rf-grid{grid-template-columns:minmax(0,1fr)}
+  .sb-r{display:none}
+  .sb{padding:4px 6px}
 }
 @media (max-height:820px) and (min-width:901px){
   .news{padding:14px 18px}
@@ -803,19 +798,11 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   .news-e{font-size:60px}
   .news h2{font-size:30px}
   .news p{font-size:16px}
-  .tpanel{gap:8px;padding:12px}
-  .tip{padding:10px 12px}
-  .trophy{font-size:56px}
-  .over-h h1{font-size:34px}
-  .over{gap:12px}
-  .ocard{gap:8px;padding:12px 16px}
-  .rf{padding:10px}
-  .rf span{font-size:22px}
-  .tip span{font-size:20px}
-  .tp-money{font-size:30px}
-  .tp-status{padding:7px 10px;font-size:14px}
-  .bin{min-height:110px;padding:10px}
-  .expl{padding:10px 12px;gap:4px;font-size:13px}
+  .stage,.rv,.over{gap:12px}
+  .res{padding:14px 18px;gap:4px}
+  .res-p{font-size:clamp(34px,14cqi,64px)}
+  .trophy{font-size:48px}
+  .rv-h,.over-h h1{font-size:32px}
   .lobby-h h1{font-size:40px}
   .lobby{gap:14px}
   .ljoin-qr{width:150px}
@@ -5012,28 +4999,6 @@ const Game = (() => {
     });
     return { round: G.round, ev: G.evs[G.round - 1], N, walked: N - sold[0] - sold[1], teams };
   }
-  function explain(r) {
-    const e = C.EVENTS[r.ev], [a, b] = r.teams, out = [];
-    if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
-    else { const c = a.price < b.price ? 0 : 1; out.push(`${name(c)} продаёт дешевле (${r.teams[c].price} ₽ против ${r.teams[1 - c].price} ₽), поэтому к ней пошло больше людей.`); }
-    r.teams.forEach((x, i) => {
-      if (x.card === 'ad') out.push(`📣 Реклама привела в ${name(i)} больше покупателей.`);
-      if (x.blocked) out.push(`🛡️ Охрана ${name(i)} отбила пакость «${C.CARDS[x.blockedCard].n}».`);
-      if (x.hit === 'rumor') out.push(`🪳 Слух про таракана отпугнул часть покупателей ${name(i)}.`);
-      if (x.hit === 'power') out.push(`🔌 У ${name(i)} отключили свет: успели сварить только ${x.cups} чашек из ${x.ordered}.`);
-      if (x.hit === 'tax') out.push(`🧾 Налоговая забрала у ${name(i)} ${fmt(x.tax)} ₽ — 30% выручки. Налог — это средство платежа.`);
-      if (x.poured > 0) out.push(`🗑️ ${name(i)} вылила ${x.poured} ${plural(x.poured, 'чашку', 'чашки', 'чашек')} — ${fmt(x.poured * e.cost)} ₽ ушли в раковину.`);
-      if (x.lost > 0) out.push(`🏃 В ${name(i)} кончился кофе: ${x.lost} ${plural(x.lost, 'человек', 'человека', 'человек')} купили его у соперника.`);
-      if (x.short > 0) out.push(`😤 В ${name(i)} кончился кофе: ${x.short} ${plural(x.short, 'человек', 'человека', 'человек')} ушли ни с чем.`);
-      if (x.loan) out.push(`💳 ${name(i)} взяла кредит: +600 ₽ сейчас, но в конце вернёт 800 ₽.`);
-      if (x.dep) out.push(`🏦 ${name(i)} открыла вклад: деньги полежат и в конце вернутся с процентами.`);
-    });
-    const hi = r.teams.map(x => x.price).filter(pp => pp >= 80);
-    if (hi.length) { const pp = Math.max(...hi); out.push(`Дорогой кофе берут не все: при цене ${pp} ₽ покупают только ${Math.round(W(e, pp) * 10)} из 10 желающих.`); }
-    if (r.ev === 'beans') out.push('🌍 Зёрна покупают за границей за доллары — это мировые деньги.');
-    return out.slice(0, 6);
-  }
-
   /* ---------- flow ---------- */
   function start() {
     G.evs = plan(G.rounds); G.round = 1; G.phase = 'orders'; G.res = null;
@@ -5115,7 +5080,7 @@ const Game = (() => {
   /* ---------- rendering ---------- */
   const capState = i => {
     const c = G.teams[i].cap;
-    return c ? (Live.alive(c) ? '📱 Капитан на связи' : '📱 Капитан отключился') : '📱 Капитана пока нет';
+    return c ? (Live.alive(c) ? 'Капитан на связи' : 'Капитан отключился') : 'Капитана пока нет';
   };
   function updateCaps() {
     $$('[data-capst]', scr).forEach(el => { const c = G.teams[+el.dataset.capst].cap; el.textContent = capState(+el.dataset.capst); el.classList.toggle('ok', !!c && Live.alive(c)); });
@@ -5123,14 +5088,17 @@ const Game = (() => {
     const q = $('#gJoinQr');
     if (q && Live.enabled && q.dataset.code !== Live.code) { q.innerHTML = Live.qr(Live.phoneUrl()); q.dataset.code = Live.code; $('#gJoinCode').textContent = 'код ' + Live.code; }
   }
-  function meta() {
-    $('#gMeta').textContent = G.phase === 'lobby' ? 'Подготовка' : G.phase === 'over' ? 'Игра окончена' : `Раунд ${G.round} из ${G.rounds}`;
-  }
-  function cardsRow(t) {
-    return `<div class="tp-cards">${CARD_IDS.map(id => { const c = C.CARDS[id]; return `<span class="tp-card ${c.good ? 'good' : 'evil'} ${t.cards[id] ? '' : 'used'}" title="${c.n}: ${c.d}">${c.e}</span>`; }).join('')}</div>`;
-  }
-  function bankRow(t) {
-    return `<div class="tp-bank"><span class="${t.loan ? 'on' : ''}">💳 ${t.loan ? 'кредит: вернуть 800 ₽' : 'кредит не брали'}</span><span class="${t.dep ? 'on' : ''}">🏦 ${t.dep ? 'вклад: получить 650 ₽' : 'вклада нет'}</span></div>`;
+  function meta(anim) {
+    root.dataset.phase = G.phase;
+    const m = $('#gMeta');
+    if (G.phase === 'lobby') { m.innerHTML = '<span class="sb-r">Подготовка</span>'; return; }
+    const T = G.teams, done = G.phase === 'over';
+    const cash = T.map((t, i) => done ? finalMoney(i) : t.money);
+    const lead = cash[0] === cash[1] ? -1 : cash[0] > cash[1] ? 0 : 1;
+    const num = i => { const from = anim && G.res ? G.res.teams[i].before : cash[i]; return `<b><span data-count="${from}" data-to="${cash[i]}">${fmt(from)}</span>&nbsp;₽</b>`; };
+    m.innerHTML = `<span class="sb t0 ${lead === 0 ? 'lead' : ''}" title="Деньги в кассе"><i>${T[0].emoji}</i><span class="sb-n">${esc(T[0].name)}</span>${num(0)}</span>
+      <span class="sb-r">${done ? 'итог' : `раунд ${G.round} из ${G.rounds}`}</span>
+      <span class="sb t1 ${lead === 1 ? 'lead' : ''}" title="Деньги в кассе">${num(1)}<span class="sb-n">${esc(T[1].name)}</span><i>${T[1].emoji}</i></span>`;
   }
 
   function lobby() {
@@ -5163,123 +5131,134 @@ const Game = (() => {
   function newsCard(e) {
     const k = G.round + '/' + G.evs.join(), still = k === newsKey; newsKey = k;  // animate once per round, not on every re-render
     return `<div class="news ${still ? 'still' : ''}">
-      <div class="news-top"><span>📰 Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
+      <div class="news-top"><span>Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
       <div class="news-body"><div class="news-e">${e.e}</div><div><h2>${e.t}</h2><p>${e.x}</p></div></div>
-      <div class="news-facts"><span>👥 Покупателей: <b>${e.lvl}</b></span><span>☕ Чашка обходится в <b>${e.cost} ₽</b></span></div>
+      <div class="news-facts"><span>Покупателей: <b>${e.lvl}</b></span><span>Одна чашка обходится в <b>${e.cost} ₽</b></span></div>
     </div>`;
   }
   function orders() {
-    const e = ev(), both = G.teams.every(t => t.order);
-    const panel = i => {
-      const t = G.teams[i];
-      return `<aside class="tpanel t${i}">
-        <div class="tp-head"><span class="tp-e">${t.emoji}</span><b>${esc(t.name)}</b></div>
-        <div class="tp-money"><small>в кассе</small>${fmt(t.money)} ₽</div>
-        <div class="tp-status ${t.order ? 'ok' : ''}">${t.order ? '✅ Решение принято' : '⏳ Команда думает…'}</div>
-        ${cardsRow(t)}${bankRow(t)}
-        <div class="tp-foot"><span class="cap-st live-only" data-capst="${i}"></span><button class="g-btn ghost sm" data-manual="${i}">✍️ Ввести решение</button></div>
-      </aside>`;
+    const e = ev(), both = G.teams.every(t => t.order), top = C.PRICES[C.PRICES.length - 1];
+    const st = i => {
+      const t = G.teams[i], ok = !!t.order;
+      return `<div class="ost t${i} ${ok ? 'ok' : ''}">
+        <span class="ost-e">${t.emoji}</span>
+        <div class="ost-t"><b>${esc(t.name)}</b><span>${ok ? 'Решение принято' : 'Думают…'}</span></div>
+        <span class="ost-mark">${ok ? '✓' : ''}</span>
+        <div class="ost-foot"><span class="cap-st live-only" data-capst="${i}"></span><button class="lnk" data-manual="${i}">${ok ? 'изменить на экране' : 'ввести на экране'}</button></div>
+      </div>`;
     };
-    scr.innerHTML = `<div class="board3">
-      ${panel(0)}
-      <section class="center">
-        ${newsCard(e)}
-        <div class="tips">
-          <div class="tip"><span>🏷️</span><b>Кто дешевле — к тому идут</b><small>Разные цены: 7 из 10 покупателей идут в более дешёвую кофейню. Цены равны — поровну.</small></div>
-          <div class="tip"><span>💸</span><b>Дорого — не все купят</b><small>При ${C.PRICES.map(pp => `${pp} ₽`).join(' / ')} кофе берут ${C.PRICES.map(pp => Math.round(W(e, pp) * 10)).join(' / ')} из 10 желающих.</small></div>
-          <div class="tip"><span>🗑️</span><b>Лишнее — в раковину</b><small>Непроданный кофе выливают. Не хватило кофе — покупатели уходят к соперникам.</small></div>
-        </div>
-        <div class="center-act">
-          <button class="g-btn gold big" id="gReveal" ${both ? '' : 'disabled'}>🔓 Вскрыть решения</button>
-          <p class="g-hint">${both ? 'Обе команды готовы! Вскрываем?' : Live.enabled ? 'Команды совещаются шёпотом, капитаны вводят решение на телефоне.' : 'Команды совещаются шёпотом, потом капитан вводит решение кнопкой «✍️ Ввести решение».'}</p>
-        </div>
-      </section>
-      ${panel(1)}
+    scr.innerHTML = `<div class="stage">
+      ${newsCard(e)}
+      <div class="rule-line"><span>Кто дешевле, к тому идут 7 из 10</span><span>За ${top} ₽ кофе берут только ${Math.round(W(e, top) * 10)} из 10</span><span>Лишний кофе выливают</span></div>
+      <div class="ost-row">${st(0)}${st(1)}</div>
+      <div class="center-act">
+        <button class="g-btn gold big" id="gReveal" ${both ? '' : 'disabled'}>Вскрыть решения</button>
+        <p class="g-hint">${both ? 'Обе команды готовы!' : Live.enabled ? 'Капитаны тайно отправляют решение с телефона.' : 'Капитаны по очереди вводят решение на экране, соперники отворачиваются.'}</p>
+      </div>
     </div>`;
     updateCaps();
   }
 
-  const STAMP = { rumor:'🪳 Таракан?!', tax:'🧾 Проверка', power:'🔌 Без света' };
+  /* what happened to one team this round: at most two short lines, the most important first */
+  function notes(r, i) {
+    const x = r.teams[i], e = C.EVENTS[r.ev], out = [];
+    const ppl = n => `${n} ${plural(n, 'покупатель', 'покупателя', 'покупателей')}`;
+    if (x.hit === 'power') out.push(['bad', `🔌 Соперник отключил свет: сварили только ${x.cups} из ${x.ordered}`]);
+    if (x.hit === 'rumor') out.push(['bad', '🪳 Слух про таракана отпугнул покупателей']);
+    if (x.hit === 'tax') out.push(['bad', '🧾 Налоговая забрала 30% выручки']);
+    if (x.blocked) out.push(['good', `🛡️ Охрана отбила пакость «${C.CARDS[x.blockedCard].n}»`]);
+    if (x.card === 'ad') out.push(['good', '📣 Реклама привела больше покупателей']);
+    if (x.lost > 0) out.push(['warn', `Кофе кончился: ${ppl(x.lost)} ушли к соперникам`]);
+    else if (x.short > 0) out.push(['warn', `Кофе кончился: ${ppl(x.short)} ушли ни с чем`]);
+    else if (x.poured > 0) out.push(['warn', `Вылили ${x.poured} ${plural(x.poured, 'чашку', 'чашки', 'чашек')}: ${fmt(x.poured * e.cost)} ₽ в раковину`]);
+    return out.slice(0, 2);
+  }
+  function why(r) {
+    const e = C.EVENTS[r.ev], [a, b] = r.teams, out = [];
+    if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
+    else { const c = a.price < b.price ? 0 : 1; out.push(`${name(c)} продаёт дешевле: ${r.teams[c].price} ₽ против ${r.teams[1 - c].price} ₽. К дешёвой кофейне идёт больше людей.`); }
+    const pp = Math.max(a.price, b.price);
+    if (r.ev === 'beans') out.push('Зёрна покупают за границей за доллары. Это мировые деньги.');
+    else if (pp >= 80) out.push(`За ${pp} ₽ кофе берут только ${Math.round(W(e, pp) * 10)} из 10 желающих.`);
+    return out;
+  }
+  const signed = n => (n >= 0 ? '+' : '−') + fmt(Math.abs(n)) + ' ₽';
   function revealView(anim) {
-    const r = G.res, e = C.EVENTS[r.ev], [a, b] = r.teams;
-    const dots = (n, cls) => Array.from({ length: n }, (_, k) => `<i class="${cls}" style="--d:${k * 22}ms"></i>`).join('');
-    const panel = i => {
-      const t = G.teams[i], x = r.teams[i], c = x.card && C.CARDS[x.card];
-      const row = (l, v, cls = '') => `<div class="rr ${cls}"><span>${l}</span><b>${v}</b></div>`;
-      return `<aside class="tpanel t${i} res">
-        <div class="tp-head"><span class="tp-e">${t.emoji}</span><b>${esc(t.name)}</b></div>
-        <div class="choice"><div><small>цена</small><b>${x.price} ₽</b></div><div><small>сварили</small><b>${x.cups}</b></div></div>
-        <div class="rcard ${c ? (c.good ? 'good' : 'evil') : 'none'}">${c ? `${c.e} ${c.n}` : 'без карты'}</div>
-        ${x.hit ? `<div class="rstamp evil">${STAMP[x.hit]}</div>` : x.blocked ? '<div class="rstamp good">🛡️ Защищено</div>' : ''}
-        <div class="rres">
-          ${row(`Продали ${x.sold} × ${x.price} ₽`, '+' + fmt(x.revenue) + ' ₽', 'plus')}
-          ${row(`Сварили ${x.cups} × ${e.cost} ₽`, '−' + fmt(x.cost) + ' ₽', 'minus')}
-          ${x.poured ? row('🗑️ Вылили', `${x.poured} ${plural(x.poured, 'чашку', 'чашки', 'чашек')}`, 'minus') : ''}
-          ${x.tax ? row('🧾 Налоговая', '−' + fmt(x.tax) + ' ₽', 'minus') : ''}
-          ${row('Прибыль за раунд', (x.profit >= 0 ? '+' : '−') + fmt(Math.abs(x.profit)) + ' ₽', 'total ' + (x.profit >= 0 ? 'plus' : 'minus'))}
-          ${x.bank ? row(x.bank > 0 ? '💳 Взяли кредит' : '🏦 Отнесли на вклад', (x.bank > 0 ? '+' : '−') + fmt(Math.abs(x.bank)) + ' ₽', x.bank > 0 ? 'plus' : 'minus') : ''}
-        </div>
-        <div class="tp-money"><small>в кассе</small><span><span data-count="${x.before}" data-to="${x.after}">${fmt(anim ? x.before : x.after)}</span> ₽</span></div>
-      </aside>`;
+    const r = G.res, e = C.EVENTS[r.ev], T = G.teams, X = r.teams;
+    const P = X.map(x => x.profit), win = P[0] === P[1] ? -1 : P[0] > P[1] ? 0 : 1;
+    const head = win < 0 ? 'Обе кофейни заработали поровну'
+      : P[win] < 0 ? `<span class="t${win}">${esc(name(win))}</span> потеряла меньше`
+      : `Больше заработала <span class="t${win}">${esc(name(win))}</span>`;
+    const card = i => {
+      const t = T[i], x = X[i];
+      return `<div class="res t${i} ${win === i && !anim ? 'win' : ''}" data-res="${i}">
+        <div class="res-h"><span class="res-e">${t.emoji}</span><b>${esc(t.name)}</b><span class="res-tag">выиграли раунд</span></div>
+        <div class="res-p ${x.profit >= 0 ? 'up' : 'down'}" data-count="0" data-to="${x.profit}" data-signed>${signed(anim ? 0 : x.profit)}</div>
+        <div class="res-f">${fmt(x.revenue)} ₽ выручка − ${fmt(x.cost)} ₽ на кофе${x.tax ? ` − ${fmt(x.tax)} ₽ налог` : ''}</div>
+        <div class="res-s">${x.cups ? `Продали ${x.sold} из ${x.cups} ${plural(x.cups, 'чашки', 'чашек', 'чашек')} по ${x.price} ₽` : 'Кофе не варили'}</div>
+        ${notes(r, i).map(([c, s]) => `<div class="res-n ${c}">${s}</div>`).join('')}
+        ${x.loan ? '<div class="res-b">💳 Взяли кредит: +600 ₽ сейчас, вернуть 800 ₽ в конце</div>' : ''}
+        ${x.dep ? '<div class="res-b">🏦 Отнесли 500 ₽ на вклад, в конце получат 650 ₽</div>' : ''}
+      </div>`;
     };
+    const seg = (n, cls, label) => n > 0 ? `<div class="cb-s ${cls}" style="flex:${n} 1 0"><b>${n}</b><span>${label}</span></div>` : '';
     const last = G.round >= G.rounds;
-    scr.innerHTML = `<div class="board3 ${anim ? 'anim' : ''}">
-      ${panel(0)}
-      <section class="center">
-        <div class="rev-head"><span>${e.e} ${e.t}</span><b>Кофе захотели ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')}</b></div>
-        <div class="crowd">
-          <div class="bin t0"><div class="bin-h">${G.teams[0].emoji} купили</div><div class="dots">${dots(a.sold, 'a')}</div><b>${a.sold}</b></div>
-          <div class="bin x"><div class="bin-h">🚶 не купили</div><div class="dots">${dots(r.walked, 'x')}</div><b>${r.walked}</b></div>
-          <div class="bin t1"><div class="bin-h">${G.teams[1].emoji} купили</div><div class="dots">${dots(b.sold, 'b')}</div><b>${b.sold}</b></div>
-        </div>
-        <ul class="expl">${explain(r).map(s => `<li>${esc(s)}</li>`).join('')}</ul>
-        <div class="center-act"><button class="g-btn gold big" id="gNext">${last ? '🏁 Итоги игры' : 'Следующий раунд →'}</button></div>
-      </section>
-      ${panel(1)}
+    scr.innerHTML = `<div class="rv ${anim ? 'anim' : ''}">
+      <div class="rv-top">
+        <div class="rv-meta">Раунд ${r.round} · ${e.e} ${e.t}</div>
+        <h2 class="rv-h">${head}</h2>
+      </div>
+      <div class="res-row">${card(0)}${card(1)}</div>
+      <div class="cb-wrap">
+        <div class="cb-h">Кофе хотели ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')}${r.walked ? `, ${r.walked} из них остались без кофе` : ''}. Вот куда они пошли:</div>
+        <div class="cb">${seg(X[0].sold, 't0', esc(T[0].name))}${seg(r.walked, 'x', 'без кофе')}${seg(X[1].sold, 't1', esc(T[1].name))}</div>
+      </div>
+      <div class="rv-why">${why(r).map(s => `<p>${esc(s)}</p>`).join('')}</div>
+      <div class="center-act"><button class="g-btn gold big" id="gNext">${last ? 'Итоги игры →' : 'Следующий раунд →'}</button></div>
     </div>`;
     if (anim) {
-      const tAfter = Math.min(2600, Math.max(a.sold, b.sold, r.walked) * 22 + 500);
-      setTimeout(() => { if (G.phase === 'reveal') { SFX.cash(); countUp(); } }, tAfter);
-      if (r.teams.some(x => x.hit)) setTimeout(SFX.evil, 600);
-      else if (r.teams.some(x => x.blocked)) setTimeout(SFX.shield, 600);
+      setTimeout(() => { if (G.phase === 'reveal') { SFX.cash(); countUp(); } }, 700);
+      setTimeout(() => { const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (c && G.phase === 'reveal') c.classList.add('win'); }, 1700);
+      if (X.some(x => x.hit)) setTimeout(SFX.evil, 500);
+      else if (X.some(x => x.blocked)) setTimeout(SFX.shield, 500);
     }
   }
   function countUp() {
-    $$('[data-count]', scr).forEach(el => {
-      const from = +el.dataset.count, to = +el.dataset.to, t0 = performance.now();
-      const f = t => { const k = Math.min(1, (t - t0) / 900); el.textContent = fmt(from + (to - from) * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); };
+    $$('[data-count]', root).forEach(el => {
+      const from = +el.dataset.count, to = +el.dataset.to, sg = el.hasAttribute('data-signed'), t0 = performance.now();
+      if (from === to) return;
+      const f = t => {
+        const k = Math.min(1, (t - t0) / 900), v = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+        el.textContent = sg ? signed(v) : fmt(v);
+        if (k < 1) requestAnimationFrame(f);
+      };
       requestAnimationFrame(f);
     });
   }
 
   function over() {
     const wi = winner(), T = G.teams;
-    const best = T.map(t => t.hist.reduce((m, h) => h.profit > m.profit ? h : m, { profit: -Infinity, round: 0 }));
-    const sum = (t, k) => t.hist.reduce((s, h) => s + h[k], 0);
     const card = i => {
-      const t = T[i];
-      return `<div class="ocard t${i} ${wi === i ? 'win' : ''}">
-        <div class="tp-head"><span class="tp-e">${t.emoji}</span><b>${esc(t.name)}</b>${wi === i ? '<span class="crown">🏆</span>' : ''}</div>
-        <div class="rres">
-          <div class="rr"><span>В кассе после ${G.rounds} раундов</span><b>${fmt(t.money)} ₽</b></div>
-          ${t.loan ? `<div class="rr minus"><span>💳 Вернули кредит</span><b>−${fmt(C.LOAN.back)} ₽</b></div>` : ''}
-          ${t.dep ? `<div class="rr plus"><span>🏦 Забрали вклад</span><b>+${fmt(C.DEPOSIT.back)} ₽</b></div>` : ''}
-          <div class="rr total"><span>Итого</span><b>${fmt(finalMoney(i))} ₽</b></div>
-        </div>
-        <div class="ostats"><span>☕ продали <b>${sum(t, 'sold')}</b></span><span>🗑️ вылили <b>${sum(t, 'poured')}</b></span><span>⭐ лучший раунд <b>${best[i].round ? (best[i].profit >= 0 ? '+' : '−') + fmt(Math.abs(best[i].profit)) + ' ₽' : '—'}</b></span></div>
+      const t = T[i], adj = [];
+      if (t.loan) adj.push(`вернули кредит ${fmt(C.LOAN.back)} ₽`);
+      if (t.dep) adj.push(`забрали вклад ${fmt(C.DEPOSIT.back)} ₽`);
+      return `<div class="res t${i} ${wi === i ? 'win' : ''}">
+        <div class="res-h"><span class="res-e">${t.emoji}</span><b>${esc(t.name)}</b><span class="res-tag">победители</span></div>
+        <div class="res-p">${fmt(finalMoney(i))} ₽</div>
+        <div class="res-s">${adj.length ? `В кассе было ${fmt(t.money)} ₽, ${adj.join(', ')}` : `Столько в кассе после ${G.rounds} раундов`}</div>
       </div>`;
     };
     const FN = [
       ['📏', 'Мера стоимости', 'вы назначали цену чашки и сравнивали её с ценой соперника'],
       ['🔄', 'Средство обращения', 'покупатель отдавал деньги и сразу получал кофе'],
-      ['🧾', 'Средство платежа', 'налоговая и возврат кредита: деньги отдают, а товар не получают'],
+      ['🧾', 'Средство платежа', 'налог и возврат кредита: деньги отдают, а товар не получают'],
       ['🐷', 'Средство накопления', 'вклад: отложили деньги сейчас, получили больше потом'],
       ['🌍', 'Мировые деньги', 'зёрна из Бразилии покупают за доллары']
     ];
     scr.innerHTML = `<div class="over">
-      <div class="over-h"><div class="trophy">${wi < 0 ? '🤝' : '🏆'}</div><h1>${wi < 0 ? 'Ничья! Обе кофейни заработали поровну' : `Победила ${esc(name(wi))}!`}</h1></div>
-      <div class="over-teams">${card(0)}${card(1)}</div>
-      <div class="reflect"><h3>Где в игре прятались функции денег</h3><div class="rf-grid">${FN.map(([e, n, d]) => `<div class="rf"><span>${e}</span><b>${n}</b><small>${d}</small></div>`).join('')}</div></div>
+      <div class="over-h"><div class="trophy">${wi < 0 ? '🤝' : '🏆'}</div><h1>${wi < 0 ? 'Ничья! Денег у кофеен поровну' : `Победила <span class="t${wi}">${esc(name(wi))}</span>`}</h1></div>
+      <div class="res-row">${card(0)}${card(1)}</div>
+      <div class="reflect"><h3>Где в игре были функции денег</h3><div class="rf-grid">${FN.map(([e, n, d]) => `<div class="rf"><b>${e} ${n}</b><small>${d}</small></div>`).join('')}</div></div>
       <div class="cta-row mid"><button class="g-btn big" id="gAgain">↺ Сыграть ещё раз</button><button class="g-btn gold big" id="gToFinal">К итогам урока →</button></div>
     </div>`;
   }
@@ -5287,7 +5266,7 @@ const Game = (() => {
   let lastPhase = null;
   function render(anim) {
     if (!isOpen) return;
-    meta();
+    meta(anim);
     if (G.phase === 'lobby') lobby();
     else if (G.phase === 'orders') orders();
     else if (G.phase === 'reveal') revealView(anim);

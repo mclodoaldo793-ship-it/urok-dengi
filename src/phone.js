@@ -143,20 +143,16 @@ function game(g) {
     main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки и сколько кофе сварить.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
     $('#pUncap').addEventListener('click', () => send('uncap', {}));
   } else if (g.phase === 'reveal' && t.res) {
-    const r = t.res;
-    main.innerHTML = `<div class="pg">${head}<div class="card">
-      <h1 class="center">${r.profit >= 0 ? '📈' : '📉'} ${r.profit >= 0 ? '+' : '−'}${fmt(Math.abs(r.profit))} ₽ за раунд</h1>
-      <div class="rows">
-        <div><span>Цена чашки</span><b>${r.price} ₽</b></div>
-        <div><span>Сварили</span><b>${r.cups}</b></div>
-        <div><span>Продали</span><b>${r.sold}</b></div>
-        ${r.poured ? `<div class="bad"><span>Вылили</span><b>${r.poured}</b></div>` : ''}
-        <div><span>Выручка</span><b>+${fmt(r.revenue)} ₽</b></div>
-        <div class="bad"><span>Затраты</span><b>−${fmt(r.cost)} ₽</b></div>
-        ${r.tax ? `<div class="bad"><span>Налоговая</span><b>−${fmt(r.tax)} ₽</b></div>` : ''}
-        ${r.bank ? `<div><span>Банк</span><b>${r.bank > 0 ? '+' : '−'}${fmt(Math.abs(r.bank))} ₽</b></div>` : ''}
-      </div>
-      <p class="muted center">Подробности — на большом экране 👀</p></div></div>`;
+    const r = t.res, o = g.teams[1 - me].res;
+    const v = !o || r.profit === o.profit ? 0 : r.profit > o.profit ? 1 : -1;
+    const sg = n => (n >= 0 ? '+' : '−') + fmt(Math.abs(n)) + '&nbsp;₽';
+    main.innerHTML = `<div class="pg">${head}<div class="card center pres ${v > 0 ? 'win' : ''}">
+      <p class="pres-v">${v > 0 ? '🎉 Вы заработали больше соперника' : v < 0 ? 'Соперник заработал больше' : 'В этом раунде ничья'}</p>
+      <div class="pres-p ${r.profit >= 0 ? 'up' : 'down'}">${sg(r.profit)}</div>
+      <p>${fmt(r.revenue)} ₽ выручка − ${fmt(r.cost)} ₽ на кофе${r.tax ? ` − ${fmt(r.tax)} ₽ налог` : ''}</p>
+      <p class="muted">${r.cups ? `Продали ${r.sold} из ${r.cups} чашек по ${r.price} ₽` : 'Кофе не варили'}</p>
+      ${o ? `<p class="pres-o">У соперника: <b>${sg(o.profit)}</b></p>` : ''}
+    </div></div>`;
   } else if (g.phase === 'over') {
     const win = g.winner === me, draw = g.winner === -1;
     main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">${draw ? '🤝' : win ? '🏆' : '🥈'}</div>

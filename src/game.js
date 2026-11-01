@@ -80,28 +80,6 @@ const Game = (() => {
     });
     return { round: G.round, ev: G.evs[G.round - 1], N, walked: N - sold[0] - sold[1], teams };
   }
-  function explain(r) {
-    const e = C.EVENTS[r.ev], [a, b] = r.teams, out = [];
-    if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
-    else { const c = a.price < b.price ? 0 : 1; out.push(`${name(c)} продаёт дешевле (${r.teams[c].price} ₽ против ${r.teams[1 - c].price} ₽), поэтому к ней пошло больше людей.`); }
-    r.teams.forEach((x, i) => {
-      if (x.card === 'ad') out.push(`📣 Реклама привела в ${name(i)} больше покупателей.`);
-      if (x.blocked) out.push(`🛡️ Охрана ${name(i)} отбила пакость «${C.CARDS[x.blockedCard].n}».`);
-      if (x.hit === 'rumor') out.push(`🪳 Слух про таракана отпугнул часть покупателей ${name(i)}.`);
-      if (x.hit === 'power') out.push(`🔌 У ${name(i)} отключили свет: успели сварить только ${x.cups} чашек из ${x.ordered}.`);
-      if (x.hit === 'tax') out.push(`🧾 Налоговая забрала у ${name(i)} ${fmt(x.tax)} ₽ — 30% выручки. Налог — это средство платежа.`);
-      if (x.poured > 0) out.push(`🗑️ ${name(i)} вылила ${x.poured} ${plural(x.poured, 'чашку', 'чашки', 'чашек')} — ${fmt(x.poured * e.cost)} ₽ ушли в раковину.`);
-      if (x.lost > 0) out.push(`🏃 В ${name(i)} кончился кофе: ${x.lost} ${plural(x.lost, 'человек', 'человека', 'человек')} купили его у соперника.`);
-      if (x.short > 0) out.push(`😤 В ${name(i)} кончился кофе: ${x.short} ${plural(x.short, 'человек', 'человека', 'человек')} ушли ни с чем.`);
-      if (x.loan) out.push(`💳 ${name(i)} взяла кредит: +600 ₽ сейчас, но в конце вернёт 800 ₽.`);
-      if (x.dep) out.push(`🏦 ${name(i)} открыла вклад: деньги полежат и в конце вернутся с процентами.`);
-    });
-    const hi = r.teams.map(x => x.price).filter(pp => pp >= 80);
-    if (hi.length) { const pp = Math.max(...hi); out.push(`Дорогой кофе берут не все: при цене ${pp} ₽ покупают только ${Math.round(W(e, pp) * 10)} из 10 желающих.`); }
-    if (r.ev === 'beans') out.push('🌍 Зёрна покупают за границей за доллары — это мировые деньги.');
-    return out.slice(0, 6);
-  }
-
   /* ---------- flow ---------- */
   function start() {
     G.evs = plan(G.rounds); G.round = 1; G.phase = 'orders'; G.res = null;
@@ -183,7 +161,7 @@ const Game = (() => {
   /* ---------- rendering ---------- */
   const capState = i => {
     const c = G.teams[i].cap;
-    return c ? (Live.alive(c) ? '📱 Капитан на связи' : '📱 Капитан отключился') : '📱 Капитана пока нет';
+    return c ? (Live.alive(c) ? 'Капитан на связи' : 'Капитан отключился') : 'Капитана пока нет';
   };
   function updateCaps() {
     $$('[data-capst]', scr).forEach(el => { const c = G.teams[+el.dataset.capst].cap; el.textContent = capState(+el.dataset.capst); el.classList.toggle('ok', !!c && Live.alive(c)); });
@@ -191,14 +169,17 @@ const Game = (() => {
     const q = $('#gJoinQr');
     if (q && Live.enabled && q.dataset.code !== Live.code) { q.innerHTML = Live.qr(Live.phoneUrl()); q.dataset.code = Live.code; $('#gJoinCode').textContent = 'код ' + Live.code; }
   }
-  function meta() {
-    $('#gMeta').textContent = G.phase === 'lobby' ? 'Подготовка' : G.phase === 'over' ? 'Игра окончена' : `Раунд ${G.round} из ${G.rounds}`;
-  }
-  function cardsRow(t) {
-    return `<div class="tp-cards">${CARD_IDS.map(id => { const c = C.CARDS[id]; return `<span class="tp-card ${c.good ? 'good' : 'evil'} ${t.cards[id] ? '' : 'used'}" title="${c.n}: ${c.d}">${c.e}</span>`; }).join('')}</div>`;
-  }
-  function bankRow(t) {
-    return `<div class="tp-bank"><span class="${t.loan ? 'on' : ''}">💳 ${t.loan ? 'кредит: вернуть 800 ₽' : 'кредит не брали'}</span><span class="${t.dep ? 'on' : ''}">🏦 ${t.dep ? 'вклад: получить 650 ₽' : 'вклада нет'}</span></div>`;
+  function meta(anim) {
+    root.dataset.phase = G.phase;
+    const m = $('#gMeta');
+    if (G.phase === 'lobby') { m.innerHTML = '<span class="sb-r">Подготовка</span>'; return; }
+    const T = G.teams, done = G.phase === 'over';
+    const cash = T.map((t, i) => done ? finalMoney(i) : t.money);
+    const lead = cash[0] === cash[1] ? -1 : cash[0] > cash[1] ? 0 : 1;
+    const num = i => { const from = anim && G.res ? G.res.teams[i].before : cash[i]; return `<b><span data-count="${from}" data-to="${cash[i]}">${fmt(from)}</span>&nbsp;₽</b>`; };
+    m.innerHTML = `<span class="sb t0 ${lead === 0 ? 'lead' : ''}" title="Деньги в кассе"><i>${T[0].emoji}</i><span class="sb-n">${esc(T[0].name)}</span>${num(0)}</span>
+      <span class="sb-r">${done ? 'итог' : `раунд ${G.round} из ${G.rounds}`}</span>
+      <span class="sb t1 ${lead === 1 ? 'lead' : ''}" title="Деньги в кассе">${num(1)}<span class="sb-n">${esc(T[1].name)}</span><i>${T[1].emoji}</i></span>`;
   }
 
   function lobby() {
@@ -231,123 +212,134 @@ const Game = (() => {
   function newsCard(e) {
     const k = G.round + '/' + G.evs.join(), still = k === newsKey; newsKey = k;  // animate once per round, not on every re-render
     return `<div class="news ${still ? 'still' : ''}">
-      <div class="news-top"><span>📰 Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
+      <div class="news-top"><span>Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
       <div class="news-body"><div class="news-e">${e.e}</div><div><h2>${e.t}</h2><p>${e.x}</p></div></div>
-      <div class="news-facts"><span>👥 Покупателей: <b>${e.lvl}</b></span><span>☕ Чашка обходится в <b>${e.cost} ₽</b></span></div>
+      <div class="news-facts"><span>Покупателей: <b>${e.lvl}</b></span><span>Одна чашка обходится в <b>${e.cost} ₽</b></span></div>
     </div>`;
   }
   function orders() {
-    const e = ev(), both = G.teams.every(t => t.order);
-    const panel = i => {
-      const t = G.teams[i];
-      return `<aside class="tpanel t${i}">
-        <div class="tp-head"><span class="tp-e">${t.emoji}</span><b>${esc(t.name)}</b></div>
-        <div class="tp-money"><small>в кассе</small>${fmt(t.money)} ₽</div>
-        <div class="tp-status ${t.order ? 'ok' : ''}">${t.order ? '✅ Решение принято' : '⏳ Команда думает…'}</div>
-        ${cardsRow(t)}${bankRow(t)}
-        <div class="tp-foot"><span class="cap-st live-only" data-capst="${i}"></span><button class="g-btn ghost sm" data-manual="${i}">✍️ Ввести решение</button></div>
-      </aside>`;
+    const e = ev(), both = G.teams.every(t => t.order), top = C.PRICES[C.PRICES.length - 1];
+    const st = i => {
+      const t = G.teams[i], ok = !!t.order;
+      return `<div class="ost t${i} ${ok ? 'ok' : ''}">
+        <span class="ost-e">${t.emoji}</span>
+        <div class="ost-t"><b>${esc(t.name)}</b><span>${ok ? 'Решение принято' : 'Думают…'}</span></div>
+        <span class="ost-mark">${ok ? '✓' : ''}</span>
+        <div class="ost-foot"><span class="cap-st live-only" data-capst="${i}"></span><button class="lnk" data-manual="${i}">${ok ? 'изменить на экране' : 'ввести на экране'}</button></div>
+      </div>`;
     };
-    scr.innerHTML = `<div class="board3">
-      ${panel(0)}
-      <section class="center">
-        ${newsCard(e)}
-        <div class="tips">
-          <div class="tip"><span>🏷️</span><b>Кто дешевле — к тому идут</b><small>Разные цены: 7 из 10 покупателей идут в более дешёвую кофейню. Цены равны — поровну.</small></div>
-          <div class="tip"><span>💸</span><b>Дорого — не все купят</b><small>При ${C.PRICES.map(pp => `${pp} ₽`).join(' / ')} кофе берут ${C.PRICES.map(pp => Math.round(W(e, pp) * 10)).join(' / ')} из 10 желающих.</small></div>
-          <div class="tip"><span>🗑️</span><b>Лишнее — в раковину</b><small>Непроданный кофе выливают. Не хватило кофе — покупатели уходят к соперникам.</small></div>
-        </div>
-        <div class="center-act">
-          <button class="g-btn gold big" id="gReveal" ${both ? '' : 'disabled'}>🔓 Вскрыть решения</button>
-          <p class="g-hint">${both ? 'Обе команды готовы! Вскрываем?' : Live.enabled ? 'Команды совещаются шёпотом, капитаны вводят решение на телефоне.' : 'Команды совещаются шёпотом, потом капитан вводит решение кнопкой «✍️ Ввести решение».'}</p>
-        </div>
-      </section>
-      ${panel(1)}
+    scr.innerHTML = `<div class="stage">
+      ${newsCard(e)}
+      <div class="rule-line"><span>Кто дешевле, к тому идут 7 из 10</span><span>За ${top} ₽ кофе берут только ${Math.round(W(e, top) * 10)} из 10</span><span>Лишний кофе выливают</span></div>
+      <div class="ost-row">${st(0)}${st(1)}</div>
+      <div class="center-act">
+        <button class="g-btn gold big" id="gReveal" ${both ? '' : 'disabled'}>Вскрыть решения</button>
+        <p class="g-hint">${both ? 'Обе команды готовы!' : Live.enabled ? 'Капитаны тайно отправляют решение с телефона.' : 'Капитаны по очереди вводят решение на экране, соперники отворачиваются.'}</p>
+      </div>
     </div>`;
     updateCaps();
   }
 
-  const STAMP = { rumor:'🪳 Таракан?!', tax:'🧾 Проверка', power:'🔌 Без света' };
+  /* what happened to one team this round: at most two short lines, the most important first */
+  function notes(r, i) {
+    const x = r.teams[i], e = C.EVENTS[r.ev], out = [];
+    const ppl = n => `${n} ${plural(n, 'покупатель', 'покупателя', 'покупателей')}`;
+    if (x.hit === 'power') out.push(['bad', `🔌 Соперник отключил свет: сварили только ${x.cups} из ${x.ordered}`]);
+    if (x.hit === 'rumor') out.push(['bad', '🪳 Слух про таракана отпугнул покупателей']);
+    if (x.hit === 'tax') out.push(['bad', '🧾 Налоговая забрала 30% выручки']);
+    if (x.blocked) out.push(['good', `🛡️ Охрана отбила пакость «${C.CARDS[x.blockedCard].n}»`]);
+    if (x.card === 'ad') out.push(['good', '📣 Реклама привела больше покупателей']);
+    if (x.lost > 0) out.push(['warn', `Кофе кончился: ${ppl(x.lost)} ушли к соперникам`]);
+    else if (x.short > 0) out.push(['warn', `Кофе кончился: ${ppl(x.short)} ушли ни с чем`]);
+    else if (x.poured > 0) out.push(['warn', `Вылили ${x.poured} ${plural(x.poured, 'чашку', 'чашки', 'чашек')}: ${fmt(x.poured * e.cost)} ₽ в раковину`]);
+    return out.slice(0, 2);
+  }
+  function why(r) {
+    const e = C.EVENTS[r.ev], [a, b] = r.teams, out = [];
+    if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
+    else { const c = a.price < b.price ? 0 : 1; out.push(`${name(c)} продаёт дешевле: ${r.teams[c].price} ₽ против ${r.teams[1 - c].price} ₽. К дешёвой кофейне идёт больше людей.`); }
+    const pp = Math.max(a.price, b.price);
+    if (r.ev === 'beans') out.push('Зёрна покупают за границей за доллары. Это мировые деньги.');
+    else if (pp >= 80) out.push(`За ${pp} ₽ кофе берут только ${Math.round(W(e, pp) * 10)} из 10 желающих.`);
+    return out;
+  }
+  const signed = n => (n >= 0 ? '+' : '−') + fmt(Math.abs(n)) + ' ₽';
   function revealView(anim) {
-    const r = G.res, e = C.EVENTS[r.ev], [a, b] = r.teams;
-    const dots = (n, cls) => Array.from({ length: n }, (_, k) => `<i class="${cls}" style="--d:${k * 22}ms"></i>`).join('');
-    const panel = i => {
-      const t = G.teams[i], x = r.teams[i], c = x.card && C.CARDS[x.card];
-      const row = (l, v, cls = '') => `<div class="rr ${cls}"><span>${l}</span><b>${v}</b></div>`;
-      return `<aside class="tpanel t${i} res">
-        <div class="tp-head"><span class="tp-e">${t.emoji}</span><b>${esc(t.name)}</b></div>
-        <div class="choice"><div><small>цена</small><b>${x.price} ₽</b></div><div><small>сварили</small><b>${x.cups}</b></div></div>
-        <div class="rcard ${c ? (c.good ? 'good' : 'evil') : 'none'}">${c ? `${c.e} ${c.n}` : 'без карты'}</div>
-        ${x.hit ? `<div class="rstamp evil">${STAMP[x.hit]}</div>` : x.blocked ? '<div class="rstamp good">🛡️ Защищено</div>' : ''}
-        <div class="rres">
-          ${row(`Продали ${x.sold} × ${x.price} ₽`, '+' + fmt(x.revenue) + ' ₽', 'plus')}
-          ${row(`Сварили ${x.cups} × ${e.cost} ₽`, '−' + fmt(x.cost) + ' ₽', 'minus')}
-          ${x.poured ? row('🗑️ Вылили', `${x.poured} ${plural(x.poured, 'чашку', 'чашки', 'чашек')}`, 'minus') : ''}
-          ${x.tax ? row('🧾 Налоговая', '−' + fmt(x.tax) + ' ₽', 'minus') : ''}
-          ${row('Прибыль за раунд', (x.profit >= 0 ? '+' : '−') + fmt(Math.abs(x.profit)) + ' ₽', 'total ' + (x.profit >= 0 ? 'plus' : 'minus'))}
-          ${x.bank ? row(x.bank > 0 ? '💳 Взяли кредит' : '🏦 Отнесли на вклад', (x.bank > 0 ? '+' : '−') + fmt(Math.abs(x.bank)) + ' ₽', x.bank > 0 ? 'plus' : 'minus') : ''}
-        </div>
-        <div class="tp-money"><small>в кассе</small><span><span data-count="${x.before}" data-to="${x.after}">${fmt(anim ? x.before : x.after)}</span> ₽</span></div>
-      </aside>`;
+    const r = G.res, e = C.EVENTS[r.ev], T = G.teams, X = r.teams;
+    const P = X.map(x => x.profit), win = P[0] === P[1] ? -1 : P[0] > P[1] ? 0 : 1;
+    const head = win < 0 ? 'Обе кофейни заработали поровну'
+      : P[win] < 0 ? `<span class="t${win}">${esc(name(win))}</span> потеряла меньше`
+      : `Больше заработала <span class="t${win}">${esc(name(win))}</span>`;
+    const card = i => {
+      const t = T[i], x = X[i];
+      return `<div class="res t${i} ${win === i && !anim ? 'win' : ''}" data-res="${i}">
+        <div class="res-h"><span class="res-e">${t.emoji}</span><b>${esc(t.name)}</b><span class="res-tag">выиграли раунд</span></div>
+        <div class="res-p ${x.profit >= 0 ? 'up' : 'down'}" data-count="0" data-to="${x.profit}" data-signed>${signed(anim ? 0 : x.profit)}</div>
+        <div class="res-f">${fmt(x.revenue)} ₽ выручка − ${fmt(x.cost)} ₽ на кофе${x.tax ? ` − ${fmt(x.tax)} ₽ налог` : ''}</div>
+        <div class="res-s">${x.cups ? `Продали ${x.sold} из ${x.cups} ${plural(x.cups, 'чашки', 'чашек', 'чашек')} по ${x.price} ₽` : 'Кофе не варили'}</div>
+        ${notes(r, i).map(([c, s]) => `<div class="res-n ${c}">${s}</div>`).join('')}
+        ${x.loan ? '<div class="res-b">💳 Взяли кредит: +600 ₽ сейчас, вернуть 800 ₽ в конце</div>' : ''}
+        ${x.dep ? '<div class="res-b">🏦 Отнесли 500 ₽ на вклад, в конце получат 650 ₽</div>' : ''}
+      </div>`;
     };
+    const seg = (n, cls, label) => n > 0 ? `<div class="cb-s ${cls}" style="flex:${n} 1 0"><b>${n}</b><span>${label}</span></div>` : '';
     const last = G.round >= G.rounds;
-    scr.innerHTML = `<div class="board3 ${anim ? 'anim' : ''}">
-      ${panel(0)}
-      <section class="center">
-        <div class="rev-head"><span>${e.e} ${e.t}</span><b>Кофе захотели ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')}</b></div>
-        <div class="crowd">
-          <div class="bin t0"><div class="bin-h">${G.teams[0].emoji} купили</div><div class="dots">${dots(a.sold, 'a')}</div><b>${a.sold}</b></div>
-          <div class="bin x"><div class="bin-h">🚶 не купили</div><div class="dots">${dots(r.walked, 'x')}</div><b>${r.walked}</b></div>
-          <div class="bin t1"><div class="bin-h">${G.teams[1].emoji} купили</div><div class="dots">${dots(b.sold, 'b')}</div><b>${b.sold}</b></div>
-        </div>
-        <ul class="expl">${explain(r).map(s => `<li>${esc(s)}</li>`).join('')}</ul>
-        <div class="center-act"><button class="g-btn gold big" id="gNext">${last ? '🏁 Итоги игры' : 'Следующий раунд →'}</button></div>
-      </section>
-      ${panel(1)}
+    scr.innerHTML = `<div class="rv ${anim ? 'anim' : ''}">
+      <div class="rv-top">
+        <div class="rv-meta">Раунд ${r.round} · ${e.e} ${e.t}</div>
+        <h2 class="rv-h">${head}</h2>
+      </div>
+      <div class="res-row">${card(0)}${card(1)}</div>
+      <div class="cb-wrap">
+        <div class="cb-h">Кофе хотели ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')}${r.walked ? `, ${r.walked} из них остались без кофе` : ''}. Вот куда они пошли:</div>
+        <div class="cb">${seg(X[0].sold, 't0', esc(T[0].name))}${seg(r.walked, 'x', 'без кофе')}${seg(X[1].sold, 't1', esc(T[1].name))}</div>
+      </div>
+      <div class="rv-why">${why(r).map(s => `<p>${esc(s)}</p>`).join('')}</div>
+      <div class="center-act"><button class="g-btn gold big" id="gNext">${last ? 'Итоги игры →' : 'Следующий раунд →'}</button></div>
     </div>`;
     if (anim) {
-      const tAfter = Math.min(2600, Math.max(a.sold, b.sold, r.walked) * 22 + 500);
-      setTimeout(() => { if (G.phase === 'reveal') { SFX.cash(); countUp(); } }, tAfter);
-      if (r.teams.some(x => x.hit)) setTimeout(SFX.evil, 600);
-      else if (r.teams.some(x => x.blocked)) setTimeout(SFX.shield, 600);
+      setTimeout(() => { if (G.phase === 'reveal') { SFX.cash(); countUp(); } }, 700);
+      setTimeout(() => { const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (c && G.phase === 'reveal') c.classList.add('win'); }, 1700);
+      if (X.some(x => x.hit)) setTimeout(SFX.evil, 500);
+      else if (X.some(x => x.blocked)) setTimeout(SFX.shield, 500);
     }
   }
   function countUp() {
-    $$('[data-count]', scr).forEach(el => {
-      const from = +el.dataset.count, to = +el.dataset.to, t0 = performance.now();
-      const f = t => { const k = Math.min(1, (t - t0) / 900); el.textContent = fmt(from + (to - from) * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); };
+    $$('[data-count]', root).forEach(el => {
+      const from = +el.dataset.count, to = +el.dataset.to, sg = el.hasAttribute('data-signed'), t0 = performance.now();
+      if (from === to) return;
+      const f = t => {
+        const k = Math.min(1, (t - t0) / 900), v = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+        el.textContent = sg ? signed(v) : fmt(v);
+        if (k < 1) requestAnimationFrame(f);
+      };
       requestAnimationFrame(f);
     });
   }
 
   function over() {
     const wi = winner(), T = G.teams;
-    const best = T.map(t => t.hist.reduce((m, h) => h.profit > m.profit ? h : m, { profit: -Infinity, round: 0 }));
-    const sum = (t, k) => t.hist.reduce((s, h) => s + h[k], 0);
     const card = i => {
-      const t = T[i];
-      return `<div class="ocard t${i} ${wi === i ? 'win' : ''}">
-        <div class="tp-head"><span class="tp-e">${t.emoji}</span><b>${esc(t.name)}</b>${wi === i ? '<span class="crown">🏆</span>' : ''}</div>
-        <div class="rres">
-          <div class="rr"><span>В кассе после ${G.rounds} раундов</span><b>${fmt(t.money)} ₽</b></div>
-          ${t.loan ? `<div class="rr minus"><span>💳 Вернули кредит</span><b>−${fmt(C.LOAN.back)} ₽</b></div>` : ''}
-          ${t.dep ? `<div class="rr plus"><span>🏦 Забрали вклад</span><b>+${fmt(C.DEPOSIT.back)} ₽</b></div>` : ''}
-          <div class="rr total"><span>Итого</span><b>${fmt(finalMoney(i))} ₽</b></div>
-        </div>
-        <div class="ostats"><span>☕ продали <b>${sum(t, 'sold')}</b></span><span>🗑️ вылили <b>${sum(t, 'poured')}</b></span><span>⭐ лучший раунд <b>${best[i].round ? (best[i].profit >= 0 ? '+' : '−') + fmt(Math.abs(best[i].profit)) + ' ₽' : '—'}</b></span></div>
+      const t = T[i], adj = [];
+      if (t.loan) adj.push(`вернули кредит ${fmt(C.LOAN.back)} ₽`);
+      if (t.dep) adj.push(`забрали вклад ${fmt(C.DEPOSIT.back)} ₽`);
+      return `<div class="res t${i} ${wi === i ? 'win' : ''}">
+        <div class="res-h"><span class="res-e">${t.emoji}</span><b>${esc(t.name)}</b><span class="res-tag">победители</span></div>
+        <div class="res-p">${fmt(finalMoney(i))} ₽</div>
+        <div class="res-s">${adj.length ? `В кассе было ${fmt(t.money)} ₽, ${adj.join(', ')}` : `Столько в кассе после ${G.rounds} раундов`}</div>
       </div>`;
     };
     const FN = [
       ['📏', 'Мера стоимости', 'вы назначали цену чашки и сравнивали её с ценой соперника'],
       ['🔄', 'Средство обращения', 'покупатель отдавал деньги и сразу получал кофе'],
-      ['🧾', 'Средство платежа', 'налоговая и возврат кредита: деньги отдают, а товар не получают'],
+      ['🧾', 'Средство платежа', 'налог и возврат кредита: деньги отдают, а товар не получают'],
       ['🐷', 'Средство накопления', 'вклад: отложили деньги сейчас, получили больше потом'],
       ['🌍', 'Мировые деньги', 'зёрна из Бразилии покупают за доллары']
     ];
     scr.innerHTML = `<div class="over">
-      <div class="over-h"><div class="trophy">${wi < 0 ? '🤝' : '🏆'}</div><h1>${wi < 0 ? 'Ничья! Обе кофейни заработали поровну' : `Победила ${esc(name(wi))}!`}</h1></div>
-      <div class="over-teams">${card(0)}${card(1)}</div>
-      <div class="reflect"><h3>Где в игре прятались функции денег</h3><div class="rf-grid">${FN.map(([e, n, d]) => `<div class="rf"><span>${e}</span><b>${n}</b><small>${d}</small></div>`).join('')}</div></div>
+      <div class="over-h"><div class="trophy">${wi < 0 ? '🤝' : '🏆'}</div><h1>${wi < 0 ? 'Ничья! Денег у кофеен поровну' : `Победила <span class="t${wi}">${esc(name(wi))}</span>`}</h1></div>
+      <div class="res-row">${card(0)}${card(1)}</div>
+      <div class="reflect"><h3>Где в игре были функции денег</h3><div class="rf-grid">${FN.map(([e, n, d]) => `<div class="rf"><b>${e} ${n}</b><small>${d}</small></div>`).join('')}</div></div>
       <div class="cta-row mid"><button class="g-btn big" id="gAgain">↺ Сыграть ещё раз</button><button class="g-btn gold big" id="gToFinal">К итогам урока →</button></div>
     </div>`;
   }
@@ -355,7 +347,7 @@ const Game = (() => {
   let lastPhase = null;
   function render(anim) {
     if (!isOpen) return;
-    meta();
+    meta(anim);
     if (G.phase === 'lobby') lobby();
     else if (G.phase === 'orders') orders();
     else if (G.phase === 'reveal') revealView(anim);

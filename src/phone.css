@@ -108,3 +108,10 @@ h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.
 .rows div{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:10px;background:var(--surface-2)}
 .rows div.bad b{color:var(--bad)}
 @media (prefers-reduced-motion:reduce){.eyes,.spin{animation:none}}
+.pres.win{border:2px solid var(--ok)}
+.pres-v{font-weight:800;font-size:17px}
+.pres.win .pres-v{color:var(--ok)}
+.pres-p{font-family:var(--font-display);font-weight:800;font-size:52px;line-height:1.05;white-space:nowrap}
+.pres-p.up{color:var(--ok)}
+.pres-p.down{color:var(--bad)}
+.pres-o{padding-top:10px;border-top:1px solid var(--line);width:100%;color:var(--muted);font-size:14px}
