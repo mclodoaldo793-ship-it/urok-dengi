@@ -14,6 +14,8 @@ const readCode = () => (location.hash.slice(1) || '').toUpperCase().replace(/[^A
 let code = readCode(), S = null, lastTs = 0, nonce = 0, t0 = Date.now(), lastPoll = '';
 let votes = {}; try { votes = JSON.parse(ls.get('votes') || '{}') || {}; } catch (e) {}
 let viewer = ls.get('viewer') === '1';
+let myTeam = ['0', '1'].includes(ls.get('team')) ? +ls.get('team') : -1;
+const setTeam = i => { myTeam = i; ls.set('team', String(i)); };
 let form = null, formKey = '', sentOid = null, dirty = false;
 const main = $('#main');
 const tS = () => `${LIVE_NS}/${code}/s`, tI = () => `${LIVE_NS}/${code}/i`;
@@ -35,7 +37,7 @@ function send(t, data) {
 }
 function hi() {
   const p = S && S.mode === 'poll' && S.poll;
-  send('hi', p && votes[p.id] ? { p: p.id, k: votes[p.id] } : {});
+  send('hi', { ...(p && votes[p.id] ? { p: p.id, k: votes[p.id] } : {}), ...(myTeam >= 0 ? { team: myTeam } : {}) });
 }
 function connect() {
   if (conns.length || !code) return;
@@ -111,36 +113,50 @@ main.addEventListener('click', e => {
 });
 
 /* ---------- coffee battle ---------- */
+/* everyone picks a team; one player of each team becomes captain and sends the decision, the rest help choose the price */
 function game(g) {
-  const me = g.teams.findIndex(t => t.cap === cid);
-  if (me < 0) { form = null; formKey = ''; return viewer ? watch(g) : claim(g); }
-  const t = g.teams[me];
-  const head = `<div class="pg-team t${me}"><span>${t.emoji}</span><div><small>Вы капитан</small><b>${esc(t.name)}</b></div><b class="pg-money">${fmt(t.money)} ₽</b></div>`;
+  const capOf = g.teams.findIndex(t => t.cap === cid);
+  if (capOf >= 0 && myTeam !== capOf) { setTeam(capOf); viewer = false; ls.set('viewer', '0'); }
+  if (myTeam < 0) { form = null; formKey = ''; return viewer ? watch(g) : pick(g); }
+  const me = myTeam, t = g.teams[me], isCap = capOf === me;
+  const head = `<div class="pg-team t${me}"><span>${t.emoji}</span><div><small>${isCap ? 'Вы капитан' : 'Ваша команда'}</small><b>${esc(t.name)}</b></div><b class="pg-money">${fmt(t.money)} ₽</b></div>`;
+  const beCap = t.cap ? '' : '<button class="btn big" id="pCap">👑 Стать капитаном</button>';
   if (g.phase === 'orders') {
-    const key = `${g.round}:${me}`;
+    const key = `${g.round}:${me}:${isCap ? 'c' : 'p'}`;
     if (formKey !== key) {
       formKey = key; sentOid = null; dirty = false;
       main.innerHTML = `<div class="pg">
         <div id="pgHead"></div>
         <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Кофе захотят <b>${g.ev.n} ${plural(g.ev.n, 'человек', 'человека', 'человек')}</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b> · ${g.ev.max < COFFEE.PRICES[COFFEE.PRICES.length - 1] ? `дороже <b>${g.ev.max} ₽</b> не купят` : `купят даже за <b>${g.ev.max} ₽</b>`}</p></div></div>
+        ${isCap ? '' : '<p class="pg-draft">Это черновик: прикиньте цену и подскажите капитану. Решение отправляет только он.</p>'}
         <div id="pform"></div>
-        <div class="pg-send"><button class="btn big" id="pSend">Отправить решение</button><p id="pSt" class="muted center"></p></div>
+        <div class="pg-send">${isCap ? '<button class="btn big" id="pSend">Отправить решение</button>' : '<div id="pCapBox"></div>'}<p id="pSt" class="muted center"></p></div>
       </div>`;
       form = coffeeForm($('#pform'), t, g.ev, null, {
-        change() { dirty = true; status(g.teams[me]); }
+        change() { dirty = true; if (isCap) status(S.game.teams[me]); }
       });
-      $('#pSend').addEventListener('click', () => {
+      if (isCap) $('#pSend').addEventListener('click', () => {
         const v = form.value; sentOid = send('order', { team: me, ...v }); dirty = false; status(S.game.teams[me]);
         setTimeout(() => { if (sentOid && S.game.teams[me].oid !== sentOid) sentOid = send('order', { team: me, ...form.value }); }, 2500);
       });
     } else form.update(t, g.ev);
     $('#pgHead').innerHTML = head;
-    return status(t);
+    if (isCap) return status(t);
+    $('#pCapBox').innerHTML = beCap;
+    $('#pSt').innerHTML = t.ready ? '<b class="good">✅ Капитан отправил решение.</b> Смотрите на экран.' : t.cap ? 'Капитан ещё выбирает…' : 'У команды нет капитана. Кто-то должен им стать.';
+    return;
   }
   form = null; formKey = '';
   if (g.phase === 'lobby') {
-    main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
-    $('#pUncap').addEventListener('click', () => send('uncap', {}));
+    if (isCap) {
+      main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
+      $('#pUncap').addEventListener('click', () => send('uncap', {}));
+    } else {
+      main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">${t.emoji}</div><h1>Вы в команде!</h1>
+        <p class="muted">Ждём начала игры. ${t.n ? `Сейчас в команде ${t.n} ${plural(t.n, 'игрок', 'игрока', 'игроков')}.` : ''}</p>
+        <p class="pg-capst">${t.cap ? '👑 Капитан выбран. Помогайте ему выбирать цену.' : '👑 Капитана пока нет.'}</p>
+        ${beCap}<button class="btn ghost" id="pSwitch">Сменить команду</button></div></div>`;
+    }
   } else if (g.phase === 'reveal' && t.res) {
     const r = t.res, o = g.teams[1 - me].res;
     const v = !o || r.profit === o.profit ? 0 : r.profit > o.profit ? 1 : -1;
@@ -166,23 +182,25 @@ function status(t) {
   else if (sentOid) el.textContent = 'Отправляем…';
   else el.textContent = t.ready ? 'Решение уже отправлено с другого устройства или ведущим.' : 'Соперники не видят ваше решение.';
 }
-function claim(g) {
-  main.innerHTML = `<div class="card center"><div class="big-e">☕</div><h1>Битва кофеен</h1>
-    <p class="muted">Капитан вводит решения за команду. Остальные советуют — и смотрят на экран.</p>
-    <div class="claim">${g.teams.map((t, i) => `<button class="btn big t${i}" data-claim="${i}" ${t.cap ? 'disabled' : ''}>${t.emoji} Я капитан «${esc(t.name)}»${t.cap ? '<small>капитан уже есть</small>' : ''}</button>`).join('')}</div>
-    <button class="btn ghost" id="pWatch">Я просто болею 👀</button></div>`;
+function pick(g) {
+  main.innerHTML = `<div class="card center"><div class="big-e">☕</div><h1>Выберите команду</h1>
+    <p class="muted">В каждой команде один капитан отправляет решения. Остальные помогают ему выбрать цену.</p>
+    <div class="claim">${g.teams.map((t, i) => `<button class="btn big t${i}" data-team="${i}">${t.emoji} ${esc(t.name)}<small>${t.n ? `уже ${t.n} ${plural(t.n, 'игрок', 'игрока', 'игроков')}` : 'пока никого'}</small></button>`).join('')}</div>
+    <button class="btn ghost" id="pWatch">Просто смотреть 👀</button></div>`;
 }
 function watch(g) {
   main.innerHTML = `<div class="card center"><div class="big-e eyes">👀</div><h1>Смотрите на экран</h1>
     ${g.ev && g.phase !== 'over' ? `<p class="muted">Раунд ${g.round}: ${g.ev.e} ${esc(g.ev.t)}</p>` : ''}
     <div class="score">${g.teams.map((t, i) => `<div class="t${i}"><span>${t.emoji} ${esc(t.name)}</span><b>${fmt(g.phase === 'over' ? t.final : t.money)} ₽</b></div>`).join('')}</div>
-    <p class="muted small">Подсказывайте своему капитану!</p>
-    <button class="btn ghost" id="pBeCap">Я капитан</button></div>`;
+    <button class="btn ghost" id="pBeCap">Выбрать команду</button></div>`;
 }
 main.addEventListener('click', e => {
-  const c = e.target.closest('[data-claim]');
-  if (c && !c.disabled) { viewer = false; ls.set('viewer', '0'); send('cap', { team: +c.dataset.claim }); c.textContent = 'Подключаем…'; setTimeout(render, 4000); }
-  if (e.target.closest('#pWatch')) { viewer = true; ls.set('viewer', '1'); render(); }
+  const tb = e.target.closest('[data-team]');
+  if (tb) { viewer = false; ls.set('viewer', '0'); setTeam(+tb.dataset.team); send('team', { team: myTeam }); render(); }
+  const cb = e.target.closest('#pCap');
+  if (cb && myTeam >= 0) { send('cap', { team: myTeam }); cb.disabled = true; cb.textContent = 'Подключаем…'; setTimeout(render, 4000); }
+  if (e.target.closest('#pSwitch')) { setTeam(-1); send('team', { team: -1 }); render(); }
+  if (e.target.closest('#pWatch')) { viewer = true; ls.set('viewer', '1'); setTeam(-1); send('team', { team: -1 }); render(); }
   if (e.target.closest('#pBeCap')) { viewer = false; ls.set('viewer', '0'); render(); }
 });
 

@@ -427,6 +427,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .pmeta{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
 .pmeta:empty{display:none}
 .no-live .live-only,.no-live .pmeta,.no-live .poll .pn{display:none!important}
+body:not(.no-live) .solo-only{display:none!important}
 
 /* ---------- live: phones ---------- */
 .live-btn{height:38px;padding:0 12px;border-radius:11px;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:15px;color:var(--ink)}
@@ -678,6 +679,8 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .lemoji{display:flex;flex-wrap:wrap;gap:6px}
 .lemoji button{width:42px;height:42px;border-radius:12px;border:1px solid var(--g-line);background:var(--g-bg-2);font-size:22px;cursor:pointer}
 .lemoji button.on{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 24%,var(--g-bg-2))}
+.lplayers{font-size:16px;font-weight:800;margin-top:auto}
+.lplayers + .lcap{margin-top:0}
 .lcap{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
 .cap-st{font-size:13px;font-weight:700;color:var(--g-muted)}
 .cap-st.ok{color:var(--g-ok)}

@@ -8,6 +8,7 @@ const Game = (() => {
   function fresh(prev) {
     return {
       phase:'lobby', round:0, rounds: prev?.rounds || 6, evs:[], res:null,
+      members: prev?.members || {},   // phone id -> team the player picked
       teams:[0, 1].map(i => ({
         name: prev?.teams[i].name || ['Кофейня А', 'Кофейня Б'][i],
         emoji: prev?.teams[i].emoji || ['☕', '🧋'][i],
@@ -23,6 +24,7 @@ const Game = (() => {
     G = s && s.teams && s.teams.length === 2 && s.phase ? s : fresh();
     if (G.res && G.res.teams[0].unit === undefined) G = fresh(G);  // a game saved under the old cups-and-chances rules
     if (G.phase === 'reveal' && !G.res) G.phase = 'orders';
+    if (!G.members || typeof G.members !== 'object') G.members = {};
     G.teams.forEach(t => CARD_IDS.forEach(k => { if (!(k in t.cards)) t.cards[k] = true; }));  // games saved before a card was added
   }
   const ev = () => C.EVENTS[G.evs[G.round - 1]] || C.EVENTS.normal;
@@ -98,11 +100,22 @@ const Game = (() => {
   /* ---------- phones ---------- */
   const team = m => (m.team === 0 || m.team === 1) ? m.team : -1;
   const rerender = () => { if (!isOpen) return; G.phase === 'lobby' ? updateCaps() : render(); };
+  /* players on phones pick a team; a captain of the other team who switches stops being captain */
+  function joinTeam(c, i) {
+    if (G.members[c] === i) return false;
+    if (i < 0) delete G.members[c]; else G.members[c] = i;
+    G.teams.forEach((x, k) => { if (k !== i && x.cap === c) x.cap = null; });
+    return true;
+  }
+  const players = i => Object.keys(G.members).filter(c => G.members[c] === i && Live.alive(c)).length;
+  Live.on('team', m => { if (G && joinTeam(m.c, m.team === -1 ? -1 : team(m))) { save(); rerender(); Live.refresh(); } });
+  Live.on('hi', m => { const i = team(m); if (G && i >= 0 && joinTeam(m.c, i)) { save(); rerender(); Live.refresh(); } });
   Live.on('cap', m => {
     const i = team(m); if (i < 0) return;
     const t = G.teams[i];
     if (t.cap && t.cap !== m.c && Live.alive(t.cap)) return;
     G.teams.forEach(x => { if (x.cap === m.c) x.cap = null; });
+    G.members[m.c] = i;
     t.cap = m.c; save(); SFX.coin(); rerender(); Live.refresh();
   });
   Live.on('uncap', m => { G.teams.forEach(x => { if (x.cap === m.c) x.cap = null; }); save(); rerender(); Live.refresh(); });
@@ -120,7 +133,7 @@ const Game = (() => {
         const x = G.phase === 'reveal' && G.res ? G.res.teams[i] : null;
         return {
           name: t.name, emoji: t.emoji, money: t.money, cards: t.cards,
-          cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null,
+          cap: t.cap, ready: !!t.order, oid: t.order ? t.order.oid : null, n: players(i),
           res: x && { price: x.price, sold: x.sold, unit: x.unit, revenue: x.revenue, cost: x.cost, tax: x.tax, profit: x.profit, after: x.after, hit: x.hit },
           final: G.phase === 'over' ? t.money : null
         };
@@ -137,6 +150,7 @@ const Game = (() => {
   function updateCaps() {
     $$('[data-capst]', scr).forEach(el => { const c = G.teams[+el.dataset.capst].cap; el.textContent = capState(+el.dataset.capst); el.classList.toggle('ok', !!c && Live.alive(c)); });
     $$('[data-capreset]', scr).forEach(b => { b.hidden = !G.teams[+b.dataset.capreset].cap; });
+    $$('[data-cnt]', scr).forEach(el => { const n = players(+el.dataset.cnt); el.textContent = n ? `👥 ${n} ${plural(n, 'игрок', 'игрока', 'игроков')}` : '👥 Пока никого'; });
     const q = $('#gJoinQr');
     if (q && Live.enabled && q.dataset.code !== Live.code) { q.innerHTML = Live.qr(Live.phoneUrl()); q.dataset.code = Live.code; $('#gJoinCode').textContent = 'код ' + Live.code; }
   }
@@ -158,6 +172,7 @@ const Game = (() => {
     const tcard = i => `<div class="lcard t${i}">
         <div class="lcard-top"><span class="lcard-e">${T[i].emoji}</span><input class="lname" data-name="${i}" maxlength="22" value="${esc(T[i].name)}" aria-label="Название команды"></div>
         <div class="lemoji">${C.EMOJI.map(e => `<button class="${e === T[i].emoji ? 'on' : ''}" data-emoji="${i}" data-e="${e}" aria-label="Значок ${e}">${e}</button>`).join('')}</div>
+        <div class="lplayers live-only" data-cnt="${i}"></div>
         <div class="lcap live-only"><span class="cap-st" data-capst="${i}"></span><button class="g-btn ghost sm" data-capreset="${i}">сбросить</button></div>
       </div>`;
     scr.innerHTML = `<div class="lobby">
@@ -167,7 +182,7 @@ const Game = (() => {
       </div>
       <div class="lobby-grid">
         ${tcard(0)}
-        <div class="ljoin live-only"><div class="ljoin-qr" id="gJoinQr"></div><b>Капитаны, сканируйте</b><span>и нажмите «Я капитан»</span><span class="mono" id="gJoinCode"></span></div>
+        <div class="ljoin live-only"><div class="ljoin-qr" id="gJoinQr"></div><b>Сканируйте все</b><span>и выберите свою команду</span><span class="mono" id="gJoinCode"></span></div>
         ${tcard(1)}
       </div>
       <div class="lobby-foot">

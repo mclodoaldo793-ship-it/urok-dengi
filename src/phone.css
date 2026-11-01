@@ -99,6 +99,8 @@ h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.
 .pg-facts b{font-family:var(--font-body);font-size:14px;color:var(--ink)}
 #pform{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 14px}
 .pg-send{display:flex;flex-direction:column;gap:8px;position:sticky;bottom:0;padding:10px 0 12px;background:linear-gradient(transparent,var(--bg) 30%)}
+.pg-draft{padding:10px 14px;border-radius:14px;background:var(--surface-2);font-size:14px;line-height:1.35;color:var(--ink-2)}
+.pg-capst{font-weight:700}
 .claim{display:flex;flex-direction:column;gap:10px;width:100%}
 .score{display:flex;flex-direction:column;gap:8px;width:100%}
 .score div{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:14px;background:var(--surface-2);font-weight:700}
