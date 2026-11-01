@@ -201,103 +201,82 @@
   reset();
 })();
 
-/* ---------- Task 2: who becomes money? one trial per property, the loser drops out ---------- */
+/* ---------- Task 2: museum of failed money, every exhibit lacked one property ---------- */
 (() => {
-  const box = $('#castBox'), LAST = TRIALS.length - 1;
-  let n, rev, pick, out, round = 0;   // out: candidate id -> trial index where it dropped out
-  const final = () => n === LAST && rev;
-  function reset() { n = 0; rev = false; pick = null; out = {}; round++; render(); }
+  const box = $('#museum'), keys = Object.keys(PROPS), N = EXHIBITS.length;
+  let open = -1, seen = {}, round = 1;   // seen: exhibit index -> the class's pick
+  const done = i => i in seen;
+  const count = () => Object.keys(seen).length;
+  const lacked = x => 'Не хватило ' + PROPS[x.a].t.replace(/ость$/, 'ости');
+  const nextOpen = () => { for (let k = 1; k <= N; k++) { const i = (open + k) % N; if (!done(i)) return i; } return -1; };
 
-  function tile(c) {
-    const k = out[c.id], inPlay = k === undefined || k >= n, now = rev && k === n;
-    const win = final() && k === undefined;
-    const passed = k !== undefined ? k : n + (rev ? 1 : 0);
-    const poll = inPlay && TRIALS[n].out;
-    const cls = `ct ${k !== undefined ? 'gone' : ''} ${now ? 'now' : ''} ${rev && pick === c.id && !now ? 'miss' : ''} ${win ? 'win' : ''} ${poll ? 'poll-opt' : ''}`;
-    const inner = `${poll ? '<i class="pbar"></i>' : ''}${win ? '<span class="ct-crown">👑</span>' : ''}
-      <span class="ct-e">${c.e}</span><b class="ct-n">${c.n}</b>
-      ${k !== undefined ? '<span class="ct-x">вне игры</span>' : `<span class="ct-d">${TRIALS.map((_, i) => `<i class="${i < passed ? 'on' : ''}"></i>`).join('')}</span>`}
-      ${poll ? '<em class="pn"></em>' : ''}`;
-    return poll ? `<button class="${cls}" data-k="${c.id}" data-t="${c.e} ${c.n}" ${rev ? 'disabled' : ''}>${inner}</button>` : `<div class="${cls}">${inner}</div>`;
+  function board() {
+    const all = count() === N;
+    box.innerHTML = `<div class="mx-board">${EXHIBITS.map((x, i) => `
+        <button class="mx ${done(i) ? 'done' : ''}" data-i="${i}">
+          <span class="mx-no">№${i + 1}</span>
+          <span class="mx-e">${x.e}</span>
+          <span class="mx-plq"><small>${x.at}</small><b>${x.t}</b>${done(i) ? `<em>${lacked(x)}</em>` : ''}</span>
+        </button>`).join('')}</div>
+      <div class="mx-foot">${all
+        ? '<p class="mx-sum">💵 А у купюры в вашем кошельке есть все шесть свойств. Поэтому она и работает как деньги.</p>'
+        : `<span class="hint">Изучено ${count()} из ${N}. Нажмите на любой экспонат.</span>`}${count() ? '<button class="btn btn-ghost btn-sm" id="mxReset">↺ Заново</button>' : ''}</div>`;
   }
 
-  /* the last trial has one candidate left, so the class votes yes / no instead */
-  const yesNo = () => `<div class="poll-opts trial-yn">${[['y', '👍 Да'], ['n', '👎 Нет']].map(([k, l]) =>
-    `<button class="popt poll-opt ${rev ? (k === 'y' ? 'right' : pick === k ? 'wrong' : 'dim') : ''}" data-k="${k}" data-t="${l}" ${rev ? 'disabled' : ''}><i class="pbar"></i><span class="pl">${l}</span><em class="pn"></em></button>`).join('')}</div>`;
-  function trial() {
-    const t = TRIALS[n], head = `Испытание ${n + 1} из ${TRIALS.length}`;
-    if (!rev) {
-      const last = !t.out;
-      return `<div class="trial card">
-        <span class="trial-e">${t.e}</span>
-        <div class="trial-b">
-          <span class="trial-n">${head}</span>
-          <h3 class="trial-t">${t.t}</h3>
-          <p class="trial-q">${last ? 'Остался один кандидат. Купюра пройдёт испытание?' : 'Кто не пройдёт испытание? Кликните того, кого выбрал класс.'}</p>
+  function detail() {
+    const x = EXHIBITS[open], rev = done(open), pick = seen[open], p = PROPS[x.a];
+    box.innerHTML = `<div class="mx-open">
+      <div class="mx-case">
+        <span class="mx-no">№${open + 1}</span>
+        <span class="mx-e">${x.e}</span>
+        ${x.big ? `<span class="mx-big">${x.big}</span>` : ''}
+        ${rev ? `<p class="mx-label">${pick ? `<span class="${pick === x.a ? 'ok' : 'bad'}">${pick === x.a ? 'Верно!' : 'Мимо.'}</span> ` : ''}<b>${lacked(x)}</b>, то есть «${p.n.toLowerCase()}». ${x.after}</p>` : ''}
+      </div>
+      <div class="mx-info">
+        <span class="mx-at">${x.at}</span>
+        <h3 class="mx-t">${x.t}</h3>
+        <p class="mx-x">${x.x}</p>
+        <div class="poll mx-poll ${rev ? 'revealed' : ''}" data-self data-poll="museum-${round}-${open}" data-q="${esc(x.t)}: какого свойства не хватило?" data-sub="Экспонат ${open + 1} из ${N}" data-answer="${x.a}">
+          <p class="poll-q">Какого свойства не хватило этим деньгам?</p>
+          <div class="poll-opts">${keys.map(k => `<button class="popt poll-opt ${rev ? (k === x.a ? 'right' : k === pick ? 'wrong' : 'dim') : ''}" data-k="${k}" data-t="${PROPS[k].n}" ${rev ? 'disabled' : ''}><i class="pbar"></i><span class="pl">${PROPS[k].n}</span><em class="pn"></em></button>`).join('')}</div>
           <div class="pmeta"></div>
         </div>
-        ${last ? yesNo() : ''}
-      </div>`;
-    }
-    const ans = t.out || 'y', ok = pick === ans;
-    const c = t.out ? CAST.find(x => x.id === t.out) : null;
-    const tag = pick ? `<span class="trial-n ${ok ? 'ok' : 'bad'}">${ok ? 'Верно!' : 'Мимо!'} · ${head}</span>` : `<span class="trial-n">${head}</span>`;
-    return `<div class="trial card after">
-      <span class="trial-e">${c ? c.e : '🏆'}</span>
-      <div class="trial-b">
-        ${tag}
-        <h3 class="trial-t">${c ? `${c.n} ${c.many ? 'выбывают' : 'выбывает'}` : 'Купюра становится деньгами!'}</h3>
-        <p class="trial-q">${t.why}${c ? '' : ' Она одна прошла все шесть испытаний.'}</p>
-        <p class="trial-p">Свойство денег: <b>${t.p.toLowerCase()}</b> <small>${t.term}</small></p>
       </div>
-      <div class="trial-side">${final()
-        ? yesNo() + '<button class="btn btn-ghost" id="castAgain">↺ Сыграть ещё раз</button>'
-        : '<button class="btn btn-primary" id="castNext">Следующее испытание →</button>'}</div>
+      <div class="mx-nav"><button class="btn btn-ghost" id="mxBack">← Все экспонаты</button>${rev
+        ? `<button class="btn btn-primary" id="mxNext">${nextOpen() >= 0 ? 'Следующий экспонат →' : 'К итогу →'}</button>` : ''}</div>
     </div>`;
   }
 
-  function render() {
-    const t = TRIALS[n], learned = n + (rev ? 1 : 0);
-    box.innerHTML = `<div class="cast poll ${rev ? 'revealed' : ''}" data-self data-poll="cast-${round}-${n}"
-        data-q="${t.e} ${t.t}: ${t.out ? 'кто не пройдёт?' : 'купюра пройдёт?'}" data-sub="Испытание ${n + 1} из ${TRIALS.length}" data-answer="${t.out || 'y'}">
-      <div class="cast-row">${CAST.map(tile).join('')}</div>
-      ${trial()}
-      <div class="learned">
-        <div class="learned-h"><b>Свойства денег: ${learned} из ${TRIALS.length}</b>${(n || rev) && !final() ? '<button class="btn btn-ghost btn-sm" id="castReset">↺ Заново</button>' : ''}</div>
-        <div class="learned-row">${TRIALS.map((x, i) => i < learned
-          ? `<span class="lp on ${rev && i === n ? 'new' : ''}"><i>${i + 1}</i><b>${x.p}</b><small>${x.term}</small></span>`
-          : `<span class="lp"><i>${i + 1}</i><b>?</b></span>`).join('')}</div>
-      </div>
-    </div>`;
-  }
-
+  function show(i) { open = i; i < 0 ? board() : detail(); }
   function reveal(k) {
-    const el = $('.cast', box), t = TRIALS[n];
-    pick = k || null;
-    Polls.reveal(el, k);
-    rev = true;
-    if (t.out) out[t.out] = n;
-    render();
-    if (pick) (pick === (t.out || 'y') ? SFX.right : SFX.wrong)();
-    if (final()) setTimeout(() => { SFX.fanfare(); Confetti.burst({ n:140 }); }, 400);
-    else setTimeout(SFX.no, 250);
+    const x = EXHIBITS[open];
+    Polls.reveal($('.mx-poll', box), k);
+    seen[open] = k;
+    detail();
+    (k === x.a ? SFX.right : SFX.wrong)();
+    if (count() === N) setTimeout(() => { SFX.fanfare(); Confetti.burst({ n:120 }); }, 500);
   }
-  function next() { if (!rev || final()) return; n++; rev = false; pick = null; render(); SFX.click(); }
 
   box.addEventListener('click', e => {
+    const m = e.target.closest('.mx');
+    if (m) { show(+m.dataset.i); SFX.click(); return; }
     const o = e.target.closest('.poll-opt');
-    if (o && !rev && !o.disabled) return reveal(o.dataset.k);
-    if (e.target.closest('#castNext')) next();
-    if (e.target.closest('#castAgain, #castReset')) { reset(); SFX.click(); }
+    if (o && !o.disabled && open >= 0 && !done(open)) return reveal(o.dataset.k);
+    if (e.target.closest('#mxBack')) { show(-1); SFX.click(); }
+    if (e.target.closest('#mxNext')) { show(nextOpen()); SFX.click(); }
+    if (e.target.closest('#mxReset')) { seen = {}; round++; show(-1); SFX.click(); }
   });
   Deck.hooks.props = {
     key(e) {
+      if (open < 0) return false;
+      if (e.code === 'Escape') { show(-1); return true; }
       if ((e.code === 'Enter' || e.code === 'Space') && e.target.closest && e.target.closest('button')) return false;
-      if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'ArrowRight') && rev && !final()) { next(); return true; }
+      if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'ArrowRight') && done(open)) { show(nextOpen()); return true; }
       return false;
-    }
+    },
+    leave() { if (open >= 0) show(-1); }
   };
-  reset();
+  board();
 })();
 
 /* ---------- measure of value: barter ratios ---------- */

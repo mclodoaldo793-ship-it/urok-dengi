@@ -262,53 +262,34 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .tl-body{display:flex;flex-direction:column;gap:12px}
 
 /* ---------- properties ---------- */
-/* who becomes money: a line-up of candidates, one trial card, the properties collected so far */
-.cast{gap:clamp(12px,2vh,20px)}
-.cast-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(8px,1vw,14px)}
-.ct{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:4px;padding:clamp(10px,1.6vh,18px) 6px clamp(12px,1.8vh,20px);border-radius:18px;border:2px solid var(--line-2);background:var(--surface);color:var(--ink);transition:transform .15s,border-color .2s,opacity .3s,background .3s}
-button.ct{cursor:pointer}
-button.ct:hover:not(:disabled){transform:translateY(-3px);border-color:var(--brand)}
-.ct:disabled{cursor:default}
-.ct-e{font-size:clamp(40px,4.4vw,68px);line-height:1.1;transition:filter .4s}
-.ct-n{font-weight:800;font-size:clamp(14px,1.1vw,18px)}
-.ct-d{display:flex;gap:3px;height:16px;align-items:center}
-.ct-d i{width:clamp(8px,.8vw,12px);height:6px;border-radius:3px;background:var(--line-2)}
-.ct-d i.on{background:var(--ok)}
-.ct-x{height:16px;font-weight:800;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--bad)}
-.ct .pbar{position:absolute;left:0;bottom:0;height:6px;width:0;background:var(--brand);transition:width .5s cubic-bezier(.2,.8,.2,1)}
-.ct .pn{position:absolute;top:8px;right:10px;font-style:normal;font-family:var(--font-mono);font-weight:700;font-size:13px;padding:1px 8px;border-radius:99px;background:var(--surface-2)}
-.ct .pn:empty{display:none}
-.ct.gone{border-style:dashed;background:transparent;opacity:.5}
-.ct.gone .ct-e{filter:grayscale(1)}
-.ct.gone.now{opacity:1;border-style:solid;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--surface));animation:shake .5s .15s}
-.ct.miss{border-color:color-mix(in srgb,var(--bad) 55%,transparent)}
-.ct.win{border-color:var(--gold-2);background:color-mix(in srgb,var(--gold-2) 18%,var(--surface));box-shadow:0 0 0 5px color-mix(in srgb,var(--gold-2) 24%,transparent);animation:pulse 1.2s ease-in-out 2}
-.ct-crown{position:absolute;top:6px;left:10px;font-size:22px;animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
-.trial{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(14px,2vw,28px);padding:clamp(14px,2.2vh,24px) clamp(18px,2vw,30px)}
-.trial.after{animation:cardIn .45s cubic-bezier(.2,.8,.2,1)}
-.trial-e{font-size:clamp(52px,5.4vw,86px);line-height:1}
-.trial-b{display:flex;flex-direction:column;gap:6px;min-width:0}
-.trial-n{font-family:var(--font-mono);font-size:clamp(12px,.95vw,14px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
-.trial-n.ok{color:var(--ok)}
-.trial-n.bad{color:var(--bad)}
-.trial-t{font-size:clamp(24px,2.6vw,42px)}
-.trial-q{font-size:clamp(15px,1.2vw,20px);color:var(--ink-2);line-height:1.45;text-wrap:pretty}
-.trial-p{align-self:flex-start;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:7px 14px;border-radius:12px;background:color-mix(in srgb,var(--ok) 13%,var(--surface-2));font-size:clamp(15px,1.15vw,19px)}
-.trial-p b{color:var(--ok)}
-.trial-p small{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
-.trial-side{display:flex;flex-direction:column;align-items:stretch;gap:10px}
-.trial-yn{min-width:min(300px,100%)}
-.trial-yn .popt{justify-content:center}
-.learned{display:flex;flex-direction:column;gap:8px}
-.learned-h{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px;font-size:clamp(14px,1.05vw,17px)}
-.learned-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
-.lp{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:8px;padding:7px 10px;border-radius:12px;border:1.5px dashed var(--line-2);color:var(--muted)}
-.lp i{grid-row:span 2;font-style:normal;font-family:var(--font-mono);font-size:12px;font-weight:700}
-.lp b{font-size:clamp(12px,.95vw,15px);line-height:1.2}
-.lp small{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
-.lp.on{border-style:solid;border-color:color-mix(in srgb,var(--ok) 45%,transparent);background:color-mix(in srgb,var(--ok) 10%,var(--surface));color:var(--ink)}
-.lp.on i{color:var(--ok)}
-.lp.new{animation:pop .5s cubic-bezier(.2,1.4,.4,1) .3s backwards}
+/* museum of failed money: exhibits under a spotlight with a plaque; an opened exhibit fills the slide */
+.mx-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.4vw,18px)}
+.mx{--spot:color-mix(in srgb,var(--gold-2) 20%,transparent);position:relative;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.4vh,14px);padding:clamp(16px,2.6vh,30px) 0 0;border-radius:20px;border:1px solid var(--line);background:radial-gradient(70% 75% at 50% 0%,var(--spot),transparent 72%),var(--surface);color:var(--ink);text-align:center;cursor:pointer;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.mx:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--gold-2) 60%,transparent);box-shadow:var(--shadow)}
+.mx.done{--spot:color-mix(in srgb,var(--ok) 16%,transparent)}
+.mx-no{position:absolute;top:12px;left:16px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--muted)}
+.mx-e{font-size:clamp(48px,5.2vw,80px);line-height:1;filter:drop-shadow(0 14px 12px rgba(0,0,0,.3))}
+.mx-plq{align-self:stretch;display:flex;flex-direction:column;gap:3px;margin-top:auto;padding:12px 14px 14px;border-top:1px solid var(--line);background:color-mix(in srgb,var(--surface-2) 70%,transparent)}
+.mx-plq small{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mx-plq b{font-family:var(--font-display);font-weight:700;font-size:clamp(15px,1.35vw,22px);line-height:1.2}
+.mx-plq em{font-style:normal;font-weight:700;font-size:clamp(12px,1vw,15px);color:var(--ok)}
+.mx-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;margin-top:clamp(10px,1.6vh,16px)}
+.mx-sum{font-weight:700;font-size:clamp(15px,1.25vw,20px);animation:cardIn .5s cubic-bezier(.2,.8,.2,1)}
+.mx-open{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(14px,2.4vw,36px);animation:cardIn .4s cubic-bezier(.2,.8,.2,1)}
+.mx-case{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.4vh,14px);padding:clamp(24px,3vh,40px) clamp(14px,1.6vw,24px) clamp(14px,2vh,22px);border-radius:22px;border:1px solid var(--line);background:radial-gradient(70% 60% at 50% 0%,color-mix(in srgb,var(--gold-2) 24%,transparent),transparent 72%),var(--surface);text-align:center}
+.mx-case .mx-e{font-size:clamp(84px,9.5vw,150px)}
+.mx-big{font-family:var(--font-display);font-weight:800;font-size:clamp(18px,1.9vw,30px);line-height:1.15;color:var(--gold);overflow-wrap:anywhere}
+.mx-label{align-self:stretch;padding:12px 14px;border-radius:14px;background:var(--surface-2);text-align:left;font-size:clamp(14px,1.05vw,17px);line-height:1.45;color:var(--ink-2);animation:cardIn .45s cubic-bezier(.2,.8,.2,1)}
+.mx-label b{color:var(--ink)}
+.mx-label .ok,.mx-label .bad{font-weight:800}
+.mx-label .ok{color:var(--ok)}
+.mx-label .bad{color:var(--bad)}
+.mx-info{display:flex;flex-direction:column;justify-content:center;gap:clamp(8px,1.4vh,14px);min-width:0}
+.mx-at{font-family:var(--font-mono);font-size:clamp(12px,.95vw,14px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.mx-t{font-size:clamp(24px,2.6vw,42px)}
+.mx-x{font-size:clamp(15px,1.25vw,21px);line-height:1.5;color:var(--ink-2);text-wrap:pretty}
+.mx-poll{margin-top:4px}
+.mx-nav{grid-column:1/-1;display:flex;justify-content:space-between;gap:12px}
 
 /* ---------- functions ---------- */
 .fgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(10px,1.2vw,18px)}
@@ -575,9 +556,8 @@ button.ct:hover:not(:disabled){transform:translateY(-3px);border-color:var(--bra
 }
 @media (max-width:900px){
   .brand-txt{display:none}
-  .barter,.two,.f-layout,.rq,.trial{grid-template-columns:minmax(0,1fr)}
-  .cast-row,.learned-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .trial-e{display:none}
+  .barter,.two,.f-layout,.rq,.mx-open{grid-template-columns:minmax(0,1fr)}
+  .mx-board{grid-template-columns:repeat(2,minmax(0,1fr))}
   .barter-you{flex-direction:row;flex-wrap:wrap;justify-content:center}
   .barter-stats{max-width:360px}
   .fgrid{grid-template-columns:minmax(0,1fr)}
@@ -610,7 +590,6 @@ button.ct:hover:not(:disabled){transform:translateY(-3px);border-color:var(--bra
   .fdiffs,.poll-opts{grid-template-columns:minmax(0,1fr)}
   .route{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}
   .route::before,.rt-note{display:none}
-  .cast-row,.learned-row{grid-template-columns:repeat(2,minmax(0,1fr))}
   .join{width:100%}
   .nav-btn .lbl{display:none}
   .stepdots{display:none}
@@ -630,13 +609,12 @@ button.ct:hover:not(:disabled){transform:translateY(-3px);border-color:var(--bra
   .trader-row .big{font-size:24px}
   .you-item{font-size:84px}
   .barter-you{gap:8px}
-  .cast{gap:12px}
-  .ct{padding:8px 6px 10px}
-  .ct-e{font-size:46px}
-  .trial{padding:12px 18px}
-  .trial-e{font-size:60px}
-  .trial-t{font-size:28px}
-  .lp{padding:5px 8px}
+  .mx{padding-top:14px;gap:6px}
+  .mx-e{font-size:52px}
+  .mx-plq{padding:8px 12px 10px}
+  .mx-case .mx-e{font-size:96px}
+  .mx-t{font-size:30px}
+  .mx-x{font-size:17px}
   .quiz{gap:10px}
   .route{padding-top:26px}
   .route::before{top:48px}
@@ -1206,16 +1184,16 @@ button.ct:hover:not(:disabled){transform:translateY(-3px);border-color:var(--bra
       <div class="slide-inner">
         <header class="slide-head">
           <div class="kicker"><span class="badge-task">Задание 2</span> Свойства денег</div>
-          <h2>Кто станет деньгами?</h2>
-          <p class="lead">Шесть кандидатов проходят испытания. Кто не справился, выбывает.</p>
+          <h2>Музей неудачных денег</h2>
+          <p class="lead">Люди пробовали сделать деньгами самые разные вещи. Каждой чего-то не хватило. Откройте экспонат и угадайте, чего.</p>
         </header>
-        <div id="castBox"></div>
+        <div id="museum"></div>
       </div>
       <aside class="notes"><ul>
-        <li>Шоу на выбывание. Каждое испытание проверяет одно свойство денег.</li>
-        <li>Зачитайте испытание. Класс голосует с телефонов «кто не пройдёт», вы кликаете кандидата, которого выбрало большинство.</li>
-        <li>Зачитайте, почему кандидат выбыл. Внизу копятся свойства денег: к концу их шесть.</li>
-        <li>Спорный момент — золото. Тысячи лет оно было деньгами, но мелкую покупку им не оплатишь. Поэтому появились монеты из дешёвых металлов и бумажные деньги.</li>
+        <li>Шесть настоящих историй. Каждая показывает одно свойство денег: без него деньги не работают.</li>
+        <li>Кликните экспонат, зачитайте историю. Класс голосует с телефонов, вы кликаете ответ большинства. Порядок любой.</li>
+        <li>После ответа зачитайте табличку: там название свойства из учебника и чем история закончилась.</li>
+        <li>Когда открыты все шесть, спросите: а у купюры в кошельке все эти свойства есть? (Да, поэтому она и работает.)</li>
       </ul></aside>
     </section>
 
@@ -1609,28 +1587,34 @@ const FAKE_DIFFS = [
   { id:'micro',  t:'Микротекст', x:'На настоящей купюре есть крошечные надписи, их читают через лупу. Принтер их не повторит: выходит размытая полоска.' }
 ];
 
-/* Задание 2: кастинг «Кто станет деньгами?». Каждое испытание проверяет одно свойство, out — кто его проваливает */
-const CAST = [
-  { id:'potato',  e:'🥔', n:'Картошка' },
-  { id:'cow',     e:'🐄', n:'Корова' },
-  { id:'pebble',  e:'🪨', n:'Камешки', many:true },
-  { id:'diamond', e:'💎', n:'Алмаз' },
-  { id:'gold',    e:'🪙', n:'Золото' },
-  { id:'note',    e:'💵', n:'Купюра' }
-];
-const TRIALS = [
-  { e:'🗓️', t:'Прошёл год', p:'Не портятся', term:'долговечность', out:'potato',
-    why:'Картошка сгнила в погребе, а вместе с ней и все сбережения.' },
-  { e:'👖', t:'Положи в карман', p:'Легко носить с собой', term:'портативность', out:'cow',
-    why:'Корову в карман не положишь. А миллион рублей — это целое стадо.' },
-  { e:'🏞️', t:'Наделай денег сам', p:'Их нельзя наделать сколько хочешь', term:'редкость', out:'pebble',
-    why:'Сходил на речку и набрал мешок. Камешков у всех полно, поэтому они ничего не стоят.' },
-  { e:'⚖️', t:'Найди два одинаковых', p:'Все одинаковые', term:'однородность', out:'diamond',
-    why:'Каждый алмаз особенный: размер, цвет, трещинки. Два похожих стоят совсем по-разному.' },
-  { e:'🍬', t:'Купи жвачку за 50 ₽', p:'Легко разменять', term:'делимость', out:'gold',
-    why:'Жвачка стоит крошку золота меньше песчинки. Такую не отпилишь и не удержишь в руках.' },
-  { e:'🔦', t:'Проверь на подделку', p:'Трудно подделать', term:'узнаваемость', out:null,
-    why:'Посмотрите на свет: водяной знак, защитная нить, микротекст. Подделку видно сразу.' }
+/* Задание 2: музей неудачных денег. Каждому экспонату не хватило одного свойства (a) */
+const PROPS = {
+  durable:   { n:'Не портятся',                 t:'долговечность' },
+  divisible: { n:'Легко разменять',             t:'делимость' },
+  portable:  { n:'Легко носить с собой',        t:'портативность' },
+  uniform:   { n:'Все одинаковые',              t:'однородность' },
+  secure:    { n:'Трудно подделать',            t:'узнаваемость' },
+  scarce:    { n:'Нельзя наделать сколько хочешь', t:'ограниченность' }
+};
+const EXHIBITS = [
+  { e:'🍞', at:'Египет · 4 500 лет назад', t:'Зарплата хлебом', a:'durable',
+    x:'Строителям пирамид платили хлебом. Хлеб нужен всем, и его легко считать: буханка, две, десять.',
+    after:'Хлеб черствеет за пару дней, и накопить такую зарплату нельзя. Богатство стали хранить в металле: он не портится.' },
+  { e:'🐄', at:'Древняя Русь', t:'Деньги-скот', big:'1 корова = 20 кур', a:'divisible',
+    x:'На Руси слово «скот» означало «деньги», а казну называли «скотницей». Допустим, корова стоит как 20 кур. Как купить одну курицу, если у вас только корова?',
+    after:'Корову на 20 частей не разделишь. А 5 000 ₽ можно разменять хоть до рубля.' },
+  { e:'🪙', at:'Швеция · 1644 год', t:'Монета весом 20 кг', big:'19,7 кг', a:'portable',
+    x:'В Швеции было много меди, и из неё делали монеты-плиты. Самая крупная весила 19,7 кг. За покупками ездили с телегой.',
+    after:'Носить такие деньги было невозможно. Поэтому в 1661 году шведский банк выпустил первые в Европе бумажные деньги.' },
+  { e:'🍂', at:'Вирджиния · XVIII век', t:'Табачные деньги', a:'uniform',
+    x:'В американской колонии Вирджиния табаком платили налоги и долги. Но один табак отличный, а другой — труха.',
+    after:'Долги отдавали самым плохим табаком, а хороший оставляли себе. Пришлось открыть склады, где табак проверяли и выдавали вместо него расписки.' },
+  { e:'🍫', at:'Ацтеки · XVI век', t:'Какао-бобы', big:'100 бобов = индейка', a:'secure',
+    x:'У ацтеков деньгами были какао-бобы: за 100 бобов давали индейку. Хитрецы вынимали боб из шкурки и набивали её землёй.',
+    after:'Снаружи подделку было не отличить. Поэтому у настоящих денег есть водяные знаки и защитная нить.' },
+  { e:'💸', at:'Зимбабве · 2009 год', t:'Купюра в 100 триллионов', big:'100 000 000 000 000 $', a:'scarce',
+    x:'Правительство Зимбабве печатало деньги каждый раз, когда их не хватало. Дошло до купюры в 100 триллионов долларов.',
+    after:'Чем больше денег печатали, тем быстрее они дешевели. В том же году страна отказалась от своих денег и перешла на доллары США.' }
 ];
 
 /* Задание 3: один день из жизни купюры в 1 000 ₽. На каждой остановке — одна суперсила */
@@ -4820,103 +4804,82 @@ const Polls = (() => {
   reset();
 })();
 
-/* ---------- Task 2: who becomes money? one trial per property, the loser drops out ---------- */
+/* ---------- Task 2: museum of failed money, every exhibit lacked one property ---------- */
 (() => {
-  const box = $('#castBox'), LAST = TRIALS.length - 1;
-  let n, rev, pick, out, round = 0;   // out: candidate id -> trial index where it dropped out
-  const final = () => n === LAST && rev;
-  function reset() { n = 0; rev = false; pick = null; out = {}; round++; render(); }
+  const box = $('#museum'), keys = Object.keys(PROPS), N = EXHIBITS.length;
+  let open = -1, seen = {}, round = 1;   // seen: exhibit index -> the class's pick
+  const done = i => i in seen;
+  const count = () => Object.keys(seen).length;
+  const lacked = x => 'Не хватило ' + PROPS[x.a].t.replace(/ость$/, 'ости');
+  const nextOpen = () => { for (let k = 1; k <= N; k++) { const i = (open + k) % N; if (!done(i)) return i; } return -1; };
 
-  function tile(c) {
-    const k = out[c.id], inPlay = k === undefined || k >= n, now = rev && k === n;
-    const win = final() && k === undefined;
-    const passed = k !== undefined ? k : n + (rev ? 1 : 0);
-    const poll = inPlay && TRIALS[n].out;
-    const cls = `ct ${k !== undefined ? 'gone' : ''} ${now ? 'now' : ''} ${rev && pick === c.id && !now ? 'miss' : ''} ${win ? 'win' : ''} ${poll ? 'poll-opt' : ''}`;
-    const inner = `${poll ? '<i class="pbar"></i>' : ''}${win ? '<span class="ct-crown">👑</span>' : ''}
-      <span class="ct-e">${c.e}</span><b class="ct-n">${c.n}</b>
-      ${k !== undefined ? '<span class="ct-x">вне игры</span>' : `<span class="ct-d">${TRIALS.map((_, i) => `<i class="${i < passed ? 'on' : ''}"></i>`).join('')}</span>`}
-      ${poll ? '<em class="pn"></em>' : ''}`;
-    return poll ? `<button class="${cls}" data-k="${c.id}" data-t="${c.e} ${c.n}" ${rev ? 'disabled' : ''}>${inner}</button>` : `<div class="${cls}">${inner}</div>`;
+  function board() {
+    const all = count() === N;
+    box.innerHTML = `<div class="mx-board">${EXHIBITS.map((x, i) => `
+        <button class="mx ${done(i) ? 'done' : ''}" data-i="${i}">
+          <span class="mx-no">№${i + 1}</span>
+          <span class="mx-e">${x.e}</span>
+          <span class="mx-plq"><small>${x.at}</small><b>${x.t}</b>${done(i) ? `<em>${lacked(x)}</em>` : ''}</span>
+        </button>`).join('')}</div>
+      <div class="mx-foot">${all
+        ? '<p class="mx-sum">💵 А у купюры в вашем кошельке есть все шесть свойств. Поэтому она и работает как деньги.</p>'
+        : `<span class="hint">Изучено ${count()} из ${N}. Нажмите на любой экспонат.</span>`}${count() ? '<button class="btn btn-ghost btn-sm" id="mxReset">↺ Заново</button>' : ''}</div>`;
   }
 
-  /* the last trial has one candidate left, so the class votes yes / no instead */
-  const yesNo = () => `<div class="poll-opts trial-yn">${[['y', '👍 Да'], ['n', '👎 Нет']].map(([k, l]) =>
-    `<button class="popt poll-opt ${rev ? (k === 'y' ? 'right' : pick === k ? 'wrong' : 'dim') : ''}" data-k="${k}" data-t="${l}" ${rev ? 'disabled' : ''}><i class="pbar"></i><span class="pl">${l}</span><em class="pn"></em></button>`).join('')}</div>`;
-  function trial() {
-    const t = TRIALS[n], head = `Испытание ${n + 1} из ${TRIALS.length}`;
-    if (!rev) {
-      const last = !t.out;
-      return `<div class="trial card">
-        <span class="trial-e">${t.e}</span>
-        <div class="trial-b">
-          <span class="trial-n">${head}</span>
-          <h3 class="trial-t">${t.t}</h3>
-          <p class="trial-q">${last ? 'Остался один кандидат. Купюра пройдёт испытание?' : 'Кто не пройдёт испытание? Кликните того, кого выбрал класс.'}</p>
+  function detail() {
+    const x = EXHIBITS[open], rev = done(open), pick = seen[open], p = PROPS[x.a];
+    box.innerHTML = `<div class="mx-open">
+      <div class="mx-case">
+        <span class="mx-no">№${open + 1}</span>
+        <span class="mx-e">${x.e}</span>
+        ${x.big ? `<span class="mx-big">${x.big}</span>` : ''}
+        ${rev ? `<p class="mx-label">${pick ? `<span class="${pick === x.a ? 'ok' : 'bad'}">${pick === x.a ? 'Верно!' : 'Мимо.'}</span> ` : ''}<b>${lacked(x)}</b>, то есть «${p.n.toLowerCase()}». ${x.after}</p>` : ''}
+      </div>
+      <div class="mx-info">
+        <span class="mx-at">${x.at}</span>
+        <h3 class="mx-t">${x.t}</h3>
+        <p class="mx-x">${x.x}</p>
+        <div class="poll mx-poll ${rev ? 'revealed' : ''}" data-self data-poll="museum-${round}-${open}" data-q="${esc(x.t)}: какого свойства не хватило?" data-sub="Экспонат ${open + 1} из ${N}" data-answer="${x.a}">
+          <p class="poll-q">Какого свойства не хватило этим деньгам?</p>
+          <div class="poll-opts">${keys.map(k => `<button class="popt poll-opt ${rev ? (k === x.a ? 'right' : k === pick ? 'wrong' : 'dim') : ''}" data-k="${k}" data-t="${PROPS[k].n}" ${rev ? 'disabled' : ''}><i class="pbar"></i><span class="pl">${PROPS[k].n}</span><em class="pn"></em></button>`).join('')}</div>
           <div class="pmeta"></div>
         </div>
-        ${last ? yesNo() : ''}
-      </div>`;
-    }
-    const ans = t.out || 'y', ok = pick === ans;
-    const c = t.out ? CAST.find(x => x.id === t.out) : null;
-    const tag = pick ? `<span class="trial-n ${ok ? 'ok' : 'bad'}">${ok ? 'Верно!' : 'Мимо!'} · ${head}</span>` : `<span class="trial-n">${head}</span>`;
-    return `<div class="trial card after">
-      <span class="trial-e">${c ? c.e : '🏆'}</span>
-      <div class="trial-b">
-        ${tag}
-        <h3 class="trial-t">${c ? `${c.n} ${c.many ? 'выбывают' : 'выбывает'}` : 'Купюра становится деньгами!'}</h3>
-        <p class="trial-q">${t.why}${c ? '' : ' Она одна прошла все шесть испытаний.'}</p>
-        <p class="trial-p">Свойство денег: <b>${t.p.toLowerCase()}</b> <small>${t.term}</small></p>
       </div>
-      <div class="trial-side">${final()
-        ? yesNo() + '<button class="btn btn-ghost" id="castAgain">↺ Сыграть ещё раз</button>'
-        : '<button class="btn btn-primary" id="castNext">Следующее испытание →</button>'}</div>
+      <div class="mx-nav"><button class="btn btn-ghost" id="mxBack">← Все экспонаты</button>${rev
+        ? `<button class="btn btn-primary" id="mxNext">${nextOpen() >= 0 ? 'Следующий экспонат →' : 'К итогу →'}</button>` : ''}</div>
     </div>`;
   }
 
-  function render() {
-    const t = TRIALS[n], learned = n + (rev ? 1 : 0);
-    box.innerHTML = `<div class="cast poll ${rev ? 'revealed' : ''}" data-self data-poll="cast-${round}-${n}"
-        data-q="${t.e} ${t.t}: ${t.out ? 'кто не пройдёт?' : 'купюра пройдёт?'}" data-sub="Испытание ${n + 1} из ${TRIALS.length}" data-answer="${t.out || 'y'}">
-      <div class="cast-row">${CAST.map(tile).join('')}</div>
-      ${trial()}
-      <div class="learned">
-        <div class="learned-h"><b>Свойства денег: ${learned} из ${TRIALS.length}</b>${(n || rev) && !final() ? '<button class="btn btn-ghost btn-sm" id="castReset">↺ Заново</button>' : ''}</div>
-        <div class="learned-row">${TRIALS.map((x, i) => i < learned
-          ? `<span class="lp on ${rev && i === n ? 'new' : ''}"><i>${i + 1}</i><b>${x.p}</b><small>${x.term}</small></span>`
-          : `<span class="lp"><i>${i + 1}</i><b>?</b></span>`).join('')}</div>
-      </div>
-    </div>`;
-  }
-
+  function show(i) { open = i; i < 0 ? board() : detail(); }
   function reveal(k) {
-    const el = $('.cast', box), t = TRIALS[n];
-    pick = k || null;
-    Polls.reveal(el, k);
-    rev = true;
-    if (t.out) out[t.out] = n;
-    render();
-    if (pick) (pick === (t.out || 'y') ? SFX.right : SFX.wrong)();
-    if (final()) setTimeout(() => { SFX.fanfare(); Confetti.burst({ n:140 }); }, 400);
-    else setTimeout(SFX.no, 250);
+    const x = EXHIBITS[open];
+    Polls.reveal($('.mx-poll', box), k);
+    seen[open] = k;
+    detail();
+    (k === x.a ? SFX.right : SFX.wrong)();
+    if (count() === N) setTimeout(() => { SFX.fanfare(); Confetti.burst({ n:120 }); }, 500);
   }
-  function next() { if (!rev || final()) return; n++; rev = false; pick = null; render(); SFX.click(); }
 
   box.addEventListener('click', e => {
+    const m = e.target.closest('.mx');
+    if (m) { show(+m.dataset.i); SFX.click(); return; }
     const o = e.target.closest('.poll-opt');
-    if (o && !rev && !o.disabled) return reveal(o.dataset.k);
-    if (e.target.closest('#castNext')) next();
-    if (e.target.closest('#castAgain, #castReset')) { reset(); SFX.click(); }
+    if (o && !o.disabled && open >= 0 && !done(open)) return reveal(o.dataset.k);
+    if (e.target.closest('#mxBack')) { show(-1); SFX.click(); }
+    if (e.target.closest('#mxNext')) { show(nextOpen()); SFX.click(); }
+    if (e.target.closest('#mxReset')) { seen = {}; round++; show(-1); SFX.click(); }
   });
   Deck.hooks.props = {
     key(e) {
+      if (open < 0) return false;
+      if (e.code === 'Escape') { show(-1); return true; }
       if ((e.code === 'Enter' || e.code === 'Space') && e.target.closest && e.target.closest('button')) return false;
-      if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'ArrowRight') && rev && !final()) { next(); return true; }
+      if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'ArrowRight') && done(open)) { show(nextOpen()); return true; }
       return false;
-    }
+    },
+    leave() { if (open >= 0) show(-1); }
   };
-  reset();
+  board();
 })();
 
 /* ---------- measure of value: barter ratios ---------- */
