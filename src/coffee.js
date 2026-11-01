@@ -1,7 +1,7 @@
 /* ================= COFFEE BATTLE: shared rules (presenter + phones) ================= */
 const COFFEE = {
   START: 1000,
-  PRICES: [40, 60, 80, 100],
+  PRICES: [30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
   AD: 10, RUMOR: 10, DISCOUNT: 10, POWER_CAP: 20,
   TAX: .3,
   EMOJI: ['☕', '🧋', '🍩', '🥐', '🧁', '🍪', '🥤', '🍫'],
@@ -17,17 +17,17 @@ const COFFEE = {
   EVENTS: {
     normal:   { e:'☕', t:'Обычный понедельник', n:60, cost:20, max:80,
                 x:'Пары как всегда, обычный поток студентов.' },
-    frost:    { e:'🥶', t:'Мороз −25°', n:90, cost:20, max:80,
+    frost:    { e:'🥶', t:'Мороз −25°', n:90, cost:20, max:90,
                 x:'Все хотят согреться. Покупателей намного больше обычного.' },
-    session:  { e:'📚', t:'Сессия', n:120, cost:20, max:100,
-                x:'Студенты не спят ночами. Кофе нужен всем, его купят даже за 100 ₽.' },
+    session:  { e:'📚', t:'Сессия', n:120, cost:20, max:120,
+                x:'Студенты не спят ночами. Кофе нужен всем, его купят даже за 120 ₽.' },
     holidays: { e:'🏖️', t:'Каникулы', n:30, cost:20, max:60,
                 x:'Колледж почти пустой, а у тех, кто пришёл, мало денег.' },
-    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:40, max:80,
+    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:40, max:90,
                 x:'Кофе везут из Бразилии и платят за него долларами. Доллар вырос — чашка теперь обходится в 40 ₽.' },
     rain:     { e:'🌧️', t:'Ливень', n:42, cost:20, max:80,
                 x:'Никто не хочет выходить из здания. Покупателей меньше обычного.' },
-    stipend:  { e:'💸', t:'Пришла стипендия', n:72, cost:20, max:100,
+    stipend:  { e:'💸', t:'Пришла стипендия', n:72, cost:20, max:110,
                 x:'У студентов появились деньги. Покупателей больше, и дорогой кофе их не пугает.' },
     blogger:  { e:'📱', t:'Блогер против кофе', n:42, cost:20, max:60,
                 x:'Популярный блогер сказал, что кофе вреден. Покупателей меньше, и платить много никто не хочет.' },
@@ -54,12 +54,12 @@ function coffeeForm(host, t, ev, init, on) {
   /* what the team earns at its price for each guess about the rival: ready answers, no maths left for the class */
   function outcomes(unit) {
     const extra = (o.card === 'ad' ? C.AD : 0) + (o.card === 'rumor' ? C.RUMOR : 0), cases = [];
-    if (o.price > C.PRICES[0]) cases.push(['Соперник дешевле', o.price - 20]);
+    if (o.price > C.PRICES[0]) cases.push(['Соперник дешевле', o.price - 10]);
     cases.push(['Цены равные', o.price]);
-    if (o.price < ev.max) cases.push(['Соперник дороже', o.price + 20]);
+    if (o.price < ev.max) cases.push(['Соперник дороже', o.price + 10]);
     return cases.map(([s, rival]) => {
-      const b = coffeeSplit(ev.n, o.price, rival) + extra;
-      return `<div class="cf-o"><small>${s}</small><b>${money(b * (o.price - unit))}</b><span>${b} ${plural(b, 'покупатель', 'покупателя', 'покупателей')}</span></div>`;
+      const b = coffeeSplit(ev.n, o.price, rival) + extra, sum = b * (o.price - unit);
+      return `<div class="cf-o ${sum < 0 ? 'bad' : ''}"><small>${s}</small><b>${money(sum)}</b><span>${b} ${plural(b, 'покупатель', 'покупателя', 'покупателей')}</span></div>`;
     }).join('');
   }
   function render() {
@@ -70,11 +70,16 @@ function coffeeForm(host, t, ev, init, on) {
       return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${o.card === id ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${used ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'Уже сыграна' : c.d}</small></button>`;
     };
     const col = (good, title) => `<div class="cf-col ${good ? 'good' : 'evil'}"><span class="cf-g">${title}</span>${ids.filter(id => C.CARDS[id].good === good).map(card).join('')}</div>`;
+    /* prices above the day's ceiling are not shown at all: nobody would buy */
+    const top = ev.max < C.PRICES[C.PRICES.length - 1] ? ` <em>· дороже ${ev.max} ₽ не купят</em>` : '', left = o.price - unit;
+    const note = left > 0 ? `С каждой чашки останется <b>${left} ₽</b>: цена ${o.price} ₽ минус ${unit} ₽ на кофе`
+      : left === 0 ? `С чашки не останется <b>ничего</b>: цена ${o.price} ₽ и кофе обходится в ${unit} ₽`
+      : `Каждая чашка <b class="bad">в убыток на ${-left} ₽</b>: цена ${o.price} ₽, а кофе обходится в ${unit} ₽`;
     host.innerHTML = `<div class="cf">
       <p class="cf-goal">Выберите <b>цену чашки</b>. Карту можно не брать.</p>
-      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
-        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}" ${p > ev.max ? 'disabled' : ''}>${p} ₽${p > ev.max ? '<small>не купят</small>' : ''}</button>`).join('')}</div>
-        <p class="cf-note">С каждой чашки останется <b>${o.price - unit} ₽</b>: цена ${o.price} ₽ минус ${unit} ₽ на кофе</p>
+      <div class="cf-sec"><div class="cf-t"><i>1</i><span>Цена чашки${top}</span></div>
+        <div class="cf-prices">${C.PRICES.filter(p => p <= ev.max).map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
+        <p class="cf-note">${note}</p>
         <div class="cf-outs"><span>Сколько заработаете за раунд:</span><div>${outcomes(unit)}</div></div></div>
       <div class="cf-sec"><div class="cf-t"><i>2</i><span>Карта <em>· по желанию, каждая — один раз за игру</em></span></div>
         <div class="cf-cards">${col(true, 'Помощь себе')}${col(false, 'Пакость сопернику')}</div></div>

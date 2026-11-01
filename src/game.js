@@ -185,7 +185,7 @@ const Game = (() => {
     return `<div class="news ${still ? 'still' : ''}">
       <div class="news-top"><span>Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
       <div class="news-body"><div class="news-e">${e.e}</div><div><h2>${e.t}</h2><p>${e.x}</p></div></div>
-      <div class="news-facts"><span>Кофе захотят <b>${e.n} человек</b></span><span>Чашка обходится в <b>${e.cost} ₽</b></span><span>${e.max < C.PRICES[C.PRICES.length - 1] ? `Дороже <b>${e.max} ₽</b> никто не купит` : `Купят даже за <b>${e.max} ₽</b>`}</span></div>
+      <div class="news-facts"><span>Кофе захотят <b>${e.n} ${plural(e.n, 'человек', 'человека', 'человек')}</b></span><span>Чашка обходится в <b>${e.cost} ₽</b></span><span>${e.max < C.PRICES[C.PRICES.length - 1] ? `Дороже <b>${e.max} ₽</b> никто не купит` : `Купят даже за <b>${e.max} ₽</b>`}</span></div>
     </div>`;
   }
   function orders() {
@@ -231,7 +231,8 @@ const Game = (() => {
     if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
     else { const c = a.price < b.price ? 0 : 1; out.push(`${name(c)} продаёт дешевле: ${r.teams[c].price} ₽ против ${r.teams[1 - c].price} ₽, поэтому к ней пошли 2 из 3 покупателей.`); }
     if (r.ev === 'beans') out.push('Зёрна покупают за границей за доллары. Это мировые деньги.');
-    else if (a.price - a.unit !== b.price - b.unit) out.push(`Зато с каждой чашки у ${name(0)} осталось ${a.price - a.unit} ₽, а у ${name(1)} — ${b.price - b.unit} ₽.`);
+    else if (a.price - a.unit !== b.price - b.unit && a.price >= a.unit && b.price >= b.unit) out.push(`Зато с каждой чашки у ${name(0)} осталось ${a.price - a.unit} ₽, а у ${name(1)} — ${b.price - b.unit} ₽.`);
+    r.teams.forEach((x, i) => { if (x.price < x.unit) out.push(`${name(i)} продавала дешевле, чем обходится кофе, и теряла ${x.unit - x.price} ₽ на каждой чашке.`); });
     return out;
   }
   const signed = n => (n >= 0 ? '+' : '−') + fmt(Math.abs(n)) + ' ₽';
@@ -342,7 +343,7 @@ const Game = (() => {
       <ol class="rules-list">
         <li>У каждой кофейни на старте ${fmt(C.START)} ₽. Раундов — ${G.rounds}.</li>
         <li>Каждый раунд выходит новость: сколько человек захотят кофе, во что обходится чашка и дороже какой цены никто не купит.</li>
-        <li>Капитан тайно выбирает <b>цену чашки</b>: 40, 60, 80 или 100 ₽.</li>
+        <li>Капитан тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Дороже, чем сказано в новости, никто не купит.</li>
         <li>Кто дешевле, к тому идут 2 из 3 покупателей. Цены равные — покупатели делятся поровну.</li>
         <li>С каждой чашки кофейня получает цену минус стоимость кофе. Дешёвый кофе привлекает людей, но с чашки остаётся меньше.</li>
         <li>За раунд можно сыграть одну карту. Каждая карта — один раз за игру.</li>

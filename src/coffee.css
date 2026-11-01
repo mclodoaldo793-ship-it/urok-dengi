@@ -10,11 +10,11 @@
 .cf button:disabled{cursor:not-allowed}
 .cf-note{margin:0;font-size:15px;line-height:1.35;color:var(--cf-muted)}
 .cf-note b{color:var(--cf-ink)}
-.cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.cf .cf-p{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf-note b.bad{color:var(--cf-evil)}
+/* up to 10 prices: 5 per row on a phone, one row when there is room */
+.cf-prices{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.cf .cf-p{display:flex;align-items:center;justify-content:center;padding:10px 2px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-.cf .cf-p:disabled{opacity:.4;text-decoration:line-through}
-.cf-p small{font-size:11px;font-weight:700;text-decoration:none;color:var(--cf-muted)}
 /* ready answers: what this price earns if the rival goes cheaper, the same or dearer */
 .cf-outs{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--cf-muted)}
 .cf-outs > div{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
@@ -22,6 +22,7 @@
 .cf-o small{font-size:13px;font-weight:700;color:var(--cf-muted)}
 .cf-o b{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--cf-good);white-space:nowrap}
 .cf-o span{font-size:13px}
+.cf-o.bad b{color:var(--cf-evil)}
 /* cards: help for you / harm for the rival; each card spells out what it does */
 .cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -38,6 +39,8 @@
 .cf-c.used b{text-decoration:line-through}
 @container (min-width:400px){ .cf-o b{font-size:22px} }
 @container (min-width:520px){
+  .cf-prices{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+  .cf .cf-p{font-size:20px}
   .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cf-o b{font-size:26px}
 }

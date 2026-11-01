@@ -856,11 +856,11 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .cf button:disabled{cursor:not-allowed}
 .cf-note{margin:0;font-size:15px;line-height:1.35;color:var(--cf-muted)}
 .cf-note b{color:var(--cf-ink)}
-.cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.cf .cf-p{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf-note b.bad{color:var(--cf-evil)}
+/* up to 10 prices: 5 per row on a phone, one row when there is room */
+.cf-prices{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.cf .cf-p{display:flex;align-items:center;justify-content:center;padding:10px 2px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .cf .cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-.cf .cf-p:disabled{opacity:.4;text-decoration:line-through}
-.cf-p small{font-size:11px;font-weight:700;text-decoration:none;color:var(--cf-muted)}
 /* ready answers: what this price earns if the rival goes cheaper, the same or dearer */
 .cf-outs{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--cf-muted)}
 .cf-outs > div{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
@@ -868,6 +868,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .cf-o small{font-size:13px;font-weight:700;color:var(--cf-muted)}
 .cf-o b{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--cf-good);white-space:nowrap}
 .cf-o span{font-size:13px}
+.cf-o.bad b{color:var(--cf-evil)}
 /* cards: help for you / harm for the rival; each card spells out what it does */
 .cf-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .cf-col{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -884,6 +885,8 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .cf-c.used b{text-decoration:line-through}
 @container (min-width:400px){ .cf-o b{font-size:22px} }
 @container (min-width:520px){
+  .cf-prices{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+  .cf .cf-p{font-size:20px}
   .cf-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cf-o b{font-size:26px}
 }
@@ -1427,8 +1430,8 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
         </header>
         <div class="rules">
           <div class="rule card"><span class="rule-ico">☕</span><div><h3>Две кофейни</h3><p class="txt">Делимся на две команды и выбираем капитанов. У каждой кофейни на старте 1 000 ₽.</p></div></div>
-          <div class="rule card"><span class="rule-ico">📰</span><div><h3>Новость дня</h3><p class="txt">Каждый раунд выходит новость: мороз, сессия, каникулы. Она говорит, сколько будет покупателей.</p></div></div>
-          <div class="rule card"><span class="rule-ico">📱</span><div><h3>Одно решение</h3><p class="txt">Капитан тайно выбирает только цену чашки: 40, 60, 80 или 100 ₽.</p></div></div>
+          <div class="rule card"><span class="rule-ico">📰</span><div><h3>Новость дня</h3><p class="txt">Каждый раунд выходит новость: мороз, сессия, каникулы. Она говорит, сколько будет покупателей и дороже какой цены никто не купит.</p></div></div>
+          <div class="rule card"><span class="rule-ico">📱</span><div><h3>Одно решение</h3><p class="txt">Капитан тайно выбирает только цену чашки: от 30 до 120 ₽, шаг 10 ₽.</p></div></div>
           <div class="rule card"><span class="rule-ico">🧍</span><div><h3>Покупатели</h3><p class="txt">Кто дешевле, к тому идут 2 из 3. Цены равные — поровну.</p></div></div>
           <div class="rule card"><span class="rule-ico">⚔️</span><div><h3>Ценовая война</h3><p class="txt">С дешёвой чашки остаётся мало денег. Если обе кофейни снижают цену, обе зарабатывают меньше.</p></div></div>
           <div class="rule card"><span class="rule-ico">🃏</span><div><h3>Помощь и пакости</h3><p class="txt">У команды 3 карты-помощи и 3 пакости. Каждую можно сыграть один раз за игру.</p></div></div>
@@ -1447,6 +1450,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
         <li>Главное правило: <b>решения тайные</b>. Команда шепчется, капитан вводит.</li>
         <li>Команде не нужно ничего считать: в окне решения под ценой сразу написано, сколько она заработает, если соперник поставит цену ниже, такую же или выше.</li>
         <li>Вопрос для обсуждения после 2–3 раундов: почему, когда обе кофейни снижают цену, обе зарабатывают меньше? Это ценовая война.</li>
+        <li>Если команды сбивают цену по 10 ₽ и дошли до дна, подскажите: иногда выгоднее резко поднять цену до потолка. Покупателей станет меньше, но с каждой чашки останется намного больше.</li>
         <li>После каждого раунда игра сама объясняет, что произошло. Зачитывайте эти пояснения вслух.</li>
       </ul></aside>
     </section>
@@ -1646,7 +1650,7 @@ const ROUTE = [
 /* ================= COFFEE BATTLE: shared rules (presenter + phones) ================= */
 const COFFEE = {
   START: 1000,
-  PRICES: [40, 60, 80, 100],
+  PRICES: [30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
   AD: 10, RUMOR: 10, DISCOUNT: 10, POWER_CAP: 20,
   TAX: .3,
   EMOJI: ['☕', '🧋', '🍩', '🥐', '🧁', '🍪', '🥤', '🍫'],
@@ -1662,17 +1666,17 @@ const COFFEE = {
   EVENTS: {
     normal:   { e:'☕', t:'Обычный понедельник', n:60, cost:20, max:80,
                 x:'Пары как всегда, обычный поток студентов.' },
-    frost:    { e:'🥶', t:'Мороз −25°', n:90, cost:20, max:80,
+    frost:    { e:'🥶', t:'Мороз −25°', n:90, cost:20, max:90,
                 x:'Все хотят согреться. Покупателей намного больше обычного.' },
-    session:  { e:'📚', t:'Сессия', n:120, cost:20, max:100,
-                x:'Студенты не спят ночами. Кофе нужен всем, его купят даже за 100 ₽.' },
+    session:  { e:'📚', t:'Сессия', n:120, cost:20, max:120,
+                x:'Студенты не спят ночами. Кофе нужен всем, его купят даже за 120 ₽.' },
     holidays: { e:'🏖️', t:'Каникулы', n:30, cost:20, max:60,
                 x:'Колледж почти пустой, а у тех, кто пришёл, мало денег.' },
-    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:40, max:80,
+    beans:    { e:'📈', t:'Зёрна подорожали', n:60, cost:40, max:90,
                 x:'Кофе везут из Бразилии и платят за него долларами. Доллар вырос — чашка теперь обходится в 40 ₽.' },
     rain:     { e:'🌧️', t:'Ливень', n:42, cost:20, max:80,
                 x:'Никто не хочет выходить из здания. Покупателей меньше обычного.' },
-    stipend:  { e:'💸', t:'Пришла стипендия', n:72, cost:20, max:100,
+    stipend:  { e:'💸', t:'Пришла стипендия', n:72, cost:20, max:110,
                 x:'У студентов появились деньги. Покупателей больше, и дорогой кофе их не пугает.' },
     blogger:  { e:'📱', t:'Блогер против кофе', n:42, cost:20, max:60,
                 x:'Популярный блогер сказал, что кофе вреден. Покупателей меньше, и платить много никто не хочет.' },
@@ -1699,12 +1703,12 @@ function coffeeForm(host, t, ev, init, on) {
   /* what the team earns at its price for each guess about the rival: ready answers, no maths left for the class */
   function outcomes(unit) {
     const extra = (o.card === 'ad' ? C.AD : 0) + (o.card === 'rumor' ? C.RUMOR : 0), cases = [];
-    if (o.price > C.PRICES[0]) cases.push(['Соперник дешевле', o.price - 20]);
+    if (o.price > C.PRICES[0]) cases.push(['Соперник дешевле', o.price - 10]);
     cases.push(['Цены равные', o.price]);
-    if (o.price < ev.max) cases.push(['Соперник дороже', o.price + 20]);
+    if (o.price < ev.max) cases.push(['Соперник дороже', o.price + 10]);
     return cases.map(([s, rival]) => {
-      const b = coffeeSplit(ev.n, o.price, rival) + extra;
-      return `<div class="cf-o"><small>${s}</small><b>${money(b * (o.price - unit))}</b><span>${b} ${plural(b, 'покупатель', 'покупателя', 'покупателей')}</span></div>`;
+      const b = coffeeSplit(ev.n, o.price, rival) + extra, sum = b * (o.price - unit);
+      return `<div class="cf-o ${sum < 0 ? 'bad' : ''}"><small>${s}</small><b>${money(sum)}</b><span>${b} ${plural(b, 'покупатель', 'покупателя', 'покупателей')}</span></div>`;
     }).join('');
   }
   function render() {
@@ -1715,11 +1719,16 @@ function coffeeForm(host, t, ev, init, on) {
       return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${o.card === id ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${used ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'Уже сыграна' : c.d}</small></button>`;
     };
     const col = (good, title) => `<div class="cf-col ${good ? 'good' : 'evil'}"><span class="cf-g">${title}</span>${ids.filter(id => C.CARDS[id].good === good).map(card).join('')}</div>`;
+    /* prices above the day's ceiling are not shown at all: nobody would buy */
+    const top = ev.max < C.PRICES[C.PRICES.length - 1] ? ` <em>· дороже ${ev.max} ₽ не купят</em>` : '', left = o.price - unit;
+    const note = left > 0 ? `С каждой чашки останется <b>${left} ₽</b>: цена ${o.price} ₽ минус ${unit} ₽ на кофе`
+      : left === 0 ? `С чашки не останется <b>ничего</b>: цена ${o.price} ₽ и кофе обходится в ${unit} ₽`
+      : `Каждая чашка <b class="bad">в убыток на ${-left} ₽</b>: цена ${o.price} ₽, а кофе обходится в ${unit} ₽`;
     host.innerHTML = `<div class="cf">
       <p class="cf-goal">Выберите <b>цену чашки</b>. Карту можно не брать.</p>
-      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
-        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}" ${p > ev.max ? 'disabled' : ''}>${p} ₽${p > ev.max ? '<small>не купят</small>' : ''}</button>`).join('')}</div>
-        <p class="cf-note">С каждой чашки останется <b>${o.price - unit} ₽</b>: цена ${o.price} ₽ минус ${unit} ₽ на кофе</p>
+      <div class="cf-sec"><div class="cf-t"><i>1</i><span>Цена чашки${top}</span></div>
+        <div class="cf-prices">${C.PRICES.filter(p => p <= ev.max).map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
+        <p class="cf-note">${note}</p>
         <div class="cf-outs"><span>Сколько заработаете за раунд:</span><div>${outcomes(unit)}</div></div></div>
       <div class="cf-sec"><div class="cf-t"><i>2</i><span>Карта <em>· по желанию, каждая — один раз за игру</em></span></div>
         <div class="cf-cards">${col(true, 'Помощь себе')}${col(false, 'Пакость сопернику')}</div></div>
@@ -5178,7 +5187,7 @@ const Game = (() => {
     return `<div class="news ${still ? 'still' : ''}">
       <div class="news-top"><span>Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
       <div class="news-body"><div class="news-e">${e.e}</div><div><h2>${e.t}</h2><p>${e.x}</p></div></div>
-      <div class="news-facts"><span>Кофе захотят <b>${e.n} человек</b></span><span>Чашка обходится в <b>${e.cost} ₽</b></span><span>${e.max < C.PRICES[C.PRICES.length - 1] ? `Дороже <b>${e.max} ₽</b> никто не купит` : `Купят даже за <b>${e.max} ₽</b>`}</span></div>
+      <div class="news-facts"><span>Кофе захотят <b>${e.n} ${plural(e.n, 'человек', 'человека', 'человек')}</b></span><span>Чашка обходится в <b>${e.cost} ₽</b></span><span>${e.max < C.PRICES[C.PRICES.length - 1] ? `Дороже <b>${e.max} ₽</b> никто не купит` : `Купят даже за <b>${e.max} ₽</b>`}</span></div>
     </div>`;
   }
   function orders() {
@@ -5224,7 +5233,8 @@ const Game = (() => {
     if (a.price === b.price) out.push(`Цены одинаковые (${a.price} ₽), поэтому покупатели разделились поровну.`);
     else { const c = a.price < b.price ? 0 : 1; out.push(`${name(c)} продаёт дешевле: ${r.teams[c].price} ₽ против ${r.teams[1 - c].price} ₽, поэтому к ней пошли 2 из 3 покупателей.`); }
     if (r.ev === 'beans') out.push('Зёрна покупают за границей за доллары. Это мировые деньги.');
-    else if (a.price - a.unit !== b.price - b.unit) out.push(`Зато с каждой чашки у ${name(0)} осталось ${a.price - a.unit} ₽, а у ${name(1)} — ${b.price - b.unit} ₽.`);
+    else if (a.price - a.unit !== b.price - b.unit && a.price >= a.unit && b.price >= b.unit) out.push(`Зато с каждой чашки у ${name(0)} осталось ${a.price - a.unit} ₽, а у ${name(1)} — ${b.price - b.unit} ₽.`);
+    r.teams.forEach((x, i) => { if (x.price < x.unit) out.push(`${name(i)} продавала дешевле, чем обходится кофе, и теряла ${x.unit - x.price} ₽ на каждой чашке.`); });
     return out;
   }
   const signed = n => (n >= 0 ? '+' : '−') + fmt(Math.abs(n)) + ' ₽';
@@ -5335,7 +5345,7 @@ const Game = (() => {
       <ol class="rules-list">
         <li>У каждой кофейни на старте ${fmt(C.START)} ₽. Раундов — ${G.rounds}.</li>
         <li>Каждый раунд выходит новость: сколько человек захотят кофе, во что обходится чашка и дороже какой цены никто не купит.</li>
-        <li>Капитан тайно выбирает <b>цену чашки</b>: 40, 60, 80 или 100 ₽.</li>
+        <li>Капитан тайно выбирает <b>цену чашки</b>: от 30 до 120 ₽, шаг 10 ₽. Дороже, чем сказано в новости, никто не купит.</li>
         <li>Кто дешевле, к тому идут 2 из 3 покупателей. Цены равные — покупатели делятся поровну.</li>
         <li>С каждой чашки кофейня получает цену минус стоимость кофе. Дешёвый кофе привлекает людей, но с чашки остаётся меньше.</li>
         <li>За раунд можно сыграть одну карту. Каждая карта — один раз за игру.</li>
