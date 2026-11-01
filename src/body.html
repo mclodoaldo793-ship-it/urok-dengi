@@ -1,0 +1,641 @@
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">₽</span><span class="brand-txt">Деньги и их функции</span></div>
+    <nav class="secnav" id="secnav" aria-label="Разделы урока">
+      <button data-go="start">Старт</button>
+      <button data-go="barter">Без денег</button>
+      <button data-go="money">История</button>
+      <button data-go="props">Свойства</button>
+      <button data-go="funcs">Функции</button>
+      <button data-go="quiz">Задание</button>
+      <button data-go="game" class="game-pill">🎮 Игра</button>
+      <button data-go="final">Итоги</button>
+    </nav>
+    <div class="tools">
+      <button class="live-btn live-only" id="btnLive" title="Телефоны учеников (Q)" aria-label="Телефоны учеников">📱 <b id="liveCount">0</b></button>
+      <button class="icon-btn" id="btnNotes" title="Подсказки ведущему (N)" aria-label="Подсказки ведущему">🎤</button>
+      <button class="icon-btn" id="btnSound" title="Звук (M)" aria-label="Звук">🔊</button>
+      <button class="icon-btn" id="btnTheme" title="Светлая или тёмная тема" aria-label="Сменить тему">◐</button>
+      <button class="icon-btn" id="btnFull" title="Полный экран (F)" aria-label="Полный экран">⛶</button>
+    </div>
+  </header>
+
+  <main class="deck" id="deck">
+    <svg class="deck-orn" id="deckOrn" viewBox="-130 -130 260 260" aria-hidden="true"></svg>
+    <canvas class="coins-canvas" id="coinsCanvas" aria-hidden="true"></canvas>
+
+    <!-- 1. Title -->
+    <section class="slide" id="start" data-sec="start">
+      <div class="slide-inner title-wrap">
+        <div class="banknote" role="img" aria-label="Банкнота с надписью «Деньги и их функции»">
+          <div class="bn-frame"></div>
+          <div class="bn-micro top" aria-hidden="true">МЕРА СТОИМОСТИ · СРЕДСТВО ОБРАЩЕНИЯ · СРЕДСТВО ПЛАТЕЖА · СРЕДСТВО НАКОПЛЕНИЯ · МИРОВЫЕ ДЕНЬГИ · МЕРА СТОИМОСТИ · СРЕДСТВО ОБРАЩЕНИЯ · СРЕДСТВО ПЛАТЕЖА · СРЕДСТВО НАКОПЛЕНИЯ · МИРОВЫЕ ДЕНЬГИ ·</div>
+          <div class="bn-micro bot" aria-hidden="true">ПОДДЕЛКА ЗНАНИЙ ПРЕСЛЕДУЕТСЯ ПРЕПОДАВАТЕЛЕМ · ПОДДЕЛКА ЗНАНИЙ ПРЕСЛЕДУЕТСЯ ПРЕПОДАВАТЕЛЕМ · ПОДДЕЛКА ЗНАНИЙ ПРЕСЛЕДУЕТСЯ ПРЕПОДАВАТЕЛЕМ ·</div>
+          <span class="bn-corner tr">5</span>
+          <span class="bn-corner bl">5</span>
+          <div class="bn-thread"></div>
+          <div class="bn-water" aria-hidden="true">₽</div>
+          <div class="bn-body">
+            <div class="bn-rosette">
+              <svg class="guilloche" data-g="rosette" viewBox="-130 -130 260 260" aria-hidden="true"></svg>
+              <div class="bn-rosette-num">5<small>функций</small></div>
+            </div>
+            <div class="bn-text">
+              <div class="bn-issuer">Билет Банка Знаний</div>
+              <h1 class="bn-title">Деньги и&nbsp;их функции</h1>
+              <div class="bn-sub">Обязателен к пониманию во всех видах платежей</div>
+              <div class="bn-serial">АБ 1769535</div>
+            </div>
+          </div>
+        </div>
+        <div class="title-cta">
+          <div class="title-main">
+          <div class="title-meta">
+            <span class="chip">🐐 бартер-квест</span>
+            <span class="chip">🗿 каменные деньги</span>
+            <span class="chip">🦸 5 суперсил денег</span>
+            <span class="chip">☕ битва кофеен</span>
+          </div>
+          <button class="btn btn-primary" data-action="next">Начать урок →</button>
+          <p class="hint">→ / ← листать · F — полный экран · N — подсказки ведущему</p>
+          </div>
+          <button class="join live-only" id="joinCard" title="Показать QR-код крупно (Q)">
+            <span class="join-qr" id="joinQr"></span>
+            <span class="join-txt"><b>📱 Голосуйте с телефона</b><span>Наведите камеру на QR-код</span><span class="mono" id="joinCode"></span></span>
+          </button>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Поздоровайтесь и спросите: <b>у кого сейчас есть наличные?</b> А кто сегодня платил телефоном?</li>
+        <li>Серийный номер <b>АБ 1769535</b> — пасхалка: 1769 — первые бумажные деньги в России, 1535 — появилась копейка. В конце спросите, кто догадался.</li>
+        <li>Попросите всех отсканировать QR-код: на слайдах с вопросами у них на телефонах появится голосование. Q — показать QR крупно.</li>
+        <li>Клавиши: → дальше, ← назад, F — полный экран, N — эти подсказки, M — звук.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 2. Barter quest -->
+    <section class="slide" id="barter" data-sec="barter">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker"><span class="badge-task">Задание 1</span> Мир без денег</div>
+          <h2>Деньги исчезли. У вас есть коза. Нужны кроссовки.</h2>
+          <p class="lead">Меняйтесь с жителями деревни. Что хочет каждый — неизвестно, пока не спросишь.</p>
+        </header>
+        <div class="barter" id="barterBox">
+          <div class="barter-you card">
+            <div class="you-label">В кармане</div>
+            <div class="you-item" id="barterItem">🐐</div>
+            <div class="you-name" id="barterItemName">Коза</div>
+            <div class="barter-goal">Цель: 👟 кроссовки</div>
+            <div class="barter-stats">
+              <div><b id="bTrades">0</b>обменов</div>
+              <div><b id="bFails">0</b>отказов</div>
+              <div><b id="bTime">0:00</b>время</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="barterReset">↺ Начать заново</button>
+          </div>
+          <div class="barter-traders" id="barterTraders"></div>
+          <div class="barter-win" id="barterWin" hidden>
+            <div class="win-card card">
+              <div class="big">👟</div>
+              <h3 style="font-size:clamp(24px,2.4vw,38px)">Кроссовки ваши!</h3>
+              <div class="win-stats" id="barterWinStats"></div>
+              <p class="txt">А с деньгами вы бы просто зашли в магазин и&nbsp;купили. За&nbsp;одну минуту и&nbsp;без козы.</p>
+              <button class="btn btn-primary" data-action="next">Почему бартер — это боль →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Скажите: «Деньги исчезли. Совсем. Вот вам коза — добудьте кроссовки».</li>
+        <li>Пусть группа хором решает, к кому идти. Кликайте по жителям. Чего хочет житель, видно только после разговора.</li>
+        <li>Решение (не выдавайте!): <b>Борис</b> — хлеб за козу → <b>Зина</b> — сыр за хлеб → <b>Гена</b> — рыба за сыр → <b>Аркадий</b> — кроссовки за рыбу.</li>
+        <li>Если затянулось, подскажите: «Начните с того, кому нужна коза».</li>
+      </ul></aside>
+    </section>
+
+    <!-- 3. Barter problems -->
+    <section class="slide" id="pain" data-sec="barter" data-steps="5">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker">Что пошло не так</div>
+          <h2>Четыре боли бартера</h2>
+          <p class="lead">Бартер — это обмен вещи на вещь, без денег. У него четыре большие проблемы. Каждую решили деньги.</p>
+        </header>
+        <div class="probs">
+          <article class="prob card" data-show="1">
+            <div class="prob-ico">🤝</div>
+            <h3>Трудно найти, с кем меняться</h3>
+            <p class="txt">Обмен состоится, только если вам нужна его вещь, а ему — ваша. Сапожнику коза не нужна, поэтому мы бегали по цепочке из четырёх человек.</p>
+            <div class="prob-sol"><span>С деньгами</span><p class="sol-txt">Продал козу тому, кому она нужна, и купил кроссовки. Деньги берут все.</p><b class="chip fn-chip" style="--c:var(--f2)">🔄 Средство обращения</b></div>
+          </article>
+          <article class="prob card" data-show="2">
+            <div class="prob-ico">⚖️</div>
+            <h3>Непонятно, что сколько стоит</h3>
+            <p class="txt">Коза — это сколько буханок хлеба? А сколько рыбы? У каждой пары вещей своя цена, и все их не запомнишь.</p>
+            <div class="prob-sol"><span>С деньгами</span><p class="sol-txt">У каждой вещи одна цена в рублях. Сразу видно, что дороже.</p><b class="chip fn-chip" style="--c:var(--f1)">📏 Мера стоимости</b></div>
+          </article>
+          <article class="prob card" data-show="3">
+            <div class="prob-ico">🐟</div>
+            <h3>Нельзя отложить на потом</h3>
+            <p class="txt">Рыба протухнет, хлеб зачерствеет, а козу надо кормить каждый день. Запас на зиму так не сделаешь.</p>
+            <div class="prob-sol"><span>С деньгами</span><p class="sol-txt">Деньги не портятся. Отложил сегодня — потратил через год.</p><b class="chip fn-chip" style="--c:var(--f4)">🐷 Средство накопления</b></div>
+          </article>
+          <article class="prob card" data-show="4">
+            <div class="prob-ico">⏳</div>
+            <h3>Непонятно, чем отдавать долг</h3>
+            <p class="txt">Весной взял в долг мешок зерна. Осенью вернуть тоже зерном? А если неурожай? Договориться трудно.</p>
+            <div class="prob-sol"><span>С деньгами</span><p class="sol-txt">Долг считают в рублях и отдают рублями. Так же платят зарплату и налоги.</p><b class="chip fn-chip" style="--c:var(--f3)">🧾 Средство платежа</b></div>
+          </article>
+        </div>
+        <p class="bigline" data-show="5">Людям надоели эти проблемы, и они придумали <em>деньги</em> — вещь, которую согласен взять каждый.</p>
+      </div>
+      <aside class="notes"><ul>
+        <li>Спросите: <b>что было самым неудобным в обмене?</b> Соберите 2–3 ответа, потом открывайте карточки клавишей →.</li>
+        <li>Карточки по порядку: 1) трудно найти, кому нужна твоя вещь; 2) непонятно, сколько чего стоит; 3) не получается копить; 4) неясно, чем отдавать долг.</li>
+        <li>Под каждой проблемой написано, как её решают деньги, и название функции. Скажите: «Запомните эти четыре названия, дальше разберём каждое».</li>
+      </ul></aside>
+    </section>
+
+    <!-- 4. What is money -->
+    <section class="slide" id="money" data-sec="history" data-steps="2">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker">Определение</div>
+          <h2>Так что же такое деньги?</h2>
+        </header>
+        <div class="two">
+          <div class="f-left">
+            <p class="def">Деньги — это <mark>особый товар</mark>, который служит <mark>всеобщим эквивалентом</mark>: на него можно обменять любой другой товар.</p>
+            <p class="txt">Простыми словами: деньги — это то, что <span class="hl">все согласны взять</span> в обмен на любую вещь или услугу. Когда-то это был скот и ракушки, потом золото и бумажки, а сейчас — цифры в телефоне.</p>
+            <div class="poll" data-show="1" data-poll="print5000" data-q="Сколько стоит напечатать одну купюру 5000 ₽?" data-answer="a" data-reveal-step="2">
+              <div class="poll-q">🤔 Как думаете, сколько стоит <b>напечатать</b> одну такую купюру?</div>
+              <div class="poll-opts">
+                <button class="poll-opt popt" data-k="a"><span class="pl">≈ 2 ₽</span><span class="pbar"></span><span class="pn"></span></button>
+                <button class="poll-opt popt" data-k="b"><span class="pl">≈ 50 ₽</span><span class="pbar"></span><span class="pn"></span></button>
+                <button class="poll-opt popt" data-k="c"><span class="pl">≈ 500 ₽</span><span class="pbar"></span><span class="pn"></span></button>
+                <button class="poll-opt popt" data-k="d"><span class="pl">≈ 2 000 ₽</span><span class="pbar"></span><span class="pn"></span></button>
+              </div>
+              <div class="pmeta"></div>
+            </div>
+          </div>
+          <div class="note5k-wrap">
+            <div class="note5k" aria-label="Купюра 5000 рублей"><span class="note5k-num">5000</span><span class="note5k-lbl">Билет Банка России</span></div>
+            <div class="price-tags">
+              <div class="ptag"><span>Купить на неё можно</span><b>на 5 000 ₽</b></div>
+              <div class="ptag cheap" data-show="2"><span>Стоит напечатать</span><b>≈ 2 ₽</b></div>
+            </div>
+            <div class="trust" data-show="2"><b>Почему за бумажку ценой около 2 ₽ дают товар на 5 000 ₽?</b> Потому что все уверены: её примут в любом магазине. А отвечает за неё государство — Центробанк.</div>
+            <p class="fine" data-show="2">Точную цену Центробанк держит в секрете. По оценке 2014 года, одна купюра обходится от 60 копеек до 2 ₽.</p>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Прочитайте определение. Его можно записать в тетрадь.</li>
+        <li>→ Появится голосование: <b>сколько стоит напечатать 5000 ₽?</b> Ученики голосуют с телефонов (или руками — кликайте вариант).</li>
+        <li>→ Ответ: около 2 ₽. Спросите: почему тогда магазин отдаёт за неё товар на 5000? Потому что все уверены, что купюру примут везде, а за неё отвечает Центробанк.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 5. Yap -->
+    <section class="slide" id="yap" data-sec="history" data-steps="4">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker">История, которая взрывает мозг</div>
+          <h2>Каменные деньги острова Яп</h2>
+        </header>
+        <div class="two">
+          <div class="yap-art">
+            <svg viewBox="0 0 560 380" role="img" aria-label="Огромный каменный диск с дыркой рядом с человеком">
+              <rect width="560" height="380" style="fill:var(--surface-2)"/>
+              <circle cx="470" cy="70" r="38" style="fill:var(--gold-soft)"/>
+              <path d="M0 300 Q70 285 140 300 T280 300 T420 300 T560 300 V380 H0Z" style="fill:var(--f1);opacity:.28"/>
+              <path d="M0 322 Q70 308 140 322 T280 322 T420 322 T560 322 V380 H0Z" style="fill:var(--f1);opacity:.35"/>
+              <ellipse cx="250" cy="300" rx="230" ry="26" style="fill:var(--gold-soft)"/>
+              <path d="M80 296 Q70 200 96 120" style="fill:none;stroke:var(--muted);stroke-width:9;stroke-linecap:round"/>
+              <path d="M96 120 Q60 100 30 118 M96 120 Q130 92 168 104 M96 120 Q78 80 52 70 M96 120 Q122 74 150 66 M96 120 Q100 90 98 60" style="fill:none;stroke:var(--brand);stroke-width:10;stroke-linecap:round"/>
+              <circle cx="270" cy="182" r="112" style="fill:var(--muted)"/>
+              <circle cx="270" cy="182" r="112" style="fill:none;stroke:var(--ink-2);stroke-width:3;opacity:.35"/>
+              <circle cx="270" cy="182" r="80" style="fill:none;stroke:var(--ink-2);stroke-width:2;opacity:.2"/>
+              <circle cx="270" cy="182" r="24" style="fill:var(--surface-2)"/>
+              <g style="fill:var(--ink)">
+                <circle cx="418" cy="214" r="11"/>
+                <rect x="410" y="226" width="16" height="42" rx="7"/>
+                <rect x="410" y="262" width="6" height="32" rx="3"/>
+                <rect x="420" y="262" width="6" height="32" rx="3"/>
+                <rect x="400" y="230" width="6" height="30" rx="3" transform="rotate(18 403 230)"/>
+                <rect x="430" y="230" width="6" height="30" rx="3" transform="rotate(-18 433 230)"/>
+              </g>
+              <text x="446" y="250" style="fill:var(--ink-2);font:600 13px var(--font-mono)">1,7 м</text>
+              <text x="200" y="40" style="fill:var(--ink-2);font:600 13px var(--font-mono)">до 3,6 м и нескольких тонн</text>
+              <circle cx="500" cy="356" r="14" style="fill:var(--muted);opacity:.7"/>
+              <circle cx="500" cy="356" r="4" style="fill:var(--surface-2)"/>
+              <circle cx="490" cy="336" r="3" style="fill:none;stroke:var(--f1);stroke-width:1.5"/>
+              <circle cx="506" cy="326" r="2" style="fill:none;stroke:var(--f1);stroke-width:1.5"/>
+            </svg>
+          </div>
+          <div class="story">
+            <div class="story-beat"><span class="n">📍</span><p class="txt"><b>Где это.</b> Яп — маленький остров в Тихом океане. Его жители платили <b>каменными кругами с дыркой посередине</b>. Самые большие — в два раза выше человека и весят несколько тонн.</p></div>
+            <div class="story-beat" data-show="1"><span class="n">⛵</span><p class="txt"><b>Откуда камни.</b> На самом Япе такого камня нет. Его вырубали на острове Палау за 400 км и везли по океану на плотах. Это было долго и опасно, поэтому камни очень ценились.</p></div>
+            <div class="story-beat" data-show="2"><span class="n">🤝</span><p class="txt"><b>Как ими платили.</b> Камень никто не таскал. Продал соседу свинью — камень остаётся лежать у твоего дома, но вся деревня запоминает: <b>теперь он принадлежит соседу</b>.</p></div>
+            <div class="story-beat" data-show="3"><span class="n">🌊</span><p class="txt"><b>Самое странное.</b> Однажды в шторм огромный камень <b>утонул</b> по дороге на остров. Моряки рассказали, какой он был большой. Жители решили: камень всё равно считается. Его хозяева остались богачами и платили им, хотя камень лежал на дне.</p></div>
+            <div class="story-beat final" data-show="4"><span class="n">!</span><p class="txt"><b>Вывод:</b> деньги не обязательно можно потрогать. Деньги — это то, что <b>все договорились считать деньгами</b>. Ваши деньги на карте — тоже просто запись в банке, но вы спокойно ими платите.</p></div>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Рассказывайте как байку, по одному шагу (→). Перед шагом 🌊 спросите: <b>что будет, если камень утонет?</b></li>
+        <li>Главный вывод: деньги — это <b>договорённость</b>. Камень на дне океана работает как деньги, потому что все с этим согласны.</li>
+        <li>Связь с сегодня: безналичные деньги мы тоже не видим, но доверяем им.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 6. Timeline -->
+    <section class="slide" id="history" data-sec="history" data-steps="5">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker">Эволюция денег</div>
+          <h2>От козы до цифрового рубля</h2>
+        </header>
+        <div class="tl">
+          <div class="tl-track" id="tlTrack"><div class="tl-fill" id="tlFill"></div></div>
+          <div class="tl-panel card" id="tlPanel">
+            <div class="tl-art" id="tlArt">🐐</div>
+            <div class="tl-body">
+              <div class="kicker" id="tlEra">с древнейших времён</div>
+              <h3 id="tlTitle" style="font-size:clamp(24px,2.6vw,44px)">Бартер</h3>
+              <p class="txt" id="tlText"></p>
+            </div>
+            <div class="tl-hook" id="tlHook"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Листайте эпохи стрелкой → или кликайте по кружкам.</li>
+        <li>У каждой эпохи своя загадка справа. Дайте группе проголосовать (с телефонов или руками), потом кликните ответ большинства или «Показать ответ».</li>
+        <li>Между эпохами спрашивайте: <b>чем были неудобны прошлые деньги?</b></li>
+        <li>Логика эволюции: деньги становятся всё легче, удобнее и невидимее.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 7. Find the fake -->
+    <section class="slide" id="fake" data-sec="history">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker"><span class="badge-task">Детектив</span> Найди фальшивку</div>
+          <h2>Одна из этих купюр — подделка</h2>
+          <p class="lead" id="fakeLead">Сначала угадайте, какая. Потом найдите на ней 6 отличий от настоящей.</p>
+        </header>
+        <div class="fake" id="fakeBox">
+          <div class="fnotes" id="fakeNotes"></div>
+          <div class="fake-bottom" id="fakeBottom"></div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Сначала голосование: <b>какая купюра фальшивая — А или Б?</b> Ученики голосуют с телефонов, потом кликните ответ большинства.</li>
+        <li>Дальше ищем отличия: группа подсказывает, вы кликаете по подозрительному месту на любой купюре. Кружок появится на обеих.</li>
+        <li>Каждое найденное отличие — настоящий способ проверить купюру: водяной знак, защитная нить, номер, микротекст.</li>
+        <li>Фальшивая купюра выбирается случайно. Кнопка «Заново» перемешивает.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 8. Properties -->
+    <section class="slide" id="props" data-sec="props">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker"><span class="badge-task">Задание 2</span> Свойства денег</div>
+          <h2>Почему не картошка?</h2>
+          <p class="lead">Не всякая вещь годится в деньги. Выберите вещь, проголосуйте, подходит ли она, и нажмите «Проверим!».</p>
+        </header>
+        <div class="props">
+          <div class="props-left">
+            <div class="cands" id="cands"></div>
+            <div id="propPoll"></div>
+          </div>
+          <div class="ptable card" id="ptable"></div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Шесть свойств справа написаны простыми словами, а в серых плашках — как они называются в учебнике.</li>
+        <li>Выбираем кандидата → группа голосует «да / нет» (с телефонов или руками) → «Проверим!».</li>
+        <li>Самый интересный — <b>биткоин</b>: все свойства есть, но курс прыгает. Значит, важна ещё и стабильность.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 9. Functions overview -->
+    <section class="slide" id="funcs" data-sec="funcs">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker">Главное на сегодня</div>
+          <h2>Пять суперсил денег</h2>
+          <p class="lead">В учебнике их называют функциями денег. Это пять дел, которые деньги делают за нас. Кликните по любой, чтобы разобрать подробно.</p>
+        </header>
+        <div class="fgrid">
+          <button class="fcard" style="--c:var(--f1)" data-go="f-measure"><span class="fnum">01</span><span class="fico">📏</span><span class="fname">Мера стоимости</span><span class="fnick">Показывают, сколько всё стоит</span></button>
+          <button class="fcard" style="--c:var(--f2)" data-go="f-exchange"><span class="fnum">02</span><span class="fico">🔄</span><span class="fname">Средство обращения</span><span class="fnick">Помогают купить: деньги сразу в обмен на товар</span></button>
+          <button class="fcard" style="--c:var(--f3)" data-go="f-payment"><span class="fnum">03</span><span class="fico">🧾</span><span class="fname">Средство платежа</span><span class="fnick">Ими отдают долги, платят налоги и зарплату</span></button>
+          <button class="fcard" style="--c:var(--f4)" data-go="f-saving"><span class="fnum">04</span><span class="fico">🐷</span><span class="fname">Средство накопления</span><span class="fnick">Их можно копить на потом</span></button>
+          <button class="fcard" style="--c:var(--f5)" data-go="f-world"><span class="fnum">05</span><span class="fico">🌍</span><span class="fname">Мировые деньги</span><span class="fnick">Ими платят друг другу страны</span></button>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Это главная часть урока. Пять функций — как пять суперсил.</li>
+        <li>Можно кликнуть по карточке или просто листать по порядку.</li>
+        <li>Напомните: каждую боль бартера вылечила одна из суперсил.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 10. Measure -->
+    <section class="slide fslide" id="f-measure" data-sec="funcs" style="--c:var(--f1)">
+      <div class="slide-inner">
+        <div class="f-layout">
+          <div class="f-left">
+            <span class="f-badge"><i>1</i>Суперсила · Показывают цену</span>
+            <h2 class="f-title"><span class="ico">📏</span>Мера стоимости</h2>
+            <p class="f-def">Деньги показывают, сколько стоит любая вещь, <b>в одних и тех же единицах</b> — в рублях. Как линейка меряет всё в сантиметрах. Держать деньги в руках для этого не нужно: хватает <b>ценника</b>.</p>
+            <div class="f-mark"><span class="f-mark-t">Как узнать</span><div class="chips"><span class="chip">ценник</span><span class="chip">«стоит…»</span><span class="chip">дороже / дешевле</span><span class="chip">оценили в…</span></div></div>
+            <div class="ex"><span class="e">🎮</span><span>«Новый айфон стоит как три PlayStation». Сравнили товары через деньги, не заплатив ни рубля.</span></div>
+          </div>
+          <div class="widget card">
+            <div class="widget-t"><span>Сколько цен нужно запомнить?</span><span id="ratioN">100 товаров</span></div>
+            <label for="ratioRange" class="txt">Товаров на рынке</label>
+            <input type="range" class="range" id="ratioRange" min="0" max="5" step="1" value="2">
+            <div class="ratio-out">
+              <div class="ratio-box bad"><span>Без денег: «что на что меняем»</span><b id="ratioBarter">4 950</b></div>
+              <div class="ratio-box good"><span>С деньгами: цен в рублях</span><b id="ratioMoney">100</b></div>
+            </div>
+            <p class="txt">Без денег надо помнить цену каждой вещи в каждой другой: козу в хлебе, козу в рыбе, хлеб в рыбе… С деньгами у каждой вещи одна цена.</p>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Спросите: <b>что дороже — 50 яиц или 2 курицы?</b> Без денег ответить сложно.</li>
+        <li>Подвигайте ползунок: в магазине на 10 000 товаров без денег пришлось бы помнить почти 50 миллионов пропорций.</li>
+        <li>Главное: для этой функции деньги не нужно доставать из кошелька. Достаточно назвать цену.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 11. Exchange -->
+    <section class="slide fslide" id="f-exchange" data-sec="funcs" style="--c:var(--f2)">
+      <div class="slide-inner">
+        <div class="f-layout">
+          <div class="f-left">
+            <span class="f-badge"><i>2</i>Суперсила · Помогают купить</span>
+            <h2 class="f-title"><span class="ico">🔄</span>Средство обращения</h2>
+            <p class="f-def">Деньги — <b>посредник в обмене</b>: продал одну вещь, а на эти деньги купил другую. Главный признак: вы отдаёте деньги и получаете товар <b>в один и тот же момент</b>.</p>
+            <div class="f-mark"><span class="f-mark-t">Как узнать</span><div class="chips"><span class="chip">купил и сразу оплатил</span><span class="chip">продал → купил</span><span class="chip">на кассе</span></div></div>
+            <div class="ex"><span class="e">☕</span><span>Купил кофе на перемене и тут же оплатил по QR-коду. Кофе у вас, деньги у кофейни, одновременно.</span></div>
+          </div>
+          <div class="widget card">
+            <div class="widget-t"><span>Формула обмена</span><span>Т — товар · Д — деньги</span></div>
+            <div class="tdt">
+              <div class="tdt-node"><div class="tdt-e">🚲</div><div class="tdt-l">Т</div><div class="tdt-s">старый велик</div></div>
+              <div class="tdt-arrow">→</div>
+              <div class="tdt-node d"><div class="tdt-e">💰</div><div class="tdt-l">Д</div><div class="tdt-s">деньги</div></div>
+              <div class="tdt-arrow">→</div>
+              <div class="tdt-node"><div class="tdt-e">🛴</div><div class="tdt-l">Т</div><div class="tdt-s">новый самокат</div></div>
+            </div>
+            <p class="txt">Без денег мы меняли по цепочке: коза → хлеб → сыр → рыба → кроссовки. С деньгами два шага: продал козу, купил кроссовки. Деньги берут все, поэтому искать «нужного» человека не надо.</p>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Формула Т → Д → Т: продал одно, купил другое. Деньги — посредник.</li>
+        <li>Признак: товар и деньги встречаются <b>в один момент</b>.</li>
+        <li>Спросите: кто что покупал сегодня утром? Это оно.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 12. Payment -->
+    <section class="slide fslide" id="f-payment" data-sec="funcs" style="--c:var(--f3)">
+      <div class="slide-inner">
+        <div class="f-layout">
+          <div class="f-left">
+            <span class="f-badge"><i>3</i>Суперсила · Долги и платежи</span>
+            <h2 class="f-title"><span class="ico">🧾</span>Средство платежа</h2>
+            <p class="f-def">Деньгами отдают долги и платят то, что должны. Это бывает, когда товар и оплата случаются <b>в разное время</b> (рассрочка, кредит) или когда товара <b>нет вообще</b> (налог, штраф).</p>
+            <div class="f-mark"><span class="f-mark-t">Как узнать</span><div class="chips"><span class="chip">кредит</span><span class="chip">рассрочка</span><span class="chip">зарплата</span><span class="chip">стипендия</span><span class="chip">налог</span><span class="chip">штраф</span><span class="chip">коммуналка</span><span class="chip">аренда</span></div></div>
+          </div>
+          <div class="widget card">
+            <div class="widget-t"><span>Не перепутай!</span><span>📦 товар · 💰 деньги</span></div>
+            <div class="tl3">
+              <div class="tl3-row">
+                <div class="tl3-name">Средство обращения<small>всё сразу</small></div>
+                <div class="tl3-axis"><span class="tl3-pin" style="left:50%">📦💰<small>сейчас</small></span></div>
+              </div>
+              <div class="tl3-row">
+                <div class="tl3-name" style="color:var(--c)">Средство платежа<small>рассрочка: товар сейчас, деньги потом</small></div>
+                <div class="tl3-axis"><span class="tl3-pin" style="left:14%">📦<small>сегодня</small></span><span class="tl3-pin" style="left:44%">💰<small>+1 мес</small></span><span class="tl3-pin" style="left:65%">💰<small>+2 мес</small></span><span class="tl3-pin" style="left:86%">💰<small>+3 мес</small></span></div>
+              </div>
+              <div class="tl3-row">
+                <div class="tl3-name" style="color:var(--c)">Тоже платёж<small>налог, штраф, стипендия</small></div>
+                <div class="tl3-axis"><span class="tl3-pin" style="left:32%">🚫📦<small>товара нет</small></span><span class="tl3-pin" style="left:68%">💰<small>только деньги</small></span></div>
+              </div>
+            </div>
+            <div class="ex"><span class="e">💡</span><span><b>Правило:</b> заплатил и сразу получил товар — это обращение. Платишь раньше или позже, или товара нет вовсе — это платёж.</span></div>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Самая коварная функция: её чаще всего путают с обращением.</li>
+        <li>Правило: если товар и деньги <b>разошлись во времени</b> (рассрочка, кредит, зарплата за прошлый месяц) или <b>товара нет совсем</b> (налог, штраф) — это средство платежа.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 13. Saving -->
+    <section class="slide fslide" id="f-saving" data-sec="funcs" style="--c:var(--f4)">
+      <div class="slide-inner">
+        <div class="f-layout">
+          <div class="f-left">
+            <span class="f-badge"><i>4</i>Суперсила · Копилка</span>
+            <h2 class="f-title"><span class="ico">🐷</span>Средство накопления</h2>
+            <p class="f-def">Деньги можно <b>отложить</b> и потратить потом. Рыба протухнет, а деньги — нет. Но у этой суперсилы есть враг — <b>инфляция</b>: цены растут, и на те же деньги со временем можно купить меньше.</p>
+            <div class="f-mark"><span class="f-mark-t">Как узнать</span><div class="chips"><span class="chip">коплю на…</span><span class="chip">вклад</span><span class="chip">копилка</span><span class="chip">«на чёрный день»</span></div></div>
+          </div>
+          <div class="widget card">
+            <div class="widget-t"><span>Деньги под подушкой</span><span>калькулятор инфляции</span></div>
+            <div class="infl">
+              <div class="infl-controls">
+                <label for="inSum">Спрятали <b id="inSumV">10 000 ₽</b><input class="range" type="range" id="inSum" min="1000" max="100000" step="1000" value="10000"></label>
+                <label for="inYears">На сколько лет <b id="inYearsV">10 лет</b><input class="range" type="range" id="inYears" min="1" max="20" step="1" value="10"></label>
+                <label for="inRate">Инфляция в год <b id="inRateV">8%</b><input class="range" type="range" id="inRate" min="1" max="25" step="1" value="8"></label>
+              </div>
+              <div class="infl-vis">
+                <div class="mini-note" id="inNote">10 000</div>
+                <div class="infl-out">через <span id="inYearsT">10 лет</span> купите столько же, сколько сегодня на<b id="inReal">4 632 ₽</b><span id="inLoss">деньги «похудели» на 54%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Спросите: <b>где лучше хранить деньги — под матрасом или на вкладе?</b> Почему?</li>
+        <li>Покрутите калькулятор: 10 000 ₽ при инфляции 8% через 10 лет — как 4 632 ₽ сегодня.</li>
+        <li>Вывод: накопления нужно защищать от инфляции, например вкладом.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 14. World money -->
+    <section class="slide fslide" id="f-world" data-sec="funcs" style="--c:var(--f5)">
+      <div class="slide-inner">
+        <div class="f-layout">
+          <div class="f-left">
+            <span class="f-badge"><i>5</i>Суперсила · Без границ</span>
+            <h2 class="f-title"><span class="ico">🌍</span>Мировые деньги</h2>
+            <p class="f-def">Деньгами рассчитываются <b>разные страны</b>: когда покупают товары за границей, продают туда свои или дают друг другу в долг.</p>
+            <div class="ex"><span class="e">🥇</span><span>Раньше страны платили друг другу <b>золотом</b>. Сейчас чаще валютами, которые берут почти везде: доллар, евро, юань. Но золото страны до сих пор хранят про запас.</span></div>
+            <div class="ex"><span class="e">🏭</span><span>Российский завод покупает станки в Китае и платит юанями. Деньги пересекли границу — включилась пятая суперсила.</span></div>
+          </div>
+          <div class="globe" id="globe">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="38" style="fill:color-mix(in srgb,var(--f5) 10%,var(--surface));stroke:color-mix(in srgb,var(--f5) 40%,transparent);stroke-width:.6"/>
+              <ellipse cx="50" cy="50" rx="38" ry="14" style="fill:none;stroke:color-mix(in srgb,var(--f5) 25%,transparent);stroke-width:.4"/>
+              <ellipse cx="50" cy="50" rx="16" ry="38" style="fill:none;stroke:color-mix(in srgb,var(--f5) 25%,transparent);stroke-width:.4"/>
+              <path class="arc" d="M50 12 Q80 18 88 38"/>
+              <path class="arc" d="M88 38 Q90 70 76 84"/>
+              <path class="arc" d="M76 84 Q50 96 24 84"/>
+              <path class="arc" d="M24 84 Q8 66 12 38"/>
+              <path class="arc" d="M12 38 Q22 16 50 12"/>
+              <path class="arc" d="M50 12 Q46 50 76 84"/>
+              <path class="arc" d="M12 38 Q50 44 88 38"/>
+            </svg>
+            <span class="cur-node" style="left:50%;top:12%">₽</span>
+            <span class="cur-node" style="left:88%;top:38%">$</span>
+            <span class="cur-node" style="left:76%;top:84%">€</span>
+            <span class="cur-node" style="left:24%;top:84%">¥</span>
+            <span class="cur-node" style="left:12%;top:38%">₹</span>
+            <span class="cur-node gold" style="left:50%;top:52%">Au</span>
+          </div>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Спросите: <b>страны тоже покупают и продают. Чем платить, если у каждой свои деньги?</b></li>
+        <li>Раньше — золотом (Au в центре). Сейчас — резервными валютами. Золото всё ещё в хранилищах центробанков.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 15. Quiz -->
+    <section class="slide" id="quiz" data-sec="quiz">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker"><span class="badge-task">Задание 3</span> Закрепляем</div>
+          <h2>Угадай суперсилу</h2>
+        </header>
+        <div class="quiz" id="quizBox"></div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Читайте ситуацию вслух, группа выкрикивает или голосует руками. Кликайте ответ большинства.</li>
+        <li>После каждого ответа зачитайте объяснение — это и есть закрепление.</li>
+        <li>Цель группы — <b>10 из 12</b>. Спорные ситуации — повод обсудить.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 16. Game intro -->
+    <section class="slide" id="game" data-sec="game">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker"><span class="badge-task">Финал урока</span> Командная игра</div>
+          <h2>☕ Битва кофеен</h2>
+          <p class="lead">Две команды открывают кофейни у колледжа. Кто к концу игры заработает больше денег, тот и победил.</p>
+        </header>
+        <div class="rules">
+          <div class="rule card"><span class="rule-ico">☕</span><div><h3>Две кофейни</h3><p class="txt">Делимся на две команды и выбираем капитанов. У каждой кофейни на старте 1 000 ₽.</p></div></div>
+          <div class="rule card"><span class="rule-ico">📰</span><div><h3>Новость дня</h3><p class="txt">Каждый раунд выходит новость: мороз, сессия, каникулы. Она подсказывает, сколько будет покупателей.</p></div></div>
+          <div class="rule card"><span class="rule-ico">📱</span><div><h3>Тайное решение</h3><p class="txt">Капитан на телефоне выбирает цену чашки и сколько кофе сварить. Соперники не видят.</p></div></div>
+          <div class="rule card"><span class="rule-ico">🧍</span><div><h3>Покупатели</h3><p class="txt">Идут туда, где дешевле. Но слишком дешёвый кофе почти не приносит денег, а дорогой купят не все.</p></div></div>
+          <div class="rule card"><span class="rule-ico">🗑️</span><div><h3>Не перестарайтесь</h3><p class="txt">Каждая чашка стоит денег. Непроданный кофе выливают — деньги ушли в раковину.</p></div></div>
+          <div class="rule card"><span class="rule-ico">🃏</span><div><h3>Помощь и пакости</h3><p class="txt">У команды 3 карты-помощи и 3 пакости, каждая на одну игру. И ещё банк: кредит и вклад.</p></div></div>
+        </div>
+        <div class="shop-teaser">
+          <span class="chip good">📣 Реклама</span><span class="chip good">🕵️ Инсайдер</span><span class="chip good">🛡️ Охрана</span>
+          <span class="chip evil">🪳 Слух про таракана</span><span class="chip evil">🧾 Налоговая проверка</span><span class="chip evil">🔌 Отключили свет</span>
+          <span class="chip">💳 Кредит</span><span class="chip">🏦 Вклад</span>
+        </div>
+        <div class="cta-row">
+          <button class="btn btn-gold" data-action="open-game">☕ Открыть игру</button>
+          <span class="hint">Игра сохраняется сама, даже если случайно обновить страницу</span>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Разделите группу на две команды. Капитан каждой сканирует QR-код в игре и нажимает «Я капитан». Без телефонов решения можно ввести вручную на экране.</li>
+        <li>Главное правило: <b>решения тайные</b>. Команда шепчется, капитан вводит.</li>
+        <li>Подсказка для рассуждений: если цены равные, покупатели делятся поровну. Кто дешевле, к тому идёт больше людей.</li>
+        <li>После каждого раунда игра сама объясняет, что произошло. Зачитывайте эти пояснения вслух.</li>
+      </ul></aside>
+    </section>
+
+    <!-- 17. Final -->
+    <section class="slide" id="final" data-sec="final">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker">Итоги урока</div>
+          <h2>Деньги работают, потому что им все доверяют</h2>
+        </header>
+        <div class="poll sumpoll" data-poll="final-fav" data-q="Какая суперсила денег самая полезная лично вам?">
+          <div class="sum5 poll-opts">
+            <div class="card poll-opt" data-k="measure" data-t="📏 Мера стоимости" style="--c:var(--f1)"><i class="pbar"></i><span class="e">📏</span><b>Мера стоимости</b><span>показывают, сколько всё стоит</span><em class="pn"></em></div>
+            <div class="card poll-opt" data-k="exchange" data-t="🔄 Средство обращения" style="--c:var(--f2)"><i class="pbar"></i><span class="e">🔄</span><b>Средство обращения</b><span>заплатил и сразу получил товар</span><em class="pn"></em></div>
+            <div class="card poll-opt" data-k="payment" data-t="🧾 Средство платежа" style="--c:var(--f3)"><i class="pbar"></i><span class="e">🧾</span><b>Средство платежа</b><span>долги, налоги, рассрочка, зарплата</span><em class="pn"></em></div>
+            <div class="card poll-opt" data-k="saving" data-t="🐷 Средство накопления" style="--c:var(--f4)"><i class="pbar"></i><span class="e">🐷</span><b>Средство накопления</b><span>копим сейчас, тратим потом</span><em class="pn"></em></div>
+            <div class="card poll-opt" data-k="world" data-t="🌍 Мировые деньги" style="--c:var(--f5)"><i class="pbar"></i><span class="e">🌍</span><b>Мировые деньги</b><span>ими платят друг другу страны</span><em class="pn"></em></div>
+          </div>
+          <div class="pmeta"></div>
+        </div>
+        <div class="final-q"><span class="e">🎤</span><p>Какая суперсила денег самая полезная лично вам? Голосуйте с телефона или поднимите руку, а 2–3 человека пусть объяснят свой выбор.</p></div>
+        <div class="cta-row">
+          <button class="btn btn-primary" data-go="start">↺ К началу</button>
+          <button class="btn btn-ghost" data-action="open-game">⚔️ Вернуться к игре</button>
+          <span class="hint">Спасибо за урок!</span>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Главная мысль: деньги работают, потому что все согласны их брать и им доверяют.</li>
+        <li>Рефлексия: на телефонах появится голосование «какая суперсила самая полезная лично вам». Попросите 2–3 человек объяснить выбор.</li>
+        <li>Пасхалка: серийный номер с первой купюры — <b>АБ 1769535</b>. Кто догадался, что значат цифры?</li>
+      </ul></aside>
+    </section>
+  </main>
+
+  <footer class="deckbar">
+    <button class="nav-btn" id="btnPrev" aria-label="Назад">← <span class="lbl">Назад</span></button>
+    <div class="progress" aria-hidden="true"><i id="progressFill"></i></div>
+    <div class="stepdots" id="stepDots" aria-hidden="true"></div>
+    <span class="counter" id="counter">1 / 17</span>
+    <button class="nav-btn primary" id="btnNext" aria-label="Дальше"><span class="lbl">Дальше</span> →</button>
+  </footer>
+</div>
+
+<div class="notes-panel" id="notesPanel" hidden></div>
+
+<div class="live-ov" id="liveOv" hidden>
+  <div class="live-card">
+    <div class="live-qr" id="liveQr"></div>
+    <div class="live-info">
+      <div class="kicker">Голосование с телефонов</div>
+      <h2>Наведите камеру на QR-код</h2>
+      <p class="txt">Или откройте адрес:<br><b class="mono live-url" id="liveUrl"></b></p>
+      <div class="live-code">Код комнаты <b id="liveCode"></b></div>
+      <p class="live-stat" id="liveStat"></p>
+      <div class="cta-row"><button class="btn btn-primary" id="liveClose">Готово</button><button class="btn btn-ghost" id="liveNew">↻ Новый код</button></div>
+      <p class="hint">Нет интернета или телефонов? Голосуйте руками и кликайте ответ сами.</p>
+    </div>
+  </div>
+</div>
+
+<div class="game" id="gameRoot" hidden>
+  <div class="g-top">
+    <button class="g-btn" id="gBack">← <span class="lbl">К уроку</span></button>
+    <div class="g-title">☕ Битва кофеен</div>
+    <div class="g-meta" id="gMeta"></div>
+    <div class="g-tools">
+      <button class="g-btn live-only" id="gLive" aria-label="QR-код для капитанов">📱 <span class="lbl">QR</span></button>
+      <button class="g-btn" id="gSound" aria-label="Звук">🔊</button>
+      <button class="g-btn" id="gRules">❔ <span class="lbl">Правила</span></button>
+      <button class="g-btn" id="gNew">↺ <span class="lbl">Новая</span></button>
+    </div>
+  </div>
+  <div class="g-screen" id="gScreen"></div>
+  <div class="g-modal" id="gModal" hidden></div>
+</div>
+
+<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>

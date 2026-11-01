@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Урок «Деньги и их функции»: голосование</title>
+<meta name="theme-color" content="#136447">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800;900&family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap">
+<style>
+/* Phone page: one big card at a time, thumb-sized buttons, same mint-banknote palette as the lesson */
+:root{
+  --bg:#E9F0E5; --surface:#F7FAF3; --surface-2:#ECF3E7; --ink:#10261E; --ink-2:#3A5148; --muted:#5F756A;
+  --line:rgba(16,38,30,.14); --line-2:rgba(16,38,30,.28);
+  --brand:#136447; --brand-2:#0B4430; --on-brand:#F2F8EE; --gold-2:#D9A928; --gold-ink:#231902;
+  --ok:#0F8655; --bad:#CC3824; --team-a:#E07B00; --team-b:#0B8FB8;
+  --font-display:"Unbounded","Arial Black","Segoe UI",system-ui,sans-serif;
+  --font-body:"Onest","Segoe UI",system-ui,-apple-system,sans-serif;
+  --cf-bg:var(--surface); --cf-bg2:var(--surface); --cf-ink:var(--ink); --cf-muted:var(--muted); --cf-line:var(--line-2);
+  --cf-acc:var(--brand); --cf-acc-ink:var(--on-brand); --cf-good:var(--ok); --cf-evil:var(--bad);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1511; --surface:#12241C; --surface-2:#172D23; --ink:#E6F0E7; --ink-2:#B2C5B9; --muted:#87A093;
+    --line:rgba(230,240,231,.12); --line-2:rgba(230,240,231,.26);
+    --brand:#3CC28E; --brand-2:#23936A; --on-brand:#05140D; --gold-2:#F2C752;
+    --ok:#42D394; --bad:#FF6B57; --team-a:#FF9F1C; --team-b:#2EC4F1;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1511; --surface:#12241C; --surface-2:#172D23; --ink:#E6F0E7; --ink-2:#B2C5B9; --muted:#87A093;
+  --line:rgba(230,240,231,.12); --line-2:rgba(230,240,231,.26);
+  --brand:#3CC28E; --brand-2:#23936A; --on-brand:#05140D; --gold-2:#F2C752;
+  --ok:#42D394; --bad:#FF6B57; --team-a:#FF9F1C; --team-b:#2EC4F1;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit}
+.ph{min-height:100dvh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+.ph-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top,0px));background:var(--bg);border-bottom:1px solid var(--line)}
+.ph-logo{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:var(--on-brand);font-weight:800}
+.ph-title{font-family:var(--font-display);font-weight:700;font-size:13px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph-net{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.ph-net.ok{color:var(--ok)}
+.ph-main{flex:1;width:min(560px,100%);margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+
+h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.2;text-wrap:balance}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 18px;display:flex;flex-direction:column;gap:12px}
+.center{text-align:center;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.good{color:var(--ok)}
+.bad{color:var(--bad)}
+.big-e{font-size:64px;line-height:1}
+.eyes{animation:look 3s ease-in-out infinite}
+@keyframes look{0%,100%{transform:translateX(0)}30%{transform:translateX(-8px)}60%{transform:translateX(8px)}}
+.spin{width:44px;height:44px;border-radius:50%;border:4px solid var(--line-2);border-top-color:var(--brand);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;min-height:48px;padding:10px 20px;border-radius:14px;border:0;background:var(--brand);color:var(--on-brand);font-weight:800;font-size:16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn.big{width:100%;min-height:56px;font-size:17px}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line-2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn small{font-size:12px;font-weight:600;opacity:.85}
+.btn.t0{background:var(--team-a);color:#1a0f00}
+.btn.t1{background:var(--team-b);color:#001820}
+
+.join{display:flex;gap:8px;width:100%}
+.join input{flex:1;min-width:0;height:52px;border-radius:14px;border:2px solid var(--line-2);background:var(--bg);color:var(--ink);font:800 24px var(--font-display);text-align:center;letter-spacing:.2em;text-transform:uppercase}
+
+/* poll */
+.pp{display:flex;flex-direction:column;gap:14px}
+.pp-sub{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.pp-q{font-size:21px}
+.pp-opts{display:flex;flex-direction:column;gap:10px}
+.pp-o{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;min-height:60px;padding:14px 16px;border-radius:16px;border:2px solid var(--line-2);background:var(--surface);text-align:left;font-weight:700;font-size:17px;line-height:1.3;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .1s,border-color .2s,background .2s}
+.pp-o:active:not(:disabled){transform:scale(.98)}
+.pp-o span{position:relative;flex:1}
+.pp-o b{position:relative;font-size:14px;font-variant-numeric:tabular-nums}
+.pp-o i{position:absolute;left:0;top:0;bottom:0;background:color-mix(in srgb,var(--brand) 16%,transparent)}
+.pp-o.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,var(--surface))}
+.pp-o.on::after{content:"✓";position:relative;font-weight:800;color:var(--brand)}
+.pp-o.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--surface))}
+.pp-o.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--surface))}
+.pp-o.dim{opacity:.6}
+.pp-o:disabled{cursor:default}
+.pp-st{font-weight:700;text-align:center}
+
+/* coffee battle */
+.pg{display:flex;flex-direction:column;gap:12px}
+.pg-team{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;background:var(--surface);border:2px solid var(--line)}
+.pg-team.t0{border-color:var(--team-a)}
+.pg-team.t1{border-color:var(--team-b)}
+.pg-team>span{font-size:30px;line-height:1}
+.pg-team div{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.pg-team small{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pg-money{font-family:var(--font-display);font-size:18px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pg-news{display:flex;gap:12px;padding:14px;border-radius:16px;background:var(--surface-2)}
+.pg-ne{font-size:40px;line-height:1}
+.pg-news div{display:flex;flex-direction:column;gap:2px}
+.pg-news small{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pg-news b{font-family:var(--font-display);font-size:17px}
+.pg-news p{font-size:14px;color:var(--ink-2)}
+.pg-facts{margin-top:4px}
+.pg-facts b{font-family:var(--font-body);font-size:14px;color:var(--ink)}
+#pform{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 14px}
+.pg-send{display:flex;flex-direction:column;gap:8px;position:sticky;bottom:0;padding:10px 0 12px;background:linear-gradient(transparent,var(--bg) 30%)}
+.claim{display:flex;flex-direction:column;gap:10px;width:100%}
+.score{display:flex;flex-direction:column;gap:8px;width:100%}
+.score div{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:14px;background:var(--surface-2);font-weight:700}
+.score .t0{border-left:5px solid var(--team-a)}
+.score .t1{border-left:5px solid var(--team-b)}
+.rows{display:flex;flex-direction:column;gap:6px}
+.rows div{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:10px;background:var(--surface-2)}
+.rows div.bad b{color:var(--bad)}
+@media (prefers-reduced-motion:reduce){.eyes,.spin{animation:none}}
+/* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
+.cf{display:flex;flex-direction:column;gap:16px;color:var(--cf-ink)}
+.cf-sec{display:flex;flex-direction:column;gap:8px}
+.cf-t{display:flex;align-items:baseline;gap:8px;font-weight:800;font-size:15px}
+.cf-t i{font-style:normal;width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:12px;flex:none;align-self:center}
+.cf-t small{font-weight:600;color:var(--cf-muted);font-size:12px}
+.cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cf button:disabled{cursor:not-allowed}
+.cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.cf-p{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2)}
+.cf-p b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.cf-p small{font-size:11px;color:var(--cf-muted);line-height:1.2;text-align:center}
+.cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
+.cf-cups{display:flex;align-items:center;gap:10px}
+.cf-cups button{width:52px;height:46px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:24px;font-weight:800;line-height:1}
+.cf-cups button:disabled{opacity:.35}
+.cf-cups b{min-width:70px;text-align:center;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.cf-cost{font-size:13px;color:var(--cf-muted)}
+.cf-cost b{color:var(--cf-ink)}
+.cf-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cf-c{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:8px;align-items:center;text-align:left;padding:8px 10px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2)}
+.cf-c span{grid-row:span 2;font-size:22px;line-height:1}
+.cf-c b{font-size:13px;font-weight:800;line-height:1.2}
+.cf-c small{font-size:11px;color:var(--cf-muted);line-height:1.25}
+.cf-c.good b{color:var(--cf-good)}
+.cf-c.evil b{color:var(--cf-evil)}
+.cf-c.on.good{border-color:var(--cf-good);background:color-mix(in srgb,var(--cf-good) 16%,var(--cf-bg2))}
+.cf-c.on.evil{border-color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 16%,var(--cf-bg2))}
+.cf-c:disabled:not(.on){opacity:.4}
+.cf-c.used{text-decoration:line-through}
+.cf-peek{padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--cf-good) 16%,var(--cf-bg2));border:1px dashed var(--cf-good);font-size:14px}
+.cf-peek b{font-size:18px}
+.cf-b{display:flex;align-items:flex-start;gap:10px;text-align:left;padding:10px 12px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:20px}
+.cf-b span{display:flex;flex-direction:column;font-size:12px;color:var(--cf-muted);line-height:1.3}
+.cf-b span b{font-size:14px;color:var(--cf-ink)}
+.cf-b.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 16%,var(--cf-bg2))}
+.cf-b:disabled{opacity:.45}
+</style>
+</head><body>
+<div class="ph">
+  <header class="ph-top"><span class="ph-logo">₽</span><span class="ph-title">Деньги и их функции</span><span class="ph-net" id="net"></span></header>
+  <main class="ph-main" id="main"></main>
+</div>
+<script>
+/* ================= MQ: tiny MQTT 3.1.1 client over WebSocket (QoS 0 only) ================= */
+/* Used by the presenter page and the phone page to talk through public brokers. */
+const MQ = (() => {
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  const u16 = n => [n >> 8 & 255, n & 255];
+  const str = s => { const b = enc.encode(s); return [...u16(b.length), ...b]; };
+  function varLen(n) { const out = []; do { let d = n % 128; n = Math.floor(n / 128); if (n) d |= 128; out.push(d); } while (n); return out; }
+  function pkt(head, body) {
+    const L = varLen(body.length), out = new Uint8Array(1 + L.length + body.length);
+    out[0] = head; out.set(L, 1); out.set(body, 1 + L.length);
+    return out;
+  }
+  function publishPkt(topic, payload, retain) {
+    const t = str(topic), p = enc.encode(payload), body = new Uint8Array(t.length + p.length);
+    body.set(t, 0); body.set(p, t.length);
+    return pkt(0x30 | (retain ? 1 : 0), body);
+  }
+
+  function connect(url, o) {
+    let ws = null, ok = false, tries = 0, ping = 0, buf = new Uint8Array(0), pid = 1;
+    const topics = new Set(o.subs || []), queue = [];
+    const nextId = () => (pid = pid % 65535 + 1);
+    const send = b => { try { ws && ws.readyState === 1 && ws.send(b); } catch (e) {} };
+    const sub = t => { if (ok) send(pkt(0x82, [...u16(nextId()), ...str(t), 0])); };
+
+    function open() {
+      try { ws = new WebSocket(url, 'mqtt'); } catch (e) { return retry(); }
+      ws.binaryType = 'arraybuffer';
+      ws.onopen = () => send(pkt(0x10, [...str('MQTT'), 4, 2, ...u16(60), ...str(o.id)]));
+      ws.onmessage = e => { if (e.data instanceof ArrayBuffer) feed(new Uint8Array(e.data)); };
+      ws.onerror = () => { try { ws.close(); } catch (e) {} };
+      ws.onclose = () => {
+        const was = ok; ok = false; ws = null; buf = new Uint8Array(0);
+        clearInterval(ping);
+        if (was) o.onState?.(false);
+        retry();
+      };
+    }
+    function retry() { setTimeout(open, Math.min(15000, 800 * 2 ** tries++) + Math.random() * 600); }
+    function feed(chunk) {
+      const b = new Uint8Array(buf.length + chunk.length); b.set(buf); b.set(chunk, buf.length); buf = b;
+      while (buf.length >= 2) {
+        let len = 0, mul = 1, i = 1, byte;
+        do {
+          if (i >= buf.length) return;
+          byte = buf[i++]; len += (byte & 127) * mul; mul *= 128;
+        } while (byte & 128 && i < 5);
+        if (buf.length < i + len) return;
+        handle(buf[0], buf.subarray(i, i + len));
+        buf = buf.slice(i + len);
+      }
+    }
+    function handle(h, p) {
+      const type = h >> 4;
+      if (type === 2) {                       // CONNACK
+        if (p[1] !== 0) { try { ws.close(); } catch (e) {} return; }
+        ok = true; tries = 0;
+        topics.forEach(sub);
+        while (queue.length) send(queue.shift());
+        clearInterval(ping); ping = setInterval(() => send(new Uint8Array([0xC0, 0])), 25000);
+        o.onState?.(true);
+      } else if (type === 3) {                // PUBLISH
+        const qos = h >> 1 & 3, tl = p[0] << 8 | p[1];
+        const topic = dec.decode(p.subarray(2, 2 + tl));
+        const body = dec.decode(p.subarray(2 + tl + (qos ? 2 : 0)));
+        try { o.onMessage?.(topic, body); } catch (e) { console.error(e); }
+      }
+    }
+    open();
+    return {
+      url,
+      get ok() { return ok; },
+      publish(t, s, retain) {
+        const b = publishPkt(t, s, retain);
+        if (ok) send(b); else { queue.push(b); if (queue.length > 20) queue.shift(); }
+      },
+      subscribe(t) { if (!topics.has(t)) { topics.add(t); sub(t); } },
+      unsubscribe(t) { if (topics.delete(t) && ok) send(pkt(0xA2, [...u16(nextId()), ...str(t)])); }
+    };
+  }
+  return { connect };
+})();
+
+const LIVE_NS = 'dengi-urok-v1';
+const LIVE_BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt'];
+/* ================= COFFEE BATTLE: shared rules (presenter + phones) ================= */
+const COFFEE = {
+  START: 1000,
+  PRICES: [40, 60, 80, 100],
+  MAX_CUPS: 80,
+  STEP: 10,
+  /* доля желающих, которые купят кофе по такой цене */
+  W: { 40: 1, 60: .9, 80: .75, 100: .6 },
+  LOAN: { now: 600, back: 800 },
+  DEPOSIT: { now: 500, back: 650 },
+  POWER_CAP: 20,
+  TAX: .3,
+  EMOJI: ['☕', '🧋', '🍩', '🥐', '🧁', '🍪', '🥤', '🍫'],
+  CARDS: {
+    ad:      { e:'📣', n:'Реклама',            good:true,  d:'К вам придёт больше покупателей.' },
+    insider: { e:'🕵️', n:'Инсайдер',           good:true,  d:'Капитан сразу узнаёт точное число покупателей.' },
+    shield:  { e:'🛡️', n:'Охрана',             good:true,  d:'Пакости соперника в этом раунде не сработают.' },
+    rumor:   { e:'🪳', n:'Слух про таракана',  good:false, d:'Часть покупателей соперника уйдёт к вам.' },
+    tax:     { e:'🧾', n:'Налоговая проверка', good:false, d:'Соперник отдаст 30% своей выручки.' },
+    power:   { e:'🔌', n:'Отключили свет',     good:false, d:'Соперник сварит не больше 20 чашек.' }
+  },
+  /* n — сколько людей вообще захотят кофе в этот день (на обе кофейни) */
+  EVENTS: {
+    normal:   { e:'☕', t:'Обычный понедельник', n:60, cost:20, lvl:'как обычно — около 60 человек',
+                x:'Пары как всегда. Около 60 человек захотят кофе.' },
+    frost:    { e:'🥶', t:'Мороз −25°', n:90, cost:20, lvl:'много',
+                x:'Все хотят согреться. Покупателей намного больше обычного.' },
+    session:  { e:'📚', t:'Сессия', n:110, cost:20, lvl:'очень много', w:{ 40:1, 60:1, 80:.9, 100:.8 },
+                x:'Студенты не спят ночами. Кофе нужен всем, и даже дорогой их не пугает.' },
+    holidays: { e:'🏖️', t:'Каникулы', n:25, cost:20, lvl:'очень мало',
+                x:'Колледж почти пустой. Кофе захотят совсем немногие.' },
+    beans:    { e:'🇧🇷', t:'Зёрна подорожали', n:60, cost:35, lvl:'как обычно',
+                x:'Кофе везут из Бразилии и платят за него долларами. Доллар вырос — чашка теперь обходится в 35 ₽.' },
+    rain:     { e:'🌧️', t:'Ливень', n:40, cost:20, lvl:'меньше обычного',
+                x:'Никто не хочет выходить из здания. Покупателей меньше обычного.' },
+    stipend:  { e:'💸', t:'Пришла стипендия', n:75, cost:20, lvl:'больше обычного', w:{ 40:1, 60:.95, 80:.85, 100:.7 },
+                x:'У студентов появились деньги. Покупателей больше, и дорогой кофе их не так пугает.' },
+    blogger:  { e:'📱', t:'Блогер против кофе', n:40, cost:20, lvl:'меньше обычного',
+                x:'Популярный блогер сказал, что кофе вреден. Часть студентов поверила.' },
+    cups:     { e:'🥤', t:'Оптовая скидка', n:60, cost:10, lvl:'как обычно',
+                x:'Поставщик устроил распродажу стаканчиков и зёрен. Чашка обходится всего в 10 ₽.' },
+    festival: { e:'🎉', t:'День студента', n:95, cost:20, lvl:'много',
+                x:'Праздник! В колледже концерт, и кофе хотят почти все.' }
+  }
+};
+
+/* ---------- order form: the same on the captain's phone and in the presenter's manual-entry window ---------- */
+/* t: { money, cards:{id:true|false}, loan, dep (already taken?), peek }  ev: { cost, w }  init: last order  on: { change(order), peek() } */
+function coffeeForm(host, t, ev, init, on) {
+  const C = COFFEE, w = ev.w || C.W;
+  const money = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+  const o = { price: 60, cups: 30, card: null, loan: false, dep: false, ...(init || {}) };
+  if (t.loan) o.loan = false;
+  if (t.dep) o.dep = false;
+  if (o.card && !t.cards[o.card]) o.card = null;
+  let arm = false;  // Insider needs a second tap: it spends the card for this round
+  const budget = () => t.money + (o.loan ? C.LOAN.now : 0) - (o.dep ? C.DEPOSIT.now : 0);
+  const maxCups = () => Math.max(0, Math.min(C.MAX_CUPS, Math.floor(budget() / ev.cost / C.STEP) * C.STEP));
+  function fix() {
+    if (budget() < 0) o.dep = false;
+    o.cups = Math.max(0, Math.min(o.cups, maxCups()));
+  }
+  function render() {
+    fix();
+    const peeked = t.peek != null;
+    host.innerHTML = `<div class="cf">
+      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена одной чашки</div>
+        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}"><b>${p} ₽</b><small>купят ${Math.round(w[p] * 10)} из 10</small></button>`).join('')}</div></div>
+      <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
+        <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= maxCups() ? 'disabled' : ''} aria-label="Больше">+</button></div>
+        <div class="cf-cost">${o.cups} × ${ev.cost} ₽ = <b>${money(o.cups * ev.cost)}</b> · у вас ${money(budget())}${o.cups >= maxCups() && maxCups() < C.MAX_CUPS ? ' — на большее не хватает' : ''}</div></div>
+      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта на этот раунд <small>можно без карты</small></div>
+        <div class="cf-cards">${Object.entries(C.CARDS).map(([id, c]) => {
+          const used = !t.cards[id] && !(id === 'insider' && peeked);
+          const sel = id === 'insider' ? peeked : o.card === id;
+          const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
+          const armed = id === 'insider' && arm && !peeked && !dis;
+          return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'уже использована' : armed ? 'Нажмите ещё раз, чтобы узнать число. Это и будет карта раунда' : c.d}</small></button>`;
+        }).join('')}</div>
+        ${peeked ? `<div class="cf-peek">🕵️ Инсайдер шепчет: в этом раунде кофе захотят <b>${t.peek}</b> человек на обе кофейни</div>` : ''}</div>
+      <div class="cf-sec"><div class="cf-t"><i>4</i>Банк <small>по желанию, один раз за игру</small></div>
+        <button type="button" class="cf-b ${o.loan ? 'on' : ''}" data-bank="loan" ${t.loan ? 'disabled' : ''}>💳 <span><b>Кредит</b>${t.loan ? 'уже взят: вернёте 800 ₽ в конце' : '+600 ₽ сейчас, а в конце игры вернуть 800 ₽'}</span></button>
+        <button type="button" class="cf-b ${o.dep ? 'on' : ''}" data-bank="dep" ${t.dep || (!o.dep && t.money + (o.loan ? C.LOAN.now : 0) < C.DEPOSIT.now) ? 'disabled' : ''}>🏦 <span><b>Вклад</b>${t.dep ? 'уже открыт: получите 650 ₽ в конце' : 'отдать 500 ₽ сейчас, а в конце получить 650 ₽'}</span></button></div>
+    </div>`;
+  }
+  host.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || b.disabled || !host.contains(b)) return;
+    if (b.dataset.card !== 'insider') arm = false;
+    if (b.dataset.p) o.price = +b.dataset.p;
+    else if (b.dataset.c) o.cups = Math.max(0, Math.min(maxCups(), o.cups + +b.dataset.c));
+    else if (b.dataset.card) {
+      const id = b.dataset.card;
+      if (id === 'insider') { if (t.peek == null) { if (arm) on.peek?.(); arm = !arm; render(); } return; }
+      o.card = o.card === id ? null : id;
+    } else if (b.dataset.bank) o[b.dataset.bank] = !o[b.dataset.bank];
+    else return;
+    render(); on.change?.({ ...o });
+  });
+  render();
+  return {
+    get value() { fix(); return { ...o }; },
+    update(nt, nev) { t = nt; if (nev) ev = nev; render(); }
+  };
+}
+/* ================= PHONE: the student's screen ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const fmt = n => (n < 0 ? '−' : '') + String(Math.abs(Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+const plural = (n, one, few, many) => { n = Math.abs(n) % 100; const d = n % 10; if (n > 10 && n < 20) return many; if (d > 1 && d < 5) return few; if (d === 1) return one; return many; };
+const ls = {
+  get(k) { try { return localStorage.getItem('dengi-p:' + k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem('dengi-p:' + k, v); } catch (e) {} }
+};
+
+let cid = ls.get('cid');
+if (!/^p[a-z0-9]{8,24}$/.test(cid || '')) { cid = 'p' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); ls.set('cid', cid); }
+const readCode = () => (location.hash.slice(1) || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+let code = readCode(), S = null, lastTs = 0, nonce = 0, t0 = Date.now(), lastPoll = '';
+let votes = {}; try { votes = JSON.parse(ls.get('votes') || '{}') || {}; } catch (e) {}
+let viewer = ls.get('viewer') === '1';
+let form = null, formKey = '', sentOid = null, dirty = false;
+const main = $('#main');
+const tS = () => `${LIVE_NS}/${code}/s`, tI = () => `${LIVE_NS}/${code}/i`;
+
+/* ---------- connection ---------- */
+const conns = [];
+function onMessage(topic, payload) {
+  if (topic !== tS()) return;
+  if (payload === '') { S = { mode:'gone' }; lastTs = 0; return render(); }
+  let m; try { m = JSON.parse(payload); } catch (e) { return; }
+  if (!m || m.v !== 1 || typeof m.ts !== 'number' || m.ts < lastTs) return;
+  lastTs = m.ts; S = m; render();
+}
+function send(t, data) {
+  const n = Date.now().toString(36) + (++nonce);
+  const msg = JSON.stringify({ c: cid, n, t, ...data });
+  conns.forEach(c => c.publish(tI(), msg, false));
+  return n;
+}
+function hi() {
+  const p = S && S.mode === 'poll' && S.poll;
+  send('hi', p && votes[p.id] ? { p: p.id, k: votes[p.id] } : {});
+}
+function connect() {
+  if (conns.length || !code) return;
+  LIVE_BROKERS.forEach((url, k) => conns.push(MQ.connect(url, {
+    id: cid.slice(0, 14) + k + Math.random().toString(36).slice(2, 6), subs: [tS()], onMessage,
+    onState: ok => { net(); if (ok) hi(); }
+  })));
+  setInterval(hi, 15000);
+  setInterval(() => { if (!S) render(); net(); }, 3000);
+}
+function net() {
+  const up = conns.some(c => c.ok);
+  const el = $('#net');
+  el.textContent = !code ? '' : up ? '● на связи' : '○ подключаемся…';
+  el.className = 'ph-net ' + (up ? 'ok' : '');
+}
+window.addEventListener('hashchange', () => {
+  const c = readCode(); if (!c || c === code) return;
+  conns.forEach(k => k.unsubscribe(tS()));
+  code = c; S = null; lastTs = 0;
+  conns.length ? conns.forEach(k => k.subscribe(tS())) : connect();
+  render();
+});
+
+/* ---------- screens ---------- */
+function join() {
+  main.innerHTML = `<div class="card center">
+    <div class="big-e">🔑</div>
+    <h1>Введите код урока</h1>
+    <p class="muted">Код написан на экране под QR-кодом.</p>
+    <form id="joinF" class="join"><input id="joinIn" maxlength="5" autocomplete="off" autocapitalize="characters" placeholder="ABCDE" aria-label="Код урока"><button class="btn">Войти</button></form>
+  </div>`;
+  $('#joinF').addEventListener('submit', e => { e.preventDefault(); const v = $('#joinIn').value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (v.length === 5) location.hash = v; });
+}
+function waiting() {
+  const slow = Date.now() - t0 > 9000;
+  main.innerHTML = `<div class="card center"><div class="spin"></div>
+    <h1>${slow ? 'Ищем урок…' : 'Подключаемся…'}</h1>
+    <p class="muted">${slow ? 'Проверьте интернет. Если ведущий ещё не открыл урок, страница подключится сама, как только он начнёт.' : 'Секунду.'}</p>
+    <p class="muted small">Код урока: <b>${esc(code)}</b></p></div>`;
+}
+function idle(gone) {
+  main.innerHTML = gone
+    ? `<div class="card center"><div class="big-e">🔄</div><h1>Ведущий сменил код</h1><p class="muted">Отсканируйте новый QR-код с экрана.</p></div>`
+    : `<div class="card center"><div class="big-e eyes">👀</div><h1>Смотрите на экран</h1><p class="muted">Когда ведущий откроет вопрос, голосование появится здесь само. Страницу можно не закрывать.</p></div>`;
+}
+function poll(p) {
+  if (p.id !== lastPoll) { lastPoll = p.id; try { navigator.vibrate && navigator.vibrate(40); } catch (e) {} }
+  const mine = votes[p.id], total = p.tally ? Object.values(p.tally).reduce((a, b) => a + b, 0) : 0;
+  const right = p.opts.find(o => o.k === p.answer);
+  let st = mine ? '✓ Голос принят. Можно передумать, пока не открыли ответ.' : 'Выберите вариант 👇';
+  if (p.rev && p.answer) st = mine === p.answer ? '🎉 Вы угадали!' : mine ? `Мимо! Правильный ответ: ${esc(right ? right.t : '')}` : `Правильный ответ: ${esc(right ? right.t : '')}`;
+  main.innerHTML = `<div class="pp ${p.rev ? 'rev' : ''}">
+    <p class="pp-sub">${esc(p.sub || 'Голосование')}</p>
+    <h1 class="pp-q">${esc(p.q)}</h1>
+    <div class="pp-opts">${p.opts.map(o => {
+      let cls = mine === o.k ? 'on' : '';
+      if (p.rev && p.answer) cls += o.k === p.answer ? ' right' : mine === o.k ? ' wrong' : ' dim';
+      const pct = total ? Math.round((p.tally[o.k] || 0) / total * 100) : 0;
+      return `<button class="pp-o ${cls}" data-k="${esc(o.k)}" ${p.rev ? 'disabled' : ''}>${p.rev && total ? `<i style="width:${pct}%"></i>` : ''}<span>${esc(o.t)}</span>${p.rev && total ? `<b>${pct}%</b>` : ''}</button>`;
+    }).join('')}</div>
+    <p class="pp-st ${p.rev && p.answer ? (mine === p.answer ? 'good' : 'bad') : ''}">${st}</p>
+    ${p.n ? `<p class="muted small center">Уже проголосовали: ${p.n}</p>` : ''}
+  </div>`;
+}
+main.addEventListener('click', e => {
+  const o = e.target.closest('.pp-o'); if (!o || o.disabled || !S || !S.poll) return;
+  const id = S.poll.id, k = o.dataset.k;
+  votes[id] = k; ls.set('votes', JSON.stringify(votes));
+  send('vote', { p: id, k });
+  setTimeout(() => { if (votes[id] === k) send('vote', { p: id, k }); }, 1500);
+  poll(S.poll);
+});
+
+/* ---------- coffee battle ---------- */
+function game(g) {
+  const me = g.teams.findIndex(t => t.cap === cid);
+  if (me < 0) { form = null; formKey = ''; return viewer ? watch(g) : claim(g); }
+  const t = g.teams[me];
+  const head = `<div class="pg-team t${me}"><span>${t.emoji}</span><div><small>Вы капитан</small><b>${esc(t.name)}</b></div><b class="pg-money">${fmt(t.money)} ₽</b></div>`;
+  if (g.phase === 'orders') {
+    const key = `${g.round}:${me}`;
+    if (formKey !== key) {
+      formKey = key; sentOid = null; dirty = false;
+      main.innerHTML = `<div class="pg">
+        <div id="pgHead"></div>
+        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Покупателей: <b>${esc(g.ev.lvl)}</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b></p></div></div>
+        <div id="pform"></div>
+        <div class="pg-send"><button class="btn big" id="pSend">Отправить решение</button><p id="pSt" class="muted center"></p></div>
+      </div>`;
+      form = coffeeForm($('#pform'), t, g.ev, null, {
+        change() { dirty = true; status(g.teams[me]); },
+        peek() { send('peek', { team: me }); }
+      });
+      $('#pSend').addEventListener('click', () => {
+        const v = form.value; sentOid = send('order', { team: me, ...v }); dirty = false; status(S.game.teams[me]);
+        setTimeout(() => { if (sentOid && S.game.teams[me].oid !== sentOid) sentOid = send('order', { team: me, ...form.value }); }, 2500);
+      });
+    } else form.update(t, g.ev);
+    $('#pgHead').innerHTML = head;
+    return status(t);
+  }
+  form = null; formKey = '';
+  if (g.phase === 'lobby') {
+    main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">☕</div><h1>Вы капитан!</h1><p class="muted">Ждём начала игры. Решать будете вы, но советуйтесь с командой: в каждом раунде нужно выбрать цену чашки и сколько кофе сварить.</p><button class="btn ghost" id="pUncap">Я не капитан</button></div></div>`;
+    $('#pUncap').addEventListener('click', () => send('uncap', {}));
+  } else if (g.phase === 'reveal' && t.res) {
+    const r = t.res;
+    main.innerHTML = `<div class="pg">${head}<div class="card">
+      <h1 class="center">${r.profit >= 0 ? '📈' : '📉'} ${r.profit >= 0 ? '+' : '−'}${fmt(Math.abs(r.profit))} ₽ за раунд</h1>
+      <div class="rows">
+        <div><span>Цена чашки</span><b>${r.price} ₽</b></div>
+        <div><span>Сварили</span><b>${r.cups}</b></div>
+        <div><span>Продали</span><b>${r.sold}</b></div>
+        ${r.poured ? `<div class="bad"><span>Вылили</span><b>${r.poured}</b></div>` : ''}
+        <div><span>Выручка</span><b>+${fmt(r.revenue)} ₽</b></div>
+        <div class="bad"><span>Затраты</span><b>−${fmt(r.cost)} ₽</b></div>
+        ${r.tax ? `<div class="bad"><span>Налоговая</span><b>−${fmt(r.tax)} ₽</b></div>` : ''}
+        ${r.bank ? `<div><span>Банк</span><b>${r.bank > 0 ? '+' : '−'}${fmt(Math.abs(r.bank))} ₽</b></div>` : ''}
+      </div>
+      <p class="muted center">Подробности — на большом экране 👀</p></div></div>`;
+  } else if (g.phase === 'over') {
+    const win = g.winner === me, draw = g.winner === -1;
+    main.innerHTML = `<div class="pg">${head}<div class="card center"><div class="big-e">${draw ? '🤝' : win ? '🏆' : '🥈'}</div>
+      <h1>${draw ? 'Ничья!' : win ? 'Ваша кофейня победила!' : 'Второе место'}</h1>
+      <p class="muted">Итог с учётом кредита и вклада: <b>${fmt(t.final)}&nbsp;₽</b></p></div></div>`;
+  } else watch(g);
+}
+function status(t) {
+  const el = $('#pSt'); if (!el) return;
+  if (sentOid && t.oid === sentOid && !dirty) el.innerHTML = '<b class="good">✅ Решение принято.</b> Можно поменять и отправить снова, пока ведущий не вскрыл решения.';
+  else if (sentOid && dirty) el.textContent = 'Есть изменения — нажмите «Отправить решение» ещё раз.';
+  else if (sentOid) el.textContent = 'Отправляем…';
+  else el.textContent = t.ready ? 'Решение уже отправлено с другого устройства или ведущим.' : 'Соперники не видят ваше решение.';
+}
+function claim(g) {
+  main.innerHTML = `<div class="card center"><div class="big-e">☕</div><h1>Битва кофеен</h1>
+    <p class="muted">Капитан вводит решения за команду. Остальные советуют — и смотрят на экран.</p>
+    <div class="claim">${g.teams.map((t, i) => `<button class="btn big t${i}" data-claim="${i}" ${t.cap ? 'disabled' : ''}>${t.emoji} Я капитан «${esc(t.name)}»${t.cap ? '<small>капитан уже есть</small>' : ''}</button>`).join('')}</div>
+    <button class="btn ghost" id="pWatch">Я просто болею 👀</button></div>`;
+}
+function watch(g) {
+  main.innerHTML = `<div class="card center"><div class="big-e eyes">👀</div><h1>Смотрите на экран</h1>
+    ${g.ev && g.phase !== 'over' ? `<p class="muted">Раунд ${g.round}: ${g.ev.e} ${esc(g.ev.t)}</p>` : ''}
+    <div class="score">${g.teams.map((t, i) => `<div class="t${i}"><span>${t.emoji} ${esc(t.name)}</span><b>${fmt(g.phase === 'over' ? t.final : t.money)} ₽</b></div>`).join('')}</div>
+    <p class="muted small">Подсказывайте своему капитану!</p>
+    <button class="btn ghost" id="pBeCap">Я капитан</button></div>`;
+}
+main.addEventListener('click', e => {
+  const c = e.target.closest('[data-claim]');
+  if (c && !c.disabled) { viewer = false; ls.set('viewer', '0'); send('cap', { team: +c.dataset.claim }); c.textContent = 'Подключаем…'; setTimeout(render, 4000); }
+  if (e.target.closest('#pWatch')) { viewer = true; ls.set('viewer', '1'); render(); }
+  if (e.target.closest('#pBeCap')) { viewer = false; ls.set('viewer', '0'); render(); }
+});
+
+function render() {
+  net();
+  if (!code) return join();
+  connect();
+  if (!S) return waiting();
+  if (S.mode === 'gone') return idle(true);
+  if (S.mode !== 'game') { form = null; formKey = ''; }
+  if (S.mode === 'poll' && S.poll) return poll(S.poll);
+  if (S.mode === 'game' && S.game) return game(S.game);
+  idle();
+}
+
+/* keep the screen awake during the lesson, where the browser allows it */
+document.addEventListener('click', () => { try { navigator.wakeLock && navigator.wakeLock.request('screen').catch(() => {}); } catch (e) {} }, { once: true });
+render();
+</script>
+</body></html>
