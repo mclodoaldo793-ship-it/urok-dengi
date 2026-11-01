@@ -201,52 +201,103 @@
   reset();
 })();
 
-/* ---------- Task 2: properties of money ---------- */
+/* ---------- Task 2: who becomes money? one trial per property, the loser drops out ---------- */
 (() => {
-  const cands = $('#cands'), table = $('#ptable'), pollBox = $('#propPoll');
-  let cur = 'potato', timers = [];
-  const score = c => c.v.reduce((s, [v]) => s + v / 2, 0);
-  cands.innerHTML = CANDS.map(c => `<button class="cand" data-id="${c.id}"><span class="cand-e">${c.e}</span><span class="cand-n">${c.n}</span></button>`).join('');
-  function render() {
-    const c = CANDS.find(x => x.id === cur);
-    $$('.cand', cands).forEach(b => b.classList.toggle('on', b.dataset.id === cur));
-    const q = c.id === 'shells' ? 'Годятся ли ракушки каури в деньги?' : `Годится ли ${c.n.toLowerCase()} в деньги?`;
-    pollBox.innerHTML = `<div class="poll prop-poll" data-poll="props-${c.id}" data-q="${q}" data-answer="${score(c) >= 5 ? 'y' : 'n'}">
-      <p class="poll-q">${c.e} ${q}</p>
-      <div class="poll-opts"><button class="poll-opt popt" data-k="y" data-t="👍 Да"><i class="pbar"></i><span class="pl">👍 Да</span><em class="pn"></em></button><button class="poll-opt popt" data-k="n" data-t="👎 Нет"><i class="pbar"></i><span class="pl">👎 Нет</span><em class="pn"></em></button></div>
-      <div class="pmeta"></div>
+  const box = $('#castBox'), LAST = TRIALS.length - 1;
+  let n, rev, pick, out, round = 0;   // out: candidate id -> trial index where it dropped out
+  const final = () => n === LAST && rev;
+  function reset() { n = 0; rev = false; pick = null; out = {}; round++; render(); }
+
+  function tile(c) {
+    const k = out[c.id], inPlay = k === undefined || k >= n, now = rev && k === n;
+    const win = final() && k === undefined;
+    const passed = k !== undefined ? k : n + (rev ? 1 : 0);
+    const poll = inPlay && TRIALS[n].out;
+    const cls = `ct ${k !== undefined ? 'gone' : ''} ${now ? 'now' : ''} ${rev && pick === c.id && !now ? 'miss' : ''} ${win ? 'win' : ''} ${poll ? 'poll-opt' : ''}`;
+    const inner = `${poll ? '<i class="pbar"></i>' : ''}${win ? '<span class="ct-crown">👑</span>' : ''}
+      <span class="ct-e">${c.e}</span><b class="ct-n">${c.n}</b>
+      ${k !== undefined ? '<span class="ct-x">вне игры</span>' : `<span class="ct-d">${TRIALS.map((_, i) => `<i class="${i < passed ? 'on' : ''}"></i>`).join('')}</span>`}
+      ${poll ? '<em class="pn"></em>' : ''}`;
+    return poll ? `<button class="${cls}" data-k="${c.id}" data-t="${c.e} ${c.n}" ${rev ? 'disabled' : ''}>${inner}</button>` : `<div class="${cls}">${inner}</div>`;
+  }
+
+  /* the last trial has one candidate left, so the class votes yes / no instead */
+  const yesNo = () => `<div class="poll-opts trial-yn">${[['y', '👍 Да'], ['n', '👎 Нет']].map(([k, l]) =>
+    `<button class="popt poll-opt ${rev ? (k === 'y' ? 'right' : pick === k ? 'wrong' : 'dim') : ''}" data-k="${k}" data-t="${l}" ${rev ? 'disabled' : ''}><i class="pbar"></i><span class="pl">${l}</span><em class="pn"></em></button>`).join('')}</div>`;
+  function trial() {
+    const t = TRIALS[n], head = `Испытание ${n + 1} из ${TRIALS.length}`;
+    if (!rev) {
+      const last = !t.out;
+      return `<div class="trial card">
+        <span class="trial-e">${t.e}</span>
+        <div class="trial-b">
+          <span class="trial-n">${head}</span>
+          <h3 class="trial-t">${t.t}</h3>
+          <p class="trial-q">${last ? 'Остался один кандидат. Купюра пройдёт испытание?' : 'Кто не пройдёт испытание? Кликните того, кого выбрал класс.'}</p>
+          <div class="pmeta"></div>
+        </div>
+        ${last ? yesNo() : ''}
+      </div>`;
+    }
+    const ans = t.out || 'y', ok = pick === ans;
+    const c = t.out ? CAST.find(x => x.id === t.out) : null;
+    const tag = pick ? `<span class="trial-n ${ok ? 'ok' : 'bad'}">${ok ? 'Верно!' : 'Мимо!'} · ${head}</span>` : `<span class="trial-n">${head}</span>`;
+    return `<div class="trial card after">
+      <span class="trial-e">${c ? c.e : '🏆'}</span>
+      <div class="trial-b">
+        ${tag}
+        <h3 class="trial-t">${c ? `${c.n} ${c.many ? 'выбывают' : 'выбывает'}` : 'Купюра становится деньгами!'}</h3>
+        <p class="trial-q">${t.why}${c ? '' : ' Она одна прошла все шесть испытаний.'}</p>
+        <p class="trial-p">Свойство денег: <b>${t.p.toLowerCase()}</b> <small>${t.term}</small></p>
+      </div>
+      <div class="trial-side">${final()
+        ? yesNo() + '<button class="btn btn-ghost" id="castAgain">↺ Сыграть ещё раз</button>'
+        : '<button class="btn btn-primary" id="castNext">Следующее испытание →</button>'}</div>
     </div>`;
-    const poll = $('.poll', pollBox);
-    poll.addEventListener('poll-reveal', check);
-    table.innerHTML = `<div class="ptable-head"><h3>${c.e} ${c.n}: годится в деньги?</h3><button class="btn btn-primary btn-sm" id="pCheck">Проверим!</button></div>` +
-      PROPS.map((p, i) => `<div class="prow" data-i="${i}"><span class="mark">?</span><div><div class="prow-name">${p.n} <span class="term">${p.t}</span></div><div class="prow-c">${p.d}</div></div></div>`).join('') +
-      `<div class="verdict" id="pVerdict" hidden></div>`;
-    $('#pCheck').addEventListener('click', () => Polls.reveal(poll));
   }
-  function check() {
-    timers.forEach(clearTimeout); timers = [];
-    const c = CANDS.find(x => x.id === cur), s = score(c);
-    $('#pCheck').disabled = true;
-    c.v.forEach(([v, txt], i) => {
-      timers.push(setTimeout(() => {
-        const row = table.querySelector(`.prow[data-i="${i}"]`);
-        row.classList.add(v === 2 ? 'yes' : v === 1 ? 'mid' : 'no');
-        row.querySelector('.mark').textContent = v === 2 ? '✓' : v === 1 ? '~' : '✕';
-        row.querySelector('.prow-c').textContent = txt;
-        SFX.beep(!v);
-      }, 250 + i * 380));
-    });
-    timers.push(setTimeout(() => {
-      const el = $('#pVerdict'); el.hidden = false;
-      el.innerHTML = `<b>${String(s).replace('.', ',')} из 6.</b> ${c.verdict}`;
-      s >= 5 ? SFX.right() : SFX.wrong();
-    }, 250 + 6 * 380 + 200));
+
+  function render() {
+    const t = TRIALS[n], learned = n + (rev ? 1 : 0);
+    box.innerHTML = `<div class="cast poll ${rev ? 'revealed' : ''}" data-self data-poll="cast-${round}-${n}"
+        data-q="${t.e} ${t.t}: ${t.out ? 'кто не пройдёт?' : 'купюра пройдёт?'}" data-sub="Испытание ${n + 1} из ${TRIALS.length}" data-answer="${t.out || 'y'}">
+      <div class="cast-row">${CAST.map(tile).join('')}</div>
+      ${trial()}
+      <div class="learned">
+        <div class="learned-h"><b>Свойства денег: ${learned} из ${TRIALS.length}</b>${(n || rev) && !final() ? '<button class="btn btn-ghost btn-sm" id="castReset">↺ Заново</button>' : ''}</div>
+        <div class="learned-row">${TRIALS.map((x, i) => i < learned
+          ? `<span class="lp on ${rev && i === n ? 'new' : ''}"><i>${i + 1}</i><b>${x.p}</b><small>${x.term}</small></span>`
+          : `<span class="lp"><i>${i + 1}</i><b>?</b></span>`).join('')}</div>
+      </div>
+    </div>`;
   }
-  cands.addEventListener('click', e => {
-    const b = e.target.closest('.cand'); if (!b) return;
-    cur = b.dataset.id; timers.forEach(clearTimeout); render(); SFX.click();
+
+  function reveal(k) {
+    const el = $('.cast', box), t = TRIALS[n];
+    pick = k || null;
+    Polls.reveal(el, k);
+    rev = true;
+    if (t.out) out[t.out] = n;
+    render();
+    if (pick) (pick === (t.out || 'y') ? SFX.right : SFX.wrong)();
+    if (final()) setTimeout(() => { SFX.fanfare(); Confetti.burst({ n:140 }); }, 400);
+    else setTimeout(SFX.no, 250);
+  }
+  function next() { if (!rev || final()) return; n++; rev = false; pick = null; render(); SFX.click(); }
+
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.poll-opt');
+    if (o && !rev && !o.disabled) return reveal(o.dataset.k);
+    if (e.target.closest('#castNext')) next();
+    if (e.target.closest('#castAgain, #castReset')) { reset(); SFX.click(); }
   });
-  render();
+  Deck.hooks.props = {
+    key(e) {
+      if ((e.code === 'Enter' || e.code === 'Space') && e.target.closest && e.target.closest('button')) return false;
+      if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'ArrowRight') && rev && !final()) { next(); return true; }
+      return false;
+    }
+  };
+  reset();
 })();
 
 /* ---------- measure of value: barter ratios ---------- */
@@ -296,44 +347,62 @@
   upd();
 })();
 
-/* ---------- Task 3: guess the function ---------- */
+/* ---------- Task 3: one day in the life of a 1 000 ₽ note ---------- */
 (() => {
-  const box = $('#quizBox'), keys = Object.keys(FUNCS);
+  const box = $('#quizBox'), keys = Object.keys(FUNCS), N = ROUTE.length;
   let i = 0, res = [], picked = null, round = 1;
+  box.innerHTML = `<div class="route">${ROUTE.map(s => `<div class="rt"><span class="rt-dot">${s.e}<i class="rt-f"></i></span><span class="rt-at">${s.at}</span><span class="rt-fn"></span></div>`).join('')}<span class="rt-note">1 000 ₽</span></div><div class="rq" id="rq"></div>`;
+  const stops = $$('.rt', box), note = $('.rt-note', box), main = $('#rq');
+
+  /* the route stays in place, so the note can slide from stop to stop */
+  function route() {
+    const end = i >= N;
+    stops.forEach((el, k) => {
+      const f = k < res.length ? FUNCS[ROUTE[k].a] : null;
+      el.className = 'rt' + (f ? ' done' : k === i ? ' cur' : '');
+      el.style.setProperty('--c', f ? f.color : '');
+      $('.rt-f', el).textContent = f ? f.icon : '';
+      $('.rt-fn', el).textContent = end && f ? f.name : '';
+    });
+    note.style.left = ((Math.min(i, N - 1) + .5) / N * 100) + '%';
+  }
   function render() {
-    if (i >= QUIZ.length) return summary();
-    const q = QUIZ[i];
-    const expl = picked ? (picked === q.a ? '<b>Верно!</b> ' : `<b>Мимо.</b> Правильно: ${FUNCS[q.a].name}. `) + q.x : '';
-    box.innerHTML = `
+    route();
+    if (i >= N) return summary();
+    const s = ROUTE[i], f = FUNCS[s.a];
+    const expl = picked ? `<b>${picked === s.a ? 'Верно!' : 'Мимо.'}</b> Это ${f.icon} ${f.name.toLowerCase()}. ${s.x}` : '';
+    main.innerHTML = `
       <div class="qcard card">
-        <div class="qprog">${QUIZ.map((_, k) => `<i class="${k < res.length ? (res[k] ? 'ok' : 'bad') : (k === i ? 'cur' : '')}"></i>`).join('')}</div>
-        <div class="qe">${q.e}</div>
-        <p class="qt">${q.t}</p>
-        <div class="qexpl ${picked && picked !== q.a ? 'bad' : ''}" ${picked ? '' : 'hidden'}>${expl}</div>
+        <span class="rq-n">Остановка ${i + 1} из ${N} · ${s.at}</span>
+        <div class="qe">${s.e}</div>
+        <p class="qt">${s.t}</p>
+        <div class="qexpl ${picked && picked !== s.a ? 'bad' : ''}" ${picked ? '' : 'hidden'}>${expl}</div>
       </div>
       <div class="qside">
-        <div class="qopts poll ${picked ? 'revealed' : ''}" data-self data-poll="quiz-${round}-${i}" data-q="${esc(q.t)}" data-sub="Какая это суперсила денег?" data-answer="${q.a}">${keys.map(k => {
-          const f = FUNCS[k];
+        <div class="qopts poll ${picked ? 'revealed' : ''}" data-self data-poll="route-${round}-${i}" data-q="${esc(s.t)}" data-sub="Какую суперсилу показала тысяча?" data-answer="${s.a}">${keys.map(k => {
+          const o = FUNCS[k];
           let cls = '';
-          if (picked) { if (k === q.a) cls = 'right'; else if (k === picked) cls = 'wrong'; }
-          return `<button class="qopt poll-opt ${cls}" style="--c:${f.color}" data-k="${k}" data-t="${f.icon} ${f.name}" ${picked ? 'disabled' : ''}><span class="e">${f.icon}</span>${f.name}<em class="pn"></em><span class="k">${f.key}</span></button>`;
+          if (picked) { if (k === s.a) cls = 'right'; else if (k === picked) cls = 'wrong'; }
+          return `<button class="qopt poll-opt ${cls}" style="--c:${o.color}" data-k="${k}" data-t="${o.icon} ${o.name} — ${o.hint}" ${picked ? 'disabled' : ''}><span class="e">${o.icon}</span><span class="qo"><b>${o.name}</b><small>${o.hint}</small></span><em class="pn"></em><span class="k">${o.key}</span></button>`;
         }).join('')}<div class="pmeta"></div></div>
-        <div class="qscore"><span class="chip">Счёт группы: ${res.filter(Boolean).length} из ${res.length}</span>${picked
-          ? `<button class="btn btn-primary" id="qNext">${i < QUIZ.length - 1 ? 'Следующая ситуация →' : 'Итог задания →'}</button>`
-          : `<span class="hint">Ситуация ${i + 1} из ${QUIZ.length} · клавиши 1–5</span>`}</div>
+        <div class="qscore"><span class="chip">Угадали: ${res.filter(Boolean).length} из ${res.length}</span>${picked
+          ? `<button class="btn btn-primary" id="qNext">${i < N - 1 ? 'Дальше по маршруту →' : 'Итог →'}</button>`
+          : '<span class="hint">Кликните ответ класса или нажмите 1–5</span>'}</div>
       </div>`;
   }
   function summary() {
     const s = res.filter(Boolean).length;
-    const msg = s >= 11 ? 'Блестяще! Группа — финансовые гении.' : s >= 8 ? 'Отлично! Суперсилы денег освоены.' : s >= 5 ? 'Неплохо. Платёж и обращение легко спутать — в игре будет шанс разобраться.' : 'Есть куда расти. В игре будет шанс отыграться!';
-    box.innerHTML = `<div class="qcard card" style="grid-column:1/-1;align-items:center;text-align:center">
-      <div class="qe">${s >= 8 ? '🏆' : '📚'}</div><p class="qt">${s} из ${QUIZ.length}</p><p class="lead">${msg}</p>
+    const msg = s === N ? 'Ни одной ошибки!' : s >= 4 ? 'Отлично, суперсилы освоены.' : 'Платёж и обращение легко спутать. В игре будет шанс разобраться.';
+    main.innerHTML = `<div class="qcard card rq-sum">
+      <div class="qe">${s >= 4 ? '🏆' : '📚'}</div>
+      <p class="qt">За один день тысяча показала все пять суперсил</p>
+      <p class="lead">Класс угадал ${s} из ${N}. ${msg}</p>
       <div class="cta-row" style="justify-content:center"><button class="btn btn-ghost" id="qAgain">↺ Пройти ещё раз</button><button class="btn btn-gold" data-action="next">К игре →</button></div></div>`;
-    if (s >= 8) { Confetti.burst(); SFX.fanfare(); }
+    if (s >= 4) { Confetti.burst(); SFX.fanfare(); }
   }
-  function pick(k) { const ok = k === QUIZ[i].a; picked = k; res.push(ok); ok ? SFX.right() : SFX.wrong(); render(); }
+  function pick(k) { const ok = k === ROUTE[i].a; picked = k; res.push(ok); ok ? SFX.right() : SFX.wrong(); render(); }
   function advance() { i++; picked = null; render(); SFX.click(); }
-  box.addEventListener('click', e => {
+  main.addEventListener('click', e => {
     const o = e.target.closest('.qopt');
     if (o && !picked) return pick(o.dataset.k);
     if (e.target.closest('#qNext')) advance();
@@ -341,7 +410,7 @@
   });
   Deck.hooks.quiz = {
     key(e) {
-      if (i >= QUIZ.length) return false;
+      if (i >= N) return false;
       const m = /^Digit([1-5])$/.exec(e.code) || /^Numpad([1-5])$/.exec(e.code);
       if (m && !picked) { pick(keys[+m[1] - 1]); return true; }
       if ((e.code === 'Enter' || e.code === 'Space') && e.target.closest && e.target.closest('button')) return false;

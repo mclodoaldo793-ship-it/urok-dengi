@@ -60,27 +60,40 @@ function coffeeForm(host, t, ev, init, on) {
     if (budget() < 0) o.dep = false;
     o.cups = Math.max(0, Math.min(o.cups, maxCups()));
   }
+  /* every section is buttons plus one plain line that explains the current choice */
   function render() {
     fix();
-    const peeked = t.peek != null;
+    const peeked = t.peek != null, max = maxCups();
+    const card = id => {
+      const c = C.CARDS[id];
+      const used = !t.cards[id] && !(id === 'insider' && peeked);
+      const sel = id === 'insider' ? peeked : o.card === id;
+      const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
+      const armed = id === 'insider' && arm && !peeked && !dis;
+      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''} title="${c.d}"><span>${c.e}</span><b>${c.n}</b></button>`;
+    };
+    const ids = Object.keys(C.CARDS);
+    let note = 'Можно без карты. Каждая карта — один раз за игру.';
+    if (peeked) note = `🕵️ Кофе захотят <b>${t.peek}</b> человек на обе кофейни`;
+    else if (arm) note = 'Нажмите «Инсайдер» ещё раз, и вы узнаете число покупателей. Это и будет карта раунда.';
+    else if (o.card) note = `${C.CARDS[o.card].e} ${C.CARDS[o.card].d}`;
+    const bank = [
+      t.loan ? `Кредит уже взят: в конце вернёте ${money(C.LOAN.back)}` : o.loan ? `Кредит: +${money(C.LOAN.now)} сейчас, в конце вернёте ${money(C.LOAN.back)}` : '',
+      t.dep ? `Вклад открыт: в конце получите ${money(C.DEPOSIT.back)}` : o.dep ? `Вклад: отдаёте ${money(C.DEPOSIT.now)} сейчас, в конце получите ${money(C.DEPOSIT.back)}` : ''
+    ].filter(Boolean).join('<br>') || 'По желанию. Кредит и вклад — по одному разу за игру.';
     host.innerHTML = `<div class="cf">
-      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена одной чашки</div>
-        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}"><b>${p} ₽</b><small>купят ${Math.round(w[p] * 10)} из 10</small></button>`).join('')}</div></div>
+      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
+        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
+        <p class="cf-note">По ${o.price} ₽ кофе купят ${Math.round(w[o.price] * 10)} из 10 желающих</p></div>
       <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
-        <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= maxCups() ? 'disabled' : ''} aria-label="Больше">+</button></div>
-        <div class="cf-cost">${o.cups} × ${ev.cost} ₽ = <b>${money(o.cups * ev.cost)}</b> · у вас ${money(budget())}${o.cups >= maxCups() && maxCups() < C.MAX_CUPS ? ' — на большее не хватает' : ''}</div></div>
-      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта на этот раунд <small>можно без карты</small></div>
-        <div class="cf-cards">${Object.entries(C.CARDS).map(([id, c]) => {
-          const used = !t.cards[id] && !(id === 'insider' && peeked);
-          const sel = id === 'insider' ? peeked : o.card === id;
-          const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
-          const armed = id === 'insider' && arm && !peeked && !dis;
-          return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'уже использована' : armed ? 'Нажмите ещё раз, чтобы узнать число. Это и будет карта раунда' : c.d}</small></button>`;
-        }).join('')}</div>
-        ${peeked ? `<div class="cf-peek">🕵️ Инсайдер шепчет: в этом раунде кофе захотят <b>${t.peek}</b> человек на обе кофейни</div>` : ''}</div>
-      <div class="cf-sec"><div class="cf-t"><i>4</i>Банк <small>по желанию, один раз за игру</small></div>
-        <button type="button" class="cf-b ${o.loan ? 'on' : ''}" data-bank="loan" ${t.loan ? 'disabled' : ''}>💳 <span><b>Кредит</b>${t.loan ? 'уже взят: вернёте 800 ₽ в конце' : '+600 ₽ сейчас, а в конце игры вернуть 800 ₽'}</span></button>
-        <button type="button" class="cf-b ${o.dep ? 'on' : ''}" data-bank="dep" ${t.dep || (!o.dep && t.money + (o.loan ? C.LOAN.now : 0) < C.DEPOSIT.now) ? 'disabled' : ''}>🏦 <span><b>Вклад</b>${t.dep ? 'уже открыт: получите 650 ₽ в конце' : 'отдать 500 ₽ сейчас, а в конце получить 650 ₽'}</span></button></div>
+        <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= max ? 'disabled' : ''} aria-label="Больше">+</button>
+          <span class="cf-note">Потратите <b>${money(o.cups * ev.cost)}</b> из ${money(budget())}${o.cups >= max && max < C.MAX_CUPS ? '. На большее не хватит' : ''}</span></div></div>
+      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта раунда</div>
+        <div class="cf-cards"><span class="cf-g good">Помощь</span>${ids.filter(id => C.CARDS[id].good).map(card).join('')}<span class="cf-g evil">Пакость</span>${ids.filter(id => !C.CARDS[id].good).map(card).join('')}</div>
+        <p class="cf-note ${peeked ? 'peek' : ''}">${note}</p></div>
+      <div class="cf-sec"><div class="cf-t"><i>4</i>Банк</div>
+        <div class="cf-bank"><button type="button" class="cf-b ${o.loan ? 'on' : ''}" data-bank="loan" ${t.loan ? 'disabled' : ''}>💳 ${t.loan ? 'Кредит взят' : 'Кредит'}</button><button type="button" class="cf-b ${o.dep ? 'on' : ''}" data-bank="dep" ${t.dep || (!o.dep && t.money + (o.loan ? C.LOAN.now : 0) < C.DEPOSIT.now) ? 'disabled' : ''}>🏦 ${t.dep ? 'Вклад открыт' : 'Вклад'}</button></div>
+        <p class="cf-note">${bank}</p></div>
     </div>`;
   }
   host.addEventListener('click', e => {

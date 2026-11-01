@@ -262,24 +262,53 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .tl-body{display:flex;flex-direction:column;gap:12px}
 
 /* ---------- properties ---------- */
-.props{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);gap:clamp(16px,2.6vw,40px);align-items:start}
-.cands{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.cand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:clamp(12px,1.4vw,20px) 8px;border-radius:18px;border:2px solid var(--line);background:var(--surface);cursor:pointer;transition:transform .15s,border-color .2s,background .2s}
-.cand:hover{transform:translateY(-3px)}
-.cand.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--surface))}
-.cand-e{font-size:clamp(38px,4.2vw,66px);line-height:1.1}
-.cand-n{font-weight:700;font-size:clamp(13px,1vw,16px)}
-.ptable{display:flex;flex-direction:column;gap:8px}
-.ptable-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-.prow{display:grid;grid-template-columns:38px minmax(0,1fr);gap:12px;align-items:center;padding:9px 12px;border-radius:14px;background:var(--surface-2)}
-.prow .mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:18px;background:var(--line);color:var(--muted);transition:background .3s,color .3s,transform .3s}
-.prow.yes .mark{background:var(--ok);color:var(--on-f);transform:scale(1.06)}
-.prow.mid .mark{background:var(--gold-2);color:var(--gold-ink)}
-.prow.no .mark{background:var(--bad);color:var(--on-f)}
-.prow-name{font-weight:800;font-size:clamp(14px,1.05vw,17px)}
-.prow-c{font-size:clamp(13px,.95vw,15px);color:var(--ink-2);min-height:1.4em}
-.verdict{margin-top:8px;padding:14px 16px;border-radius:16px;background:var(--ink);color:var(--bg);font-weight:600;font-size:clamp(14px,1.1vw,18px);line-height:1.4}
-.verdict b{font-family:var(--font-display);color:var(--gold-2)}
+/* who becomes money: a line-up of candidates, one trial card, the properties collected so far */
+.cast{gap:clamp(12px,2vh,20px)}
+.cast-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(8px,1vw,14px)}
+.ct{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:4px;padding:clamp(10px,1.6vh,18px) 6px clamp(12px,1.8vh,20px);border-radius:18px;border:2px solid var(--line-2);background:var(--surface);color:var(--ink);transition:transform .15s,border-color .2s,opacity .3s,background .3s}
+button.ct{cursor:pointer}
+button.ct:hover:not(:disabled){transform:translateY(-3px);border-color:var(--brand)}
+.ct:disabled{cursor:default}
+.ct-e{font-size:clamp(40px,4.4vw,68px);line-height:1.1;transition:filter .4s}
+.ct-n{font-weight:800;font-size:clamp(14px,1.1vw,18px)}
+.ct-d{display:flex;gap:3px;height:16px;align-items:center}
+.ct-d i{width:clamp(8px,.8vw,12px);height:6px;border-radius:3px;background:var(--line-2)}
+.ct-d i.on{background:var(--ok)}
+.ct-x{height:16px;font-weight:800;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--bad)}
+.ct .pbar{position:absolute;left:0;bottom:0;height:6px;width:0;background:var(--brand);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.ct .pn{position:absolute;top:8px;right:10px;font-style:normal;font-family:var(--font-mono);font-weight:700;font-size:13px;padding:1px 8px;border-radius:99px;background:var(--surface-2)}
+.ct .pn:empty{display:none}
+.ct.gone{border-style:dashed;background:transparent;opacity:.5}
+.ct.gone .ct-e{filter:grayscale(1)}
+.ct.gone.now{opacity:1;border-style:solid;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--surface));animation:shake .5s .15s}
+.ct.miss{border-color:color-mix(in srgb,var(--bad) 55%,transparent)}
+.ct.win{border-color:var(--gold-2);background:color-mix(in srgb,var(--gold-2) 18%,var(--surface));box-shadow:0 0 0 5px color-mix(in srgb,var(--gold-2) 24%,transparent);animation:pulse 1.2s ease-in-out 2}
+.ct-crown{position:absolute;top:6px;left:10px;font-size:22px;animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
+.trial{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(14px,2vw,28px);padding:clamp(14px,2.2vh,24px) clamp(18px,2vw,30px)}
+.trial.after{animation:cardIn .45s cubic-bezier(.2,.8,.2,1)}
+.trial-e{font-size:clamp(52px,5.4vw,86px);line-height:1}
+.trial-b{display:flex;flex-direction:column;gap:6px;min-width:0}
+.trial-n{font-family:var(--font-mono);font-size:clamp(12px,.95vw,14px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.trial-n.ok{color:var(--ok)}
+.trial-n.bad{color:var(--bad)}
+.trial-t{font-size:clamp(24px,2.6vw,42px)}
+.trial-q{font-size:clamp(15px,1.2vw,20px);color:var(--ink-2);line-height:1.45;text-wrap:pretty}
+.trial-p{align-self:flex-start;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:7px 14px;border-radius:12px;background:color-mix(in srgb,var(--ok) 13%,var(--surface-2));font-size:clamp(15px,1.15vw,19px)}
+.trial-p b{color:var(--ok)}
+.trial-p small{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.trial-side{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+.trial-yn{min-width:min(300px,100%)}
+.trial-yn .popt{justify-content:center}
+.learned{display:flex;flex-direction:column;gap:8px}
+.learned-h{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px;font-size:clamp(14px,1.05vw,17px)}
+.learned-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.lp{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:8px;padding:7px 10px;border-radius:12px;border:1.5px dashed var(--line-2);color:var(--muted)}
+.lp i{grid-row:span 2;font-style:normal;font-family:var(--font-mono);font-size:12px;font-weight:700}
+.lp b{font-size:clamp(12px,.95vw,15px);line-height:1.2}
+.lp small{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.lp.on{border-style:solid;border-color:color-mix(in srgb,var(--ok) 45%,transparent);background:color-mix(in srgb,var(--ok) 10%,var(--surface));color:var(--ink)}
+.lp.on i{color:var(--ok)}
+.lp.new{animation:pop .5s cubic-bezier(.2,1.4,.4,1) .3s backwards}
 
 /* ---------- functions ---------- */
 .fgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(10px,1.2vw,18px)}
@@ -345,25 +374,40 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .cur-node.gold{border-color:var(--gold-2);color:var(--gold)}
 
 /* ---------- quiz ---------- */
-.quiz{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(16px,2.6vw,40px);align-items:stretch}
-.qcard{display:flex;flex-direction:column;gap:clamp(12px,2vh,22px);justify-content:center;min-height:clamp(300px,46vh,460px);position:relative}
-.qprog{display:flex;gap:6px;flex-wrap:wrap}
-.qprog i{width:22px;height:6px;border-radius:4px;background:var(--line)}
-.qprog i.ok{background:var(--ok)}
-.qprog i.bad{background:var(--bad)}
-.qprog i.cur{background:var(--ink)}
-.qe{font-size:clamp(60px,7vw,108px);line-height:1}
-.qt{font-family:var(--font-display);font-weight:700;font-size:clamp(21px,2.1vw,36px);line-height:1.22;text-wrap:balance}
+.quiz{display:flex;flex-direction:column;gap:clamp(12px,2vh,22px)}
+.rq{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(16px,2.6vw,40px);align-items:stretch}
+.qcard{display:flex;flex-direction:column;gap:clamp(10px,1.6vh,18px);justify-content:center;position:relative}
+.rq-sum{grid-column:1/-1;align-items:center;text-align:center}
+.rq-n{font-family:var(--font-mono);font-size:clamp(12px,.95vw,14px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+/* the route: six stops on a dashed line, the 1 000 ₽ note slides above the current one */
+.route{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding-top:30px}
+.route::before{content:"";position:absolute;left:calc(100% / 12);right:calc(100% / 12);top:56px;border-top:3px dashed var(--line-2)}
+.rt{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.rt-dot{position:relative;z-index:1;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:26px;background:var(--surface);border:2px solid var(--line-2);transition:transform .3s,border-color .3s,background .3s,box-shadow .3s}
+.rt.cur .rt-dot{border-color:var(--gold-2);box-shadow:0 0 0 5px color-mix(in srgb,var(--gold-2) 25%,transparent);transform:scale(1.08)}
+.rt.done .rt-dot{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--surface))}
+.rt-f{position:absolute;right:-8px;bottom:-6px;font-style:normal;font-size:16px;line-height:1}
+.rt-f:empty{display:none}
+.rt-at{font-weight:700;font-size:clamp(12px,.95vw,15px);color:var(--muted)}
+.rt.cur .rt-at,.rt.done .rt-at{color:var(--ink)}
+.rt-fn{font-weight:800;font-size:clamp(11px,.85vw,13px);line-height:1.2;color:var(--c)}
+.rt-fn:empty{display:none}
+.rt-note{position:absolute;top:0;transform:translateX(-50%);padding:2px 10px;border-radius:6px;border:1.5px solid var(--note-line);background:var(--note-bg);color:var(--note-ink);font-family:var(--font-display);font-weight:800;font-size:12px;white-space:nowrap;transition:left .8s cubic-bezier(.5,0,.2,1)}
+.qe{font-size:clamp(52px,5.6vw,92px);line-height:1}
+.qt{font-family:var(--font-display);font-weight:700;font-size:clamp(19px,1.8vw,30px);line-height:1.25;text-wrap:balance}
 .qexpl{padding:14px 16px;border-radius:16px;background:var(--surface-2);font-size:clamp(14px,1.08vw,18px);line-height:1.45}
 .qexpl b{color:var(--ok)}
 .qexpl.bad b{color:var(--bad)}
 .qside{display:flex;flex-direction:column;gap:16px;justify-content:center;min-width:0}
-.qopts{display:flex;flex-direction:column;gap:10px}
+.qopts{display:flex;flex-direction:column;gap:8px}
 .globe .arc{fill:none;stroke:var(--f5);stroke-width:.7;stroke-dasharray:2 2.4;opacity:.65;animation:dash 4s linear infinite}
 @keyframes dash{to{stroke-dashoffset:-26}}
-.qopt{--c:var(--f1);display:flex;align-items:center;gap:14px;padding:clamp(12px,1.3vw,18px) 18px;border-radius:16px;border:2px solid color-mix(in srgb,var(--c) 35%,transparent);background:color-mix(in srgb,var(--c) 7%,var(--surface));font-weight:800;font-size:clamp(15px,1.25vw,21px);cursor:pointer;text-align:left;transition:transform .15s,background .2s,opacity .2s}
+.qopt{--c:var(--f1);display:flex;align-items:center;gap:14px;padding:clamp(8px,1.2vh,14px) 16px;border-radius:16px;border:2px solid color-mix(in srgb,var(--c) 35%,transparent);background:color-mix(in srgb,var(--c) 7%,var(--surface));font-weight:800;font-size:clamp(15px,1.25vw,21px);cursor:pointer;text-align:left;transition:transform .15s,background .2s,opacity .2s}
 .qopt:hover:not(:disabled){transform:translateX(4px)}
 .qopt .e{font-size:1.5em;line-height:1}
+.qopt .qo{display:flex;flex-direction:column;gap:1px;line-height:1.2}
+.qopt .qo small{font-weight:600;font-size:clamp(12px,.9vw,14px);color:var(--muted)}
+.qopt.right .qo small{color:inherit;opacity:.85}
 .qopt .k{margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--muted);font-weight:600}
 .qopt.right{background:var(--c);color:var(--on-f);border-color:var(--c)}
 .qopt.right .k{color:var(--on-f)}
@@ -493,11 +537,6 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .fdiff.empty i{background:var(--line);color:var(--muted)}
 .fdiff.empty b{color:var(--muted)}
 
-/* ---------- props: vote + plain names ---------- */
-.props-left{display:flex;flex-direction:column;gap:14px}
-.prop-poll .popt{justify-content:center;font-size:clamp(15px,1.2vw,19px)}
-.prow-name .term{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:var(--line);color:var(--muted);font-family:var(--font-mono);font-size:11px;font-weight:600;vertical-align:middle}
-
 /* ---------- quiz + final slide tallies ---------- */
 .qopt .pn{font-style:normal;font-family:var(--font-mono);font-size:13px;padding:2px 9px;border-radius:99px;background:var(--surface);color:var(--ink)}
 .qopt .pn:empty{display:none}
@@ -536,7 +575,9 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 }
 @media (max-width:900px){
   .brand-txt{display:none}
-  .barter,.two,.props,.f-layout,.quiz{grid-template-columns:minmax(0,1fr)}
+  .barter,.two,.f-layout,.rq,.trial{grid-template-columns:minmax(0,1fr)}
+  .cast-row,.learned-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .trial-e{display:none}
   .barter-you{flex-direction:row;flex-wrap:wrap;justify-content:center}
   .barter-stats{max-width:360px}
   .fgrid{grid-template-columns:minmax(0,1fr)}
@@ -553,7 +594,6 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   .live-card{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}
   .tl-art{width:auto}
   .infl{grid-template-columns:minmax(0,1fr)}
-  .qcard{min-height:0}
 }
 @media (max-width:640px){
   .banknote{aspect-ratio:auto}
@@ -568,6 +608,9 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   .ratio-out,.price-tags{grid-template-columns:minmax(0,1fr)}
   .tl3-row{grid-template-columns:minmax(0,1fr)}
   .fdiffs,.poll-opts{grid-template-columns:minmax(0,1fr)}
+  .route{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}
+  .route::before,.rt-note{display:none}
+  .cast-row,.learned-row{grid-template-columns:repeat(2,minmax(0,1fr))}
   .join{width:100%}
   .nav-btn .lbl{display:none}
   .stepdots{display:none}
@@ -587,14 +630,20 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   .trader-row .big{font-size:24px}
   .you-item{font-size:84px}
   .barter-you{gap:8px}
-  .prow{padding:5px 10px;grid-template-columns:30px minmax(0,1fr)}
-  .prow .mark{width:30px;height:30px;font-size:15px}
-  .prow > div{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px}
-  .prow-c{min-height:0}
-  .verdict{padding:10px 14px;font-size:15px}
-  .ptable{gap:6px}
-  .cand{padding:8px 6px}
-  .cand-e{font-size:46px}
+  .cast{gap:12px}
+  .ct{padding:8px 6px 10px}
+  .ct-e{font-size:46px}
+  .trial{padding:12px 18px}
+  .trial-e{font-size:60px}
+  .trial-t{font-size:28px}
+  .lp{padding:5px 8px}
+  .quiz{gap:10px}
+  .route{padding-top:26px}
+  .route::before{top:48px}
+  .rt-dot{width:44px;height:44px;font-size:22px}
+  .qe{font-size:52px}
+  .qcard{gap:10px}
+  .qopt{padding:7px 14px}
   .rules{gap:10px}
   .rule .txt{font-size:14px}
   .rule-ico{font-size:30px}
@@ -620,7 +669,6 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   .fdiff span{font-size:12px}
   .join-qr{width:88px}
   .trust{padding:10px 14px}
-  .props-left{gap:10px}
 }
 
 /* =================== GAME: Битва кофеен =================== */
@@ -813,42 +861,43 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
-.cf{display:flex;flex-direction:column;gap:16px;color:var(--cf-ink)}
-.cf-sec{display:flex;flex-direction:column;gap:8px}
-.cf-t{display:flex;align-items:baseline;gap:8px;font-weight:800;font-size:15px}
-.cf-t i{font-style:normal;width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:12px;flex:none;align-self:center}
-.cf-t small{font-weight:600;color:var(--cf-muted);font-size:12px}
+.cf{display:flex;flex-direction:column;gap:14px;color:var(--cf-ink)}
+.cf-sec{display:flex;flex-direction:column;gap:7px}
+.cf-t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+.cf-t i{font-style:normal;width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;background:var(--cf-acc);color:var(--cf-acc-ink);font-size:12px;flex:none}
 .cf button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cf button:disabled{cursor:not-allowed}
+.cf-note{margin:0;font-size:13px;line-height:1.35;color:var(--cf-muted)}
+.cf-note b{color:var(--cf-ink)}
+.cf-note.peek{padding:8px 12px;border-radius:10px;border:1px dashed var(--cf-good);color:var(--cf-ink);font-size:14px}
+.cf-note.peek b{font-size:18px;color:var(--cf-good)}
 .cf-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.cf-p{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2)}
-.cf-p b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
-.cf-p small{font-size:11px;color:var(--cf-muted);line-height:1.2;text-align:center}
-.cf-p.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
-.cf-cups{display:flex;align-items:center;gap:10px}
+.cf .cf-p{padding:10px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cf-cups{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cf-cups button{width:52px;height:46px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:24px;font-weight:800;line-height:1}
 .cf-cups button:disabled{opacity:.35}
-.cf-cups b{min-width:70px;text-align:center;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
-.cf-cost{font-size:13px;color:var(--cf-muted)}
-.cf-cost b{color:var(--cf-ink)}
-.cf-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.cf-c{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:8px;align-items:center;text-align:left;padding:8px 10px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2)}
-.cf-c span{grid-row:span 2;font-size:22px;line-height:1}
-.cf-c b{font-size:13px;font-weight:800;line-height:1.2}
-.cf-c small{font-size:11px;color:var(--cf-muted);line-height:1.25}
-.cf-c.good b{color:var(--cf-good)}
-.cf-c.evil b{color:var(--cf-evil)}
+.cf-cups > b{min-width:56px;text-align:center;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.cf-cups .cf-note{margin-left:6px}
+.cf-cards{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:6px}
+.cf-g{align-self:center;padding-right:4px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.cf-g.good{color:var(--cf-good)}
+.cf-g.evil{color:var(--cf-evil)}
+.cf-c{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:58px;padding:7px 4px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);text-align:center}
+.cf-c span{font-size:24px;line-height:1}
+.cf-c b{font-size:13px;font-weight:800;line-height:1.15}
 .cf-c.on.good{border-color:var(--cf-good);background:color-mix(in srgb,var(--cf-good) 16%,var(--cf-bg2))}
 .cf-c.on.evil{border-color:var(--cf-evil);background:color-mix(in srgb,var(--cf-evil) 16%,var(--cf-bg2))}
-.cf-c:disabled:not(.on){opacity:.4}
-.cf-c.used{text-decoration:line-through}
-.cf-peek{padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--cf-good) 16%,var(--cf-bg2));border:1px dashed var(--cf-good);font-size:14px}
-.cf-peek b{font-size:18px}
-.cf-b{display:flex;align-items:flex-start;gap:10px;text-align:left;padding:10px 12px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:20px}
-.cf-b span{display:flex;flex-direction:column;font-size:12px;color:var(--cf-muted);line-height:1.3}
-.cf-b span b{font-size:14px;color:var(--cf-ink)}
-.cf-b.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 16%,var(--cf-bg2))}
+.cf-c:disabled:not(.on){opacity:.35}
+.cf-c.used b{text-decoration:line-through}
+.cf-bank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cf .cf-b{padding:11px 12px;border-radius:12px;border:2px solid var(--cf-line);background:var(--cf-bg2);font-size:15px;font-weight:800}
 .cf-b:disabled{opacity:.45}
+.cf .cf-p.on,.cf .cf-b.on{border-color:var(--cf-acc);background:color-mix(in srgb,var(--cf-acc) 18%,var(--cf-bg2))}
+@media (max-width:420px){
+  .cf-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cf-g{grid-column:1/-1;padding:4px 0 0}
+  .cf-c b{font-size:12px}
+}
 </style>
 </head><body>
 <div class="app" id="app">
@@ -1157,21 +1206,16 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
       <div class="slide-inner">
         <header class="slide-head">
           <div class="kicker"><span class="badge-task">Задание 2</span> Свойства денег</div>
-          <h2>Почему не картошка?</h2>
-          <p class="lead">Не всякая вещь годится в деньги. Выберите вещь, проголосуйте, подходит ли она, и нажмите «Проверим!».</p>
+          <h2>Кто станет деньгами?</h2>
+          <p class="lead">Шесть кандидатов проходят испытания. Кто не справился, выбывает.</p>
         </header>
-        <div class="props">
-          <div class="props-left">
-            <div class="cands" id="cands"></div>
-            <div id="propPoll"></div>
-          </div>
-          <div class="ptable card" id="ptable"></div>
-        </div>
+        <div id="castBox"></div>
       </div>
       <aside class="notes"><ul>
-        <li>Шесть свойств справа написаны простыми словами, а в серых плашках — как они называются в учебнике.</li>
-        <li>Выбираем кандидата → группа голосует «да / нет» (с телефонов или руками) → «Проверим!».</li>
-        <li>Самый интересный — <b>биткоин</b>: все свойства есть, но курс прыгает. Значит, важна ещё и стабильность.</li>
+        <li>Шоу на выбывание. Каждое испытание проверяет одно свойство денег.</li>
+        <li>Зачитайте испытание. Класс голосует с телефонов «кто не пройдёт», вы кликаете кандидата, которого выбрало большинство.</li>
+        <li>Зачитайте, почему кандидат выбыл. Внизу копятся свойства денег: к концу их шесть.</li>
+        <li>Спорный момент — золото. Тысячи лет оно было деньгами, но мелкую покупку им не оплатишь. Поэтому появились монеты из дешёвых металлов и бумажные деньги.</li>
       </ul></aside>
     </section>
 
@@ -1372,14 +1416,15 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
       <div class="slide-inner">
         <header class="slide-head">
           <div class="kicker"><span class="badge-task">Задание 3</span> Закрепляем</div>
-          <h2>Угадай суперсилу</h2>
+          <h2>Один день из жизни тысячи</h2>
+          <p class="lead" style="max-width:none">Следим за одной купюрой. На каждой остановке решаем, какую суперсилу она показала.</p>
         </header>
         <div class="quiz" id="quizBox"></div>
       </div>
       <aside class="notes"><ul>
-        <li>Читайте ситуацию вслух, группа выкрикивает или голосует руками. Кликайте ответ большинства.</li>
-        <li>После каждого ответа зачитайте объяснение — это и есть закрепление.</li>
-        <li>Цель группы — <b>10 из 12</b>. Спорные ситуации — повод обсудить.</li>
+        <li>Зачитайте остановку вслух. Класс голосует с телефонов, вы кликаете ответ большинства (или клавиши 1–5).</li>
+        <li>Под каждой суперсилой есть подсказка в два-три слова. На неё можно опираться.</li>
+        <li>Главная ловушка — платёж и обращение. Шаурма: заплатил и сразу получил — обращение. Зарплата и налог: товара взамен нет — платёж.</li>
       </ul></aside>
     </section>
 
@@ -1495,11 +1540,11 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 <script>
 /* ================= DATA ================= */
 const FUNCS = {
-  measure:  { icon:'📏', name:'Мера стоимости',      color:'var(--f1)', key:'1' },
-  exchange: { icon:'🔄', name:'Средство обращения',  color:'var(--f2)', key:'2' },
-  payment:  { icon:'🧾', name:'Средство платежа',    color:'var(--f3)', key:'3' },
-  saving:   { icon:'🐷', name:'Средство накопления', color:'var(--f4)', key:'4' },
-  world:    { icon:'🌍', name:'Мировые деньги',      color:'var(--f5)', key:'5' }
+  measure:  { icon:'📏', name:'Мера стоимости',      color:'var(--f1)', key:'1', hint:'сравниваем цены' },
+  exchange: { icon:'🔄', name:'Средство обращения',  color:'var(--f2)', key:'2', hint:'отдал деньги и сразу получил товар' },
+  payment:  { icon:'🧾', name:'Средство платежа',    color:'var(--f3)', key:'3', hint:'зарплата, налог, долг' },
+  saving:   { icon:'🐷', name:'Средство накопления', color:'var(--f4)', key:'4', hint:'откладываем на потом' },
+  world:    { icon:'🌍', name:'Мировые деньги',      color:'var(--f5)', key:'5', hint:'платим другой стране' }
 };
 
 const BARTER_ITEMS = {
@@ -1564,49 +1609,44 @@ const FAKE_DIFFS = [
   { id:'micro',  t:'Микротекст', x:'На настоящей купюре есть крошечные надписи, их читают через лупу. Принтер их не повторит: выходит размытая полоска.' }
 ];
 
-const PROPS = [
-  { n:'Не портится', t:'долговечность', d:'не гниёт и не ломается со временем' },
-  { n:'Легко носить с собой', t:'портативность', d:'большую сумму можно унести в кармане' },
-  { n:'Легко разменять', t:'делимость', d:'можно разделить на мелкие части без потерь' },
-  { n:'Все одинаковые', t:'однородность', d:'одна купюра в 100 ₽ ничем не лучше другой' },
-  { n:'Трудно подделать', t:'узнаваемость', d:'сразу видно, настоящие или нет' },
-  { n:'Нельзя наделать сколько хочешь', t:'редкость', d:'их количество ограничено' }
+/* Задание 2: кастинг «Кто станет деньгами?». Каждое испытание проверяет одно свойство, out — кто его проваливает */
+const CAST = [
+  { id:'potato',  e:'🥔', n:'Картошка' },
+  { id:'cow',     e:'🐄', n:'Корова' },
+  { id:'pebble',  e:'🪨', n:'Камешки', many:true },
+  { id:'diamond', e:'💎', n:'Алмаз' },
+  { id:'gold',    e:'🪙', n:'Золото' },
+  { id:'note',    e:'💵', n:'Купюра' }
 ];
-/* 2 — да, 1 — частично, 0 — нет */
-const CANDS = [
-  { id:'potato', e:'🥔', n:'Картошка',
-    v:[[0,'Сгниёт к весне'],[0,'Миллион в мешках не унесёшь'],[0,'Половинка картофелины — уже пюре'],[0,'Все картофелины разные'],[2,'Картошку ни с чем не спутаешь'],[0,'Посадил, вырастил — «напечатал»']],
-    verdict:'Картошка-деньги годятся только для огорода. Портится, тяжёлая, все клубни разные.' },
-  { id:'brick', e:'🧱', n:'Кирпич',
-    v:[[2,'Простоит сто лет'],[0,'Зарплата — поддон кирпичей?'],[0,'Разбил — и денег нет'],[2,'Стандартный размер'],[2,'Узнаваем'],[0,'Завод сделает ещё миллион']],
-    verdict:'Прочный, но тяжёлый, не делится и не редкий. В кошельке не поместится.' },
-  { id:'shells', e:'🐚', n:'Ракушки каури',
-    v:[[2,'Не портятся веками'],[2,'Лёгкие, носили на нитке'],[2,'Мелкие, считаются штуками'],[2,'Похожи одна на другую'],[2,'Форму сложно подделать'],[1,'Редкие только вдали от моря']],
-    verdict:'Ракушки каури реально были деньгами в Африке и Азии сотни лет!' },
-  { id:'gold', e:'🥇', n:'Золото',
-    v:[[2,'Не ржавеет никогда'],[1,'Дорогое и компактное, но мешок монет тяжёлый'],[2,'Можно отлить монету любого веса'],[2,'Чистое золото везде одинаково'],[1,'Проверить пробу умеет не каждый'],[2,'Его мало на Земле']],
-    verdict:'Почти идеал. Недаром золото было главными деньгами тысячи лет.' },
-  { id:'note', e:'💵', n:'Купюра',
-    v:[[1,'Служит несколько лет, потом меняют'],[2,'Миллион помещается в рюкзак'],[2,'Размен на любые суммы'],[2,'Все пятитысячные равны'],[2,'Водяные знаки, защитные нити'],[2,'Выпускает только Центробанк']],
-    verdict:'Отличные деньги, хотя сама бумага почти ничего не стоит. Всё держится на доверии к Центробанку.' },
-  { id:'btc', e:'₿', n:'Биткоин',
-    v:[[2,'Цифровой — не изнашивается'],[2,'Хоть миллиард — в телефоне'],[2,'Делится до 0,00000001 — «сатоши»'],[2,'Все биткоины одинаковы'],[2,'Подделать блокчейн почти нельзя'],[2,'Всего будет 21 миллион']],
-    verdict:'Но есть подвох: за месяц биткоин может подорожать или подешеветь на треть. Цены в нём не назначишь. Хорошие деньги ещё и не должны скакать в цене.' }
+const TRIALS = [
+  { e:'🗓️', t:'Прошёл год', p:'Не портятся', term:'долговечность', out:'potato',
+    why:'Картошка сгнила в погребе, а вместе с ней и все сбережения.' },
+  { e:'👖', t:'Положи в карман', p:'Легко носить с собой', term:'портативность', out:'cow',
+    why:'Корову в карман не положишь. А миллион рублей — это целое стадо.' },
+  { e:'🏞️', t:'Наделай денег сам', p:'Их нельзя наделать сколько хочешь', term:'редкость', out:'pebble',
+    why:'Сходил на речку и набрал мешок. Камешков у всех полно, поэтому они ничего не стоят.' },
+  { e:'⚖️', t:'Найди два одинаковых', p:'Все одинаковые', term:'однородность', out:'diamond',
+    why:'Каждый алмаз особенный: размер, цвет, трещинки. Два похожих стоят совсем по-разному.' },
+  { e:'🍬', t:'Купи жвачку за 50 ₽', p:'Легко разменять', term:'делимость', out:'gold',
+    why:'Жвачка стоит крошку золота меньше песчинки. Такую не отпилишь и не удержишь в руках.' },
+  { e:'🔦', t:'Проверь на подделку', p:'Трудно подделать', term:'узнаваемость', out:null,
+    why:'Посмотрите на свет: водяной знак, защитная нить, микротекст. Подделку видно сразу.' }
 ];
 
-const QUIZ = [
-  { e:'👟', t:'На кроссовках висит ценник: 8 990 ₽', a:'measure', x:'Ценник просто показывает, сколько стоит вещь. Никто ещё ничего не платит: деньги служат меркой.' },
-  { e:'🌯', t:'Купил шаурму на перемене и сразу оплатил по QR-коду', a:'exchange', x:'Шаурму получили, деньги отдали — в один и тот же момент. Это средство обращения.' },
-  { e:'👵', t:'Бабушка каждый месяц откладывает 2 000 ₽ «на чёрный день»', a:'saving', x:'Деньги не тратят, а копят на потом. Это средство накопления.' },
-  { e:'🚗', t:'Папа заплатил транспортный налог', a:'payment', x:'За налог не получаешь товар взамен, просто отдаёшь то, что должен государству. Это средство платежа.' },
-  { e:'🏭', t:'Российский завод купил станки в Китае и расплатился юанями', a:'world', x:'Деньги ушли из одной страны в другую. Это мировые деньги.' },
-  { e:'🎓', t:'На карту пришла стипендия', a:'payment', x:'Стипендию платят не за покупку товара. Деньги просто переходят от вуза к студенту: это средство платежа.' },
-  { e:'🎮', t:'«Новый айфон стоит как три PlayStation!» — сравнил одногруппник', a:'measure', x:'Сравнили две вещи по их ценам. Деньги здесь — общая линейка.' },
-  { e:'📱', t:'Купил телефон в рассрочку на 12 месяцев', a:'payment', x:'Телефон уже у вас, а платить будете потом, по частям. Товар и оплата в разное время — это средство платежа.' },
-  { e:'🏛️', t:'Центробанк хранит часть запасов в золоте и юанях', a:'world', x:'Золото и чужие валюты страна держит, чтобы рассчитываться с другими странами. Это мировые деньги.' },
-  { e:'🚲', t:'Продал старый велосипед и сразу купил на эти деньги самокат', a:'exchange', x:'Товар → деньги → товар. Деньги тут посредник между двумя вещами: это средство обращения.' },
-  { e:'🏦', t:'Открыл вклад и копишь на первую машину', a:'saving', x:'Деньги лежат и копятся на будущую покупку. Это средство накопления.' },
-  { e:'🚌', t:'Контролёр выписал штраф за безбилетный проезд, ты его оплатил', a:'payment', x:'За штраф товар не получаешь, просто платишь, что должен. Это средство платежа.' }
+/* Задание 3: один день из жизни купюры в 1 000 ₽. На каждой остановке — одна суперсила */
+const ROUTE = [
+  { e:'🏭', at:'Зарплата', t:'Маме на заводе выдали зарплату. Среди купюр — наша тысяча.', a:'payment',
+    x:'Зарплату платят за работу, которую уже сделали. Товар в обмен никто не даёт.' },
+  { e:'✉️', at:'Конверт', t:'Мама убрала тысячу в конверт «На море». Летом пригодится.', a:'saving',
+    x:'Деньги не тратят, а откладывают на потом.' },
+  { e:'🎧', at:'Витрина', t:'Летом тысяча досталась Тимуру. Он сравнивает: наушники — 2 000 ₽, чехол — 500 ₽.', a:'measure',
+    x:'Тимур ещё ничего не купил, только сравнил цены. Деньги здесь как линейка.' },
+  { e:'🌯', at:'Шаурма', t:'Тимур купил шаурму, отдал тысячу и тут же получил шаурму и сдачу.', a:'exchange',
+    x:'Деньги и товар поменялись местами в одну секунду.' },
+  { e:'🧾', at:'Налог', t:'Вечером хозяин шаурмичной заплатил этой тысячей налог.', a:'payment',
+    x:'За налог ничего не получают взамен. Деньги просто отдают государству.' },
+  { e:'🚄', at:'Китай', t:'Налоги попали в бюджет. Государство покупает в Китае новые поезда и платит юанями.', a:'world',
+    x:'Деньги ушли в другую страну. Когда платят за границу, это мировые деньги.' }
 ];
 /* ================= COFFEE BATTLE: shared rules (presenter + phones) ================= */
 const COFFEE = {
@@ -1670,27 +1710,40 @@ function coffeeForm(host, t, ev, init, on) {
     if (budget() < 0) o.dep = false;
     o.cups = Math.max(0, Math.min(o.cups, maxCups()));
   }
+  /* every section is buttons plus one plain line that explains the current choice */
   function render() {
     fix();
-    const peeked = t.peek != null;
+    const peeked = t.peek != null, max = maxCups();
+    const card = id => {
+      const c = C.CARDS[id];
+      const used = !t.cards[id] && !(id === 'insider' && peeked);
+      const sel = id === 'insider' ? peeked : o.card === id;
+      const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
+      const armed = id === 'insider' && arm && !peeked && !dis;
+      return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''} title="${c.d}"><span>${c.e}</span><b>${c.n}</b></button>`;
+    };
+    const ids = Object.keys(C.CARDS);
+    let note = 'Можно без карты. Каждая карта — один раз за игру.';
+    if (peeked) note = `🕵️ Кофе захотят <b>${t.peek}</b> человек на обе кофейни`;
+    else if (arm) note = 'Нажмите «Инсайдер» ещё раз, и вы узнаете число покупателей. Это и будет карта раунда.';
+    else if (o.card) note = `${C.CARDS[o.card].e} ${C.CARDS[o.card].d}`;
+    const bank = [
+      t.loan ? `Кредит уже взят: в конце вернёте ${money(C.LOAN.back)}` : o.loan ? `Кредит: +${money(C.LOAN.now)} сейчас, в конце вернёте ${money(C.LOAN.back)}` : '',
+      t.dep ? `Вклад открыт: в конце получите ${money(C.DEPOSIT.back)}` : o.dep ? `Вклад: отдаёте ${money(C.DEPOSIT.now)} сейчас, в конце получите ${money(C.DEPOSIT.back)}` : ''
+    ].filter(Boolean).join('<br>') || 'По желанию. Кредит и вклад — по одному разу за игру.';
     host.innerHTML = `<div class="cf">
-      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена одной чашки</div>
-        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}"><b>${p} ₽</b><small>купят ${Math.round(w[p] * 10)} из 10</small></button>`).join('')}</div></div>
+      <div class="cf-sec"><div class="cf-t"><i>1</i>Цена чашки</div>
+        <div class="cf-prices">${C.PRICES.map(p => `<button type="button" class="cf-p ${p === o.price ? 'on' : ''}" data-p="${p}">${p} ₽</button>`).join('')}</div>
+        <p class="cf-note">По ${o.price} ₽ кофе купят ${Math.round(w[o.price] * 10)} из 10 желающих</p></div>
       <div class="cf-sec"><div class="cf-t"><i>2</i>Сколько чашек сварить</div>
-        <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= maxCups() ? 'disabled' : ''} aria-label="Больше">+</button></div>
-        <div class="cf-cost">${o.cups} × ${ev.cost} ₽ = <b>${money(o.cups * ev.cost)}</b> · у вас ${money(budget())}${o.cups >= maxCups() && maxCups() < C.MAX_CUPS ? ' — на большее не хватает' : ''}</div></div>
-      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта на этот раунд <small>можно без карты</small></div>
-        <div class="cf-cards">${Object.entries(C.CARDS).map(([id, c]) => {
-          const used = !t.cards[id] && !(id === 'insider' && peeked);
-          const sel = id === 'insider' ? peeked : o.card === id;
-          const dis = used || (peeked && id !== 'insider') || (id === 'insider' && !peeked && !!o.card);
-          const armed = id === 'insider' && arm && !peeked && !dis;
-          return `<button type="button" class="cf-c ${c.good ? 'good' : 'evil'} ${sel || armed ? 'on' : ''} ${used ? 'used' : ''}" data-card="${id}" ${dis ? 'disabled' : ''}><span>${c.e}</span><b>${c.n}</b><small>${used ? 'уже использована' : armed ? 'Нажмите ещё раз, чтобы узнать число. Это и будет карта раунда' : c.d}</small></button>`;
-        }).join('')}</div>
-        ${peeked ? `<div class="cf-peek">🕵️ Инсайдер шепчет: в этом раунде кофе захотят <b>${t.peek}</b> человек на обе кофейни</div>` : ''}</div>
-      <div class="cf-sec"><div class="cf-t"><i>4</i>Банк <small>по желанию, один раз за игру</small></div>
-        <button type="button" class="cf-b ${o.loan ? 'on' : ''}" data-bank="loan" ${t.loan ? 'disabled' : ''}>💳 <span><b>Кредит</b>${t.loan ? 'уже взят: вернёте 800 ₽ в конце' : '+600 ₽ сейчас, а в конце игры вернуть 800 ₽'}</span></button>
-        <button type="button" class="cf-b ${o.dep ? 'on' : ''}" data-bank="dep" ${t.dep || (!o.dep && t.money + (o.loan ? C.LOAN.now : 0) < C.DEPOSIT.now) ? 'disabled' : ''}>🏦 <span><b>Вклад</b>${t.dep ? 'уже открыт: получите 650 ₽ в конце' : 'отдать 500 ₽ сейчас, а в конце получить 650 ₽'}</span></button></div>
+        <div class="cf-cups"><button type="button" data-c="-10" ${o.cups <= 0 ? 'disabled' : ''} aria-label="Меньше">−</button><b>${o.cups}</b><button type="button" data-c="10" ${o.cups >= max ? 'disabled' : ''} aria-label="Больше">+</button>
+          <span class="cf-note">Потратите <b>${money(o.cups * ev.cost)}</b> из ${money(budget())}${o.cups >= max && max < C.MAX_CUPS ? '. На большее не хватит' : ''}</span></div></div>
+      <div class="cf-sec"><div class="cf-t"><i>3</i>Карта раунда</div>
+        <div class="cf-cards"><span class="cf-g good">Помощь</span>${ids.filter(id => C.CARDS[id].good).map(card).join('')}<span class="cf-g evil">Пакость</span>${ids.filter(id => !C.CARDS[id].good).map(card).join('')}</div>
+        <p class="cf-note ${peeked ? 'peek' : ''}">${note}</p></div>
+      <div class="cf-sec"><div class="cf-t"><i>4</i>Банк</div>
+        <div class="cf-bank"><button type="button" class="cf-b ${o.loan ? 'on' : ''}" data-bank="loan" ${t.loan ? 'disabled' : ''}>💳 ${t.loan ? 'Кредит взят' : 'Кредит'}</button><button type="button" class="cf-b ${o.dep ? 'on' : ''}" data-bank="dep" ${t.dep || (!o.dep && t.money + (o.loan ? C.LOAN.now : 0) < C.DEPOSIT.now) ? 'disabled' : ''}>🏦 ${t.dep ? 'Вклад открыт' : 'Вклад'}</button></div>
+        <p class="cf-note">${bank}</p></div>
     </div>`;
   }
   host.addEventListener('click', e => {
@@ -4767,52 +4820,103 @@ const Polls = (() => {
   reset();
 })();
 
-/* ---------- Task 2: properties of money ---------- */
+/* ---------- Task 2: who becomes money? one trial per property, the loser drops out ---------- */
 (() => {
-  const cands = $('#cands'), table = $('#ptable'), pollBox = $('#propPoll');
-  let cur = 'potato', timers = [];
-  const score = c => c.v.reduce((s, [v]) => s + v / 2, 0);
-  cands.innerHTML = CANDS.map(c => `<button class="cand" data-id="${c.id}"><span class="cand-e">${c.e}</span><span class="cand-n">${c.n}</span></button>`).join('');
-  function render() {
-    const c = CANDS.find(x => x.id === cur);
-    $$('.cand', cands).forEach(b => b.classList.toggle('on', b.dataset.id === cur));
-    const q = c.id === 'shells' ? 'Годятся ли ракушки каури в деньги?' : `Годится ли ${c.n.toLowerCase()} в деньги?`;
-    pollBox.innerHTML = `<div class="poll prop-poll" data-poll="props-${c.id}" data-q="${q}" data-answer="${score(c) >= 5 ? 'y' : 'n'}">
-      <p class="poll-q">${c.e} ${q}</p>
-      <div class="poll-opts"><button class="poll-opt popt" data-k="y" data-t="👍 Да"><i class="pbar"></i><span class="pl">👍 Да</span><em class="pn"></em></button><button class="poll-opt popt" data-k="n" data-t="👎 Нет"><i class="pbar"></i><span class="pl">👎 Нет</span><em class="pn"></em></button></div>
-      <div class="pmeta"></div>
+  const box = $('#castBox'), LAST = TRIALS.length - 1;
+  let n, rev, pick, out, round = 0;   // out: candidate id -> trial index where it dropped out
+  const final = () => n === LAST && rev;
+  function reset() { n = 0; rev = false; pick = null; out = {}; round++; render(); }
+
+  function tile(c) {
+    const k = out[c.id], inPlay = k === undefined || k >= n, now = rev && k === n;
+    const win = final() && k === undefined;
+    const passed = k !== undefined ? k : n + (rev ? 1 : 0);
+    const poll = inPlay && TRIALS[n].out;
+    const cls = `ct ${k !== undefined ? 'gone' : ''} ${now ? 'now' : ''} ${rev && pick === c.id && !now ? 'miss' : ''} ${win ? 'win' : ''} ${poll ? 'poll-opt' : ''}`;
+    const inner = `${poll ? '<i class="pbar"></i>' : ''}${win ? '<span class="ct-crown">👑</span>' : ''}
+      <span class="ct-e">${c.e}</span><b class="ct-n">${c.n}</b>
+      ${k !== undefined ? '<span class="ct-x">вне игры</span>' : `<span class="ct-d">${TRIALS.map((_, i) => `<i class="${i < passed ? 'on' : ''}"></i>`).join('')}</span>`}
+      ${poll ? '<em class="pn"></em>' : ''}`;
+    return poll ? `<button class="${cls}" data-k="${c.id}" data-t="${c.e} ${c.n}" ${rev ? 'disabled' : ''}>${inner}</button>` : `<div class="${cls}">${inner}</div>`;
+  }
+
+  /* the last trial has one candidate left, so the class votes yes / no instead */
+  const yesNo = () => `<div class="poll-opts trial-yn">${[['y', '👍 Да'], ['n', '👎 Нет']].map(([k, l]) =>
+    `<button class="popt poll-opt ${rev ? (k === 'y' ? 'right' : pick === k ? 'wrong' : 'dim') : ''}" data-k="${k}" data-t="${l}" ${rev ? 'disabled' : ''}><i class="pbar"></i><span class="pl">${l}</span><em class="pn"></em></button>`).join('')}</div>`;
+  function trial() {
+    const t = TRIALS[n], head = `Испытание ${n + 1} из ${TRIALS.length}`;
+    if (!rev) {
+      const last = !t.out;
+      return `<div class="trial card">
+        <span class="trial-e">${t.e}</span>
+        <div class="trial-b">
+          <span class="trial-n">${head}</span>
+          <h3 class="trial-t">${t.t}</h3>
+          <p class="trial-q">${last ? 'Остался один кандидат. Купюра пройдёт испытание?' : 'Кто не пройдёт испытание? Кликните того, кого выбрал класс.'}</p>
+          <div class="pmeta"></div>
+        </div>
+        ${last ? yesNo() : ''}
+      </div>`;
+    }
+    const ans = t.out || 'y', ok = pick === ans;
+    const c = t.out ? CAST.find(x => x.id === t.out) : null;
+    const tag = pick ? `<span class="trial-n ${ok ? 'ok' : 'bad'}">${ok ? 'Верно!' : 'Мимо!'} · ${head}</span>` : `<span class="trial-n">${head}</span>`;
+    return `<div class="trial card after">
+      <span class="trial-e">${c ? c.e : '🏆'}</span>
+      <div class="trial-b">
+        ${tag}
+        <h3 class="trial-t">${c ? `${c.n} ${c.many ? 'выбывают' : 'выбывает'}` : 'Купюра становится деньгами!'}</h3>
+        <p class="trial-q">${t.why}${c ? '' : ' Она одна прошла все шесть испытаний.'}</p>
+        <p class="trial-p">Свойство денег: <b>${t.p.toLowerCase()}</b> <small>${t.term}</small></p>
+      </div>
+      <div class="trial-side">${final()
+        ? yesNo() + '<button class="btn btn-ghost" id="castAgain">↺ Сыграть ещё раз</button>'
+        : '<button class="btn btn-primary" id="castNext">Следующее испытание →</button>'}</div>
     </div>`;
-    const poll = $('.poll', pollBox);
-    poll.addEventListener('poll-reveal', check);
-    table.innerHTML = `<div class="ptable-head"><h3>${c.e} ${c.n}: годится в деньги?</h3><button class="btn btn-primary btn-sm" id="pCheck">Проверим!</button></div>` +
-      PROPS.map((p, i) => `<div class="prow" data-i="${i}"><span class="mark">?</span><div><div class="prow-name">${p.n} <span class="term">${p.t}</span></div><div class="prow-c">${p.d}</div></div></div>`).join('') +
-      `<div class="verdict" id="pVerdict" hidden></div>`;
-    $('#pCheck').addEventListener('click', () => Polls.reveal(poll));
   }
-  function check() {
-    timers.forEach(clearTimeout); timers = [];
-    const c = CANDS.find(x => x.id === cur), s = score(c);
-    $('#pCheck').disabled = true;
-    c.v.forEach(([v, txt], i) => {
-      timers.push(setTimeout(() => {
-        const row = table.querySelector(`.prow[data-i="${i}"]`);
-        row.classList.add(v === 2 ? 'yes' : v === 1 ? 'mid' : 'no');
-        row.querySelector('.mark').textContent = v === 2 ? '✓' : v === 1 ? '~' : '✕';
-        row.querySelector('.prow-c').textContent = txt;
-        SFX.beep(!v);
-      }, 250 + i * 380));
-    });
-    timers.push(setTimeout(() => {
-      const el = $('#pVerdict'); el.hidden = false;
-      el.innerHTML = `<b>${String(s).replace('.', ',')} из 6.</b> ${c.verdict}`;
-      s >= 5 ? SFX.right() : SFX.wrong();
-    }, 250 + 6 * 380 + 200));
+
+  function render() {
+    const t = TRIALS[n], learned = n + (rev ? 1 : 0);
+    box.innerHTML = `<div class="cast poll ${rev ? 'revealed' : ''}" data-self data-poll="cast-${round}-${n}"
+        data-q="${t.e} ${t.t}: ${t.out ? 'кто не пройдёт?' : 'купюра пройдёт?'}" data-sub="Испытание ${n + 1} из ${TRIALS.length}" data-answer="${t.out || 'y'}">
+      <div class="cast-row">${CAST.map(tile).join('')}</div>
+      ${trial()}
+      <div class="learned">
+        <div class="learned-h"><b>Свойства денег: ${learned} из ${TRIALS.length}</b>${(n || rev) && !final() ? '<button class="btn btn-ghost btn-sm" id="castReset">↺ Заново</button>' : ''}</div>
+        <div class="learned-row">${TRIALS.map((x, i) => i < learned
+          ? `<span class="lp on ${rev && i === n ? 'new' : ''}"><i>${i + 1}</i><b>${x.p}</b><small>${x.term}</small></span>`
+          : `<span class="lp"><i>${i + 1}</i><b>?</b></span>`).join('')}</div>
+      </div>
+    </div>`;
   }
-  cands.addEventListener('click', e => {
-    const b = e.target.closest('.cand'); if (!b) return;
-    cur = b.dataset.id; timers.forEach(clearTimeout); render(); SFX.click();
+
+  function reveal(k) {
+    const el = $('.cast', box), t = TRIALS[n];
+    pick = k || null;
+    Polls.reveal(el, k);
+    rev = true;
+    if (t.out) out[t.out] = n;
+    render();
+    if (pick) (pick === (t.out || 'y') ? SFX.right : SFX.wrong)();
+    if (final()) setTimeout(() => { SFX.fanfare(); Confetti.burst({ n:140 }); }, 400);
+    else setTimeout(SFX.no, 250);
+  }
+  function next() { if (!rev || final()) return; n++; rev = false; pick = null; render(); SFX.click(); }
+
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.poll-opt');
+    if (o && !rev && !o.disabled) return reveal(o.dataset.k);
+    if (e.target.closest('#castNext')) next();
+    if (e.target.closest('#castAgain, #castReset')) { reset(); SFX.click(); }
   });
-  render();
+  Deck.hooks.props = {
+    key(e) {
+      if ((e.code === 'Enter' || e.code === 'Space') && e.target.closest && e.target.closest('button')) return false;
+      if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'ArrowRight') && rev && !final()) { next(); return true; }
+      return false;
+    }
+  };
+  reset();
 })();
 
 /* ---------- measure of value: barter ratios ---------- */
@@ -4862,44 +4966,62 @@ const Polls = (() => {
   upd();
 })();
 
-/* ---------- Task 3: guess the function ---------- */
+/* ---------- Task 3: one day in the life of a 1 000 ₽ note ---------- */
 (() => {
-  const box = $('#quizBox'), keys = Object.keys(FUNCS);
+  const box = $('#quizBox'), keys = Object.keys(FUNCS), N = ROUTE.length;
   let i = 0, res = [], picked = null, round = 1;
+  box.innerHTML = `<div class="route">${ROUTE.map(s => `<div class="rt"><span class="rt-dot">${s.e}<i class="rt-f"></i></span><span class="rt-at">${s.at}</span><span class="rt-fn"></span></div>`).join('')}<span class="rt-note">1 000 ₽</span></div><div class="rq" id="rq"></div>`;
+  const stops = $$('.rt', box), note = $('.rt-note', box), main = $('#rq');
+
+  /* the route stays in place, so the note can slide from stop to stop */
+  function route() {
+    const end = i >= N;
+    stops.forEach((el, k) => {
+      const f = k < res.length ? FUNCS[ROUTE[k].a] : null;
+      el.className = 'rt' + (f ? ' done' : k === i ? ' cur' : '');
+      el.style.setProperty('--c', f ? f.color : '');
+      $('.rt-f', el).textContent = f ? f.icon : '';
+      $('.rt-fn', el).textContent = end && f ? f.name : '';
+    });
+    note.style.left = ((Math.min(i, N - 1) + .5) / N * 100) + '%';
+  }
   function render() {
-    if (i >= QUIZ.length) return summary();
-    const q = QUIZ[i];
-    const expl = picked ? (picked === q.a ? '<b>Верно!</b> ' : `<b>Мимо.</b> Правильно: ${FUNCS[q.a].name}. `) + q.x : '';
-    box.innerHTML = `
+    route();
+    if (i >= N) return summary();
+    const s = ROUTE[i], f = FUNCS[s.a];
+    const expl = picked ? `<b>${picked === s.a ? 'Верно!' : 'Мимо.'}</b> Это ${f.icon} ${f.name.toLowerCase()}. ${s.x}` : '';
+    main.innerHTML = `
       <div class="qcard card">
-        <div class="qprog">${QUIZ.map((_, k) => `<i class="${k < res.length ? (res[k] ? 'ok' : 'bad') : (k === i ? 'cur' : '')}"></i>`).join('')}</div>
-        <div class="qe">${q.e}</div>
-        <p class="qt">${q.t}</p>
-        <div class="qexpl ${picked && picked !== q.a ? 'bad' : ''}" ${picked ? '' : 'hidden'}>${expl}</div>
+        <span class="rq-n">Остановка ${i + 1} из ${N} · ${s.at}</span>
+        <div class="qe">${s.e}</div>
+        <p class="qt">${s.t}</p>
+        <div class="qexpl ${picked && picked !== s.a ? 'bad' : ''}" ${picked ? '' : 'hidden'}>${expl}</div>
       </div>
       <div class="qside">
-        <div class="qopts poll ${picked ? 'revealed' : ''}" data-self data-poll="quiz-${round}-${i}" data-q="${esc(q.t)}" data-sub="Какая это суперсила денег?" data-answer="${q.a}">${keys.map(k => {
-          const f = FUNCS[k];
+        <div class="qopts poll ${picked ? 'revealed' : ''}" data-self data-poll="route-${round}-${i}" data-q="${esc(s.t)}" data-sub="Какую суперсилу показала тысяча?" data-answer="${s.a}">${keys.map(k => {
+          const o = FUNCS[k];
           let cls = '';
-          if (picked) { if (k === q.a) cls = 'right'; else if (k === picked) cls = 'wrong'; }
-          return `<button class="qopt poll-opt ${cls}" style="--c:${f.color}" data-k="${k}" data-t="${f.icon} ${f.name}" ${picked ? 'disabled' : ''}><span class="e">${f.icon}</span>${f.name}<em class="pn"></em><span class="k">${f.key}</span></button>`;
+          if (picked) { if (k === s.a) cls = 'right'; else if (k === picked) cls = 'wrong'; }
+          return `<button class="qopt poll-opt ${cls}" style="--c:${o.color}" data-k="${k}" data-t="${o.icon} ${o.name} — ${o.hint}" ${picked ? 'disabled' : ''}><span class="e">${o.icon}</span><span class="qo"><b>${o.name}</b><small>${o.hint}</small></span><em class="pn"></em><span class="k">${o.key}</span></button>`;
         }).join('')}<div class="pmeta"></div></div>
-        <div class="qscore"><span class="chip">Счёт группы: ${res.filter(Boolean).length} из ${res.length}</span>${picked
-          ? `<button class="btn btn-primary" id="qNext">${i < QUIZ.length - 1 ? 'Следующая ситуация →' : 'Итог задания →'}</button>`
-          : `<span class="hint">Ситуация ${i + 1} из ${QUIZ.length} · клавиши 1–5</span>`}</div>
+        <div class="qscore"><span class="chip">Угадали: ${res.filter(Boolean).length} из ${res.length}</span>${picked
+          ? `<button class="btn btn-primary" id="qNext">${i < N - 1 ? 'Дальше по маршруту →' : 'Итог →'}</button>`
+          : '<span class="hint">Кликните ответ класса или нажмите 1–5</span>'}</div>
       </div>`;
   }
   function summary() {
     const s = res.filter(Boolean).length;
-    const msg = s >= 11 ? 'Блестяще! Группа — финансовые гении.' : s >= 8 ? 'Отлично! Суперсилы денег освоены.' : s >= 5 ? 'Неплохо. Платёж и обращение легко спутать — в игре будет шанс разобраться.' : 'Есть куда расти. В игре будет шанс отыграться!';
-    box.innerHTML = `<div class="qcard card" style="grid-column:1/-1;align-items:center;text-align:center">
-      <div class="qe">${s >= 8 ? '🏆' : '📚'}</div><p class="qt">${s} из ${QUIZ.length}</p><p class="lead">${msg}</p>
+    const msg = s === N ? 'Ни одной ошибки!' : s >= 4 ? 'Отлично, суперсилы освоены.' : 'Платёж и обращение легко спутать. В игре будет шанс разобраться.';
+    main.innerHTML = `<div class="qcard card rq-sum">
+      <div class="qe">${s >= 4 ? '🏆' : '📚'}</div>
+      <p class="qt">За один день тысяча показала все пять суперсил</p>
+      <p class="lead">Класс угадал ${s} из ${N}. ${msg}</p>
       <div class="cta-row" style="justify-content:center"><button class="btn btn-ghost" id="qAgain">↺ Пройти ещё раз</button><button class="btn btn-gold" data-action="next">К игре →</button></div></div>`;
-    if (s >= 8) { Confetti.burst(); SFX.fanfare(); }
+    if (s >= 4) { Confetti.burst(); SFX.fanfare(); }
   }
-  function pick(k) { const ok = k === QUIZ[i].a; picked = k; res.push(ok); ok ? SFX.right() : SFX.wrong(); render(); }
+  function pick(k) { const ok = k === ROUTE[i].a; picked = k; res.push(ok); ok ? SFX.right() : SFX.wrong(); render(); }
   function advance() { i++; picked = null; render(); SFX.click(); }
-  box.addEventListener('click', e => {
+  main.addEventListener('click', e => {
     const o = e.target.closest('.qopt');
     if (o && !picked) return pick(o.dataset.k);
     if (e.target.closest('#qNext')) advance();
@@ -4907,7 +5029,7 @@ const Polls = (() => {
   });
   Deck.hooks.quiz = {
     key(e) {
-      if (i >= QUIZ.length) return false;
+      if (i >= N) return false;
       const m = /^Digit([1-5])$/.exec(e.code) || /^Numpad([1-5])$/.exec(e.code);
       if (m && !picked) { pick(keys[+m[1] - 1]); return true; }
       if ((e.code === 'Enter' || e.code === 'Space') && e.target.closest && e.target.closest('button')) return false;
