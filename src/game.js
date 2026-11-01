@@ -52,14 +52,15 @@ const Game = (() => {
     const hit = harm.map((h, i) => blocked[i] ? null : h);
     const cups = [0, 1].map(i => hit[i] === 'power' ? Math.min(o[i].cups, C.POWER_CAP) : o[i].cups);
     const p = o.map(x => x.price), w = p.map(x => W(e, x));
-    let share = p[0] < p[1] ? .7 : p[0] > p[1] ? .3 : .5;
-    if (card[0] === 'ad') share += .15;
-    if (card[1] === 'ad') share -= .15;
-    if (hit[1] === 'rumor') share += .2;
-    if (hit[0] === 'rumor') share -= .2;
+    let share = p[0] < p[1] ? C.SHARE : p[0] > p[1] ? 1 - C.SHARE : .5;
+    if (card[0] === 'ad') share += C.AD;
+    if (card[1] === 'ad') share -= C.AD;
+    if (hit[1] === 'rumor') share += C.RUMOR;
+    if (hit[0] === 'rumor') share -= C.RUMOR;
     share = clamp(share, .1, .9);
-    const N = e.n, inter = [Math.round(N * share)]; inter[1] = N - inter[0];
-    const will = [0, 1].map(i => Math.round(inter[i] * w[i]));
+    /* chance decides twice: how many people came (drawn when the round opened) and who of them buys */
+    const N = G.N ?? e.n, inter = [Math.round(N * share)]; inter[1] = N - inter[0];
+    const will = [0, 1].map(i => coffeeBuyers(inter[i], w[i]));
     const sold0 = [0, 1].map(i => Math.min(cups[i], will[i]));
     const left = [0, 1].map(i => will[i] - sold0[i]);
     const moved = [0, 1].map(i => Math.min(cups[1 - i] - sold0[1 - i], Math.round(left[i] * Math.min(1, w[1 - i] / w[i]))));
@@ -77,7 +78,7 @@ const Game = (() => {
   }
   /* ---------- flow ---------- */
   function start() {
-    G.evs = plan(G.rounds); G.round = 1; G.phase = 'orders'; G.res = null;
+    G.evs = plan(G.rounds); G.round = 1; G.phase = 'orders'; G.res = null; G.N = coffeeCrowd(ev().n);
     G.teams.forEach(t => { t.order = null; t.peek = null; });
     save(); render(); SFX.fanfare();
   }
@@ -96,7 +97,7 @@ const Game = (() => {
   function next() {
     if (G.phase !== 'reveal') return;
     if (G.round >= G.rounds) { G.phase = 'over'; save(); render(); return; }
-    G.round++; G.phase = 'orders'; G.res = null;
+    G.round++; G.phase = 'orders'; G.res = null; G.N = coffeeCrowd(ev().n);
     G.teams.forEach(t => { t.order = null; t.peek = null; });
     save(); render(); SFX.news();
   }
@@ -109,7 +110,7 @@ const Game = (() => {
   function peek(i) {
     const t = G.teams[i];
     if (G.phase !== 'orders' || !t.cards.insider || t.peek != null || (t.order && t.order.card)) return false;
-    t.cards.insider = false; t.peek = ev().n;
+    t.cards.insider = false; t.peek = G.N ?? ev().n;
     save(); return true;
   }
 
@@ -137,7 +138,7 @@ const Game = (() => {
     const e = (G.phase === 'orders' || G.phase === 'reveal') ? ev() : null;
     return {
       phase: G.phase, round: G.round, rounds: G.rounds,
-      ev: e && { e: e.e, t: e.t, x: e.x, lvl: e.lvl, cost: e.cost, w: e.w || C.W },
+      ev: e && { e: e.e, t: e.t, x: e.x, n: e.n, cost: e.cost, w: e.w || C.W },
       teams: G.teams.map((t, i) => {
         const x = G.phase === 'reveal' && G.res ? G.res.teams[i] : null;
         return {
@@ -207,7 +208,7 @@ const Game = (() => {
     return `<div class="news ${still ? 'still' : ''}">
       <div class="news-top"><span>Новости колледжа</span><span>Раунд ${G.round} из ${G.rounds}</span></div>
       <div class="news-body"><div class="news-e">${e.e}</div><div><h2>${e.t}</h2><p>${e.x}</p></div></div>
-      <div class="news-facts"><span>Покупателей: <b>${e.lvl}</b></span><span>Одна чашка обходится в <b>${e.cost} ₽</b></span></div>
+      <div class="news-facts"><span>Кофе захотят <b>около ${e.n} человек</b></span><span>Одна чашка обходится в <b>${e.cost} ₽</b></span></div>
     </div>`;
   }
   function orders() {
@@ -221,7 +222,7 @@ const Game = (() => {
         <div class="ost-foot"><span class="cap-st live-only" data-capst="${i}"></span><button class="lnk" data-manual="${i}">${ok ? 'изменить на экране' : 'ввести на экране'}</button></div>
       </div>`;
     };
-    const todo = ['Читаем новость: сколько будет покупателей', 'Команда решает: цена чашки и сколько сварить',
+    const todo = ['Читаем новость: сколько будет покупателей', 'Команда решает цену и сколько сварить. Игра покажет шансы',
       Live.enabled ? 'Капитан тайно отправляет решение с телефона' : 'Капитан тайно вводит решение на экране'];
     scr.innerHTML = `<div class="stage">
       ${newsCard(e)}
@@ -285,7 +286,7 @@ const Game = (() => {
       </div>
       <div class="res-row">${card(0)}${card(1)}</div>
       <div class="cb-wrap">
-        <div class="cb-h">Кофе хотели ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')}${r.walked ? `, ${r.walked} из них остались без кофе` : ''}. Вот куда они пошли:</div>
+        <div class="cb-h">Кофе хотели ${r.N} ${plural(r.N, 'человек', 'человека', 'человек')} (в новости было «около ${e.n}»)${r.walked ? `, ${r.walked} из них остались без кофе` : ''}. Вот куда они пошли:</div>
         <div class="cb">${seg(X[0].sold, 't0', esc(T[0].name))}${seg(r.walked, 'x', 'без кофе')}${seg(X[1].sold, 't1', esc(T[1].name))}</div>
       </div>
       <div class="rv-why">${why(r).map(s => `<p>${esc(s)}</p>`).join('')}</div>
@@ -372,6 +373,7 @@ const Game = (() => {
         <li>Капитан тайно выбирает <b>цену чашки</b> (40, 60, 80 или 100 ₽) и <b>сколько чашек сварить</b>. Варить можно только на те деньги, что есть в кассе.</li>
         <li>Покупатели идут туда, где дешевле: 7 из 10 — в более дешёвую кофейню. Цены равные — делятся поровну.</li>
         <li>Чем дороже кофе, тем меньше людей готовы его купить: при 100 ₽ берут только 6 из 10 желающих.</li>
+        <li>Немного решает случай: людей может прийти на 20% больше или меньше, чем в новости, и каждый сам решает, купить ли. Окно решения считает прогноз и шанс продать все чашки.</li>
         <li>Кофе кончился — покупатели идут к соперникам. Остался лишний — его выливают.</li>
         <li>За раунд можно сыграть одну карту. Каждая карта — один раз за игру.</li>
       </ol>

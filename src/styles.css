@@ -794,6 +794,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .g-card{width:min(720px,100%);max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;gap:14px;padding:clamp(16px,2vw,28px);border-radius:24px;background:var(--g-panel);border:1px solid var(--g-line);box-shadow:0 30px 80px -20px #000;animation:cardIn .35s cubic-bezier(.2,.8,.2,1)}
 .g-card h3{font-size:clamp(18px,1.6vw,26px);color:var(--g-gold-2)}
 .g-card.wide{width:min(960px,100%)}
+.g-card .cf-goal{display:none}
 .g-card-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px}
 .g-card-h .g-hint{font-size:15px}
 .rules-list{display:flex;flex-direction:column;gap:6px;padding-left:20px;font-size:15px;line-height:1.45}

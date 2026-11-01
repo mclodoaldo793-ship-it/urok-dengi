@@ -122,7 +122,7 @@ function game(g) {
       formKey = key; sentOid = null; dirty = false;
       main.innerHTML = `<div class="pg">
         <div id="pgHead"></div>
-        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Покупателей: <b>${esc(g.ev.lvl)}</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b></p></div></div>
+        <div class="pg-news"><span class="pg-ne">${g.ev.e}</span><div><small>Раунд ${g.round} из ${g.rounds}</small><b>${esc(g.ev.t)}</b><p>${esc(g.ev.x)}</p><p class="pg-facts">👥 Кофе захотят <b>около ${g.ev.n} человек</b> · ☕ чашка обходится в <b>${g.ev.cost} ₽</b></p></div></div>
         <div id="pform"></div>
         <div class="pg-send"><button class="btn big" id="pSend">Отправить решение</button><p id="pSt" class="muted center"></p></div>
       </div>`;
