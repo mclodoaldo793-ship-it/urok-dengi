@@ -845,92 +845,156 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
-/* ---------- coffee battle: the reveal show (prices face off, then each card's effect) ---------- */
-.fx{position:absolute;inset:0;z-index:55;overflow:hidden;cursor:pointer;background:radial-gradient(900px 560px at 50% 42%,var(--g-glow) 0%,transparent 70%),var(--g-bg);animation:fxIn .3s ease}
+/* ---------- coffee battle: the reveal show, drawn like a cartoon (sunburst, ink outlines, comic bursts) ---------- */
+.game,.fx{--ink:#16110E;--pow:#FFE14D;--pow-t:#F0302E}
+.fx{position:absolute;inset:0;z-index:55;overflow:hidden;cursor:pointer;background:#FFB300;animation:fxIn .25s ease}
 .fx.out{animation:fxOut .35s ease forwards;pointer-events:none}
 @keyframes fxIn{from{opacity:0}}
 @keyframes fxOut{to{opacity:0}}
 .fx-stage,.fx-scene{position:absolute;inset:0}
-.fx-skip{position:absolute;right:16px;bottom:16px;z-index:3;padding:8px 16px;border-radius:99px;border:1px solid var(--g-line);background:var(--g-panel);color:var(--g-muted);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
-.fx-count{position:absolute;top:clamp(16px,5vh,44px);left:50%;transform:translateX(-50%);z-index:2;padding:6px 18px;border-radius:99px;background:var(--g-panel);border:1px solid var(--g-line);color:var(--g-gold);font-weight:800;font-size:clamp(14px,1.3vw,19px);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;animation:fxIn .35s ease}
+.fx-scene{--s1:#FFD23F;--s2:#FFB300;--cx:50%;isolation:isolate;background:var(--s2)}
+.fx-scene.on0{--cx:25%}
+.fx-scene.on1{--cx:75%}
+/* sunburst rays + halftone dots + vignette */
+.fx-scene::before{content:"";position:absolute;z-index:-2;left:var(--cx);top:50%;width:230vmax;height:230vmax;margin:-115vmax 0 0 -115vmax;background:repeating-conic-gradient(var(--s1) 0 7.5deg,var(--s2) 7.5deg 15deg);animation:spin 50s linear infinite}
+.fx-scene::after{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:radial-gradient(circle at var(--cx) 50%,rgba(255,255,255,.55),transparent 34%),radial-gradient(circle at var(--cx) 50%,transparent 45%,rgba(22,17,14,.42) 100%),radial-gradient(rgba(22,17,14,.13) 24%,transparent 27%) 0 0/16px 16px}
+.fx-ad{--s1:#FFE45C;--s2:#FFB300}
+.fx-discount{--s1:#7ADFFF;--s2:#1EA7E1}
+.fx-rumor{--s1:#C9A4FF;--s2:#8E5CF0}
+.fx-tax{--s1:#FF8A7A;--s2:#E5412E}
+.fx-power{--s1:#4A4F86;--s2:#2A2D52}
+.fx-block,.fx-shield{--s1:#7EF0A6;--s2:#22B862}
+.fx-drum{--s1:#FFC861;--s2:#FF8A00}
+/* comic labels */
+.fx-skip{position:absolute;right:16px;bottom:16px;z-index:6;padding:8px 18px;border-radius:14px;border:3px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:800;box-shadow:4px 4px 0 var(--ink);cursor:pointer}
+.fx-count{position:absolute;top:clamp(14px,4.5vh,40px);left:50%;z-index:5;padding:8px 22px;border-radius:14px;border:4px solid var(--ink);background:#FFF27A;color:var(--ink);box-shadow:6px 6px 0 var(--ink);font-family:var(--font-display);font-weight:800;font-size:clamp(14px,1.4vw,21px);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;transform:translateX(-50%) rotate(-2deg);animation:tagIn .45s cubic-bezier(.2,1.6,.4,1) backwards}
+@keyframes tagIn{from{transform:translateX(-50%) rotate(-12deg) scale(.3);opacity:0}}
+.fx-cap{position:absolute;z-index:5;left:50%;bottom:clamp(30px,7vh,76px);width:min(980px,calc(100% - 40px));display:flex;flex-direction:column;align-items:center;gap:4px;padding:clamp(12px,1.8vh,20px) clamp(16px,2vw,30px);text-align:center;background:#fff;border:5px solid var(--ink);border-radius:22px;box-shadow:10px 10px 0 var(--ink);transform:translateX(-50%) rotate(-1.2deg);animation:capIn .5s cubic-bezier(.2,1.5,.4,1) .2s backwards}
+@keyframes capIn{from{transform:translate(-50%,60px) rotate(4deg) scale(.7);opacity:0}}
+.fx-cap b{font-family:var(--font-display);font-weight:900;font-size:clamp(28px,3.8vw,56px);line-height:1.1;color:#FF8A00;-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+.fx-cap span{font-size:clamp(17px,1.8vw,27px);font-weight:800;color:var(--ink);text-wrap:balance}
+.fx-cap.good b{color:#2BD67B}
+.fx-cap.evil b{color:#B36BFF}
+/* sticker outline on the main pictures */
+.fx-big{position:relative;z-index:1;font-size:clamp(100px,19vh,200px);line-height:1;filter:drop-shadow(5px 0 0 #fff) drop-shadow(-5px 0 0 #fff) drop-shadow(0 5px 0 #fff) drop-shadow(0 -5px 0 #fff) drop-shadow(8px 10px 0 rgba(22,17,14,.9));animation:boing .75s cubic-bezier(.3,1.3,.5,1) backwards}
+.fx-p,.fx-roach,.fx-money,.fx-walk,.fx-truck,.fx-missile,.fx-bolt{filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(4px 5px 0 rgba(22,17,14,.75))}
+@keyframes boing{0%{transform:scale(0)}35%{transform:scale(1.3,.75)}52%{transform:scale(.82,1.22)}68%{transform:scale(1.1,.92)}84%{transform:scale(.96,1.04)}100%{transform:none}}
+@keyframes quake{0%,100%{transform:none}15%{transform:translate(-14px,8px) rotate(-1deg)}30%{transform:translate(12px,-10px) rotate(1deg)}45%{transform:translate(-9px,-6px)}60%{transform:translate(8px,7px)}80%{transform:translate(-4px,2px)}}
+/* POW! burst with a word inside */
+.fx-pow{--pw:clamp(190px,22vw,330px);position:absolute;z-index:4;top:var(--py,8%);left:var(--px,50%);width:var(--pw);margin-left:calc(var(--pw) / -2);aspect-ratio:128/104;display:grid;place-items:center;animation:powIn .55s cubic-bezier(.2,1.7,.4,1) var(--pd,.3s) backwards,powWig 1.1s ease-in-out calc(var(--pd,.3s) + .55s) infinite}
+.fx-pow svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(7px 8px 0 var(--ink))}
+.fx-pow path{fill:var(--pf,var(--pow));stroke:var(--ink);stroke-width:4;stroke-linejoin:round}
+.fx-pow b{position:relative;padding:0 8%;font-family:var(--font-display);font-weight:900;font-size:calc(var(--pw) * var(--fs,.15));line-height:1;letter-spacing:-.01em;text-align:center;white-space:nowrap;color:var(--pt,var(--pow-t));-webkit-text-stroke:calc(var(--pw) * .016) var(--ink);paint-order:stroke fill;text-shadow:3px 4px 0 var(--ink);transform:rotate(-8deg)}
+@keyframes powIn{0%{transform:scale(0) rotate(-35deg)}60%{transform:scale(1.18) rotate(6deg)}100%{transform:rotate(-4deg)}}
+@keyframes powWig{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(3deg) scale(1.05)}}
+.on0 .fx-pow{--px:35%}
+.on1 .fx-pow{--px:65%}
+/* white cartoon clouds of dust and smoke */
+.fx-puff{position:absolute;z-index:3;left:var(--x);top:var(--y);width:var(--s,140px);margin:calc(var(--s,140px) * -.35) 0 0 calc(var(--s,140px) / -2);aspect-ratio:10/7;animation:puff .9s ease-out var(--d,0s) both}
+.fx-puff svg{width:100%;height:100%;overflow:visible}
+@keyframes puff{0%{transform:scale(0);opacity:1}35%{transform:scale(1.1);opacity:1}100%{transform:scale(1.45) translateY(-12%);opacity:0}}
+/* twinkling stars */
+.fx-star{position:absolute;z-index:3;left:var(--x);top:var(--y);width:var(--s,46px);aspect-ratio:1;margin:calc(var(--s,46px) / -2) 0 0 calc(var(--s,46px) / -2);animation:twinkle 1.1s ease-in-out var(--d,0s) infinite backwards}
+.fx-star svg{width:100%;height:100%;overflow:visible}
+@keyframes twinkle{0%,100%{transform:scale(0) rotate(0)}45%{transform:scale(1) rotate(45deg)}70%{transform:scale(.8) rotate(70deg)}}
+/* manga focus lines */
+.fx-speed{position:absolute;z-index:0;inset:-10%;pointer-events:none;background:repeating-conic-gradient(from 0deg at var(--cx,50%) 50%,rgba(255,255,255,.75) 0 .9deg,transparent .9deg 5deg);-webkit-mask:radial-gradient(circle at var(--cx,50%) 50%,transparent 26%,#000 62%);mask:radial-gradient(circle at var(--cx,50%) 50%,transparent 26%,#000 62%);animation:speed .18s steps(2) infinite}
+@keyframes speed{to{transform:rotate(2.5deg)}}
 .fx-side{position:absolute;top:0;bottom:0;width:50%;display:grid;place-items:center;overflow:hidden}
 .fx-side.s0{left:0}
 .fx-side.s1{right:0}
-.fx-side::before{content:"";position:absolute;inset:0;background:radial-gradient(closest-side,color-mix(in srgb,var(--tc) 26%,transparent),transparent);animation:fxIn .4s ease}
-.fx-big{position:relative;z-index:1;font-size:clamp(90px,17vh,180px);line-height:1;animation:pop .45s cubic-bezier(.2,1.5,.4,1) backwards}
-.fx-cap{position:absolute;z-index:2;left:50%;bottom:clamp(36px,9vh,90px);transform:translateX(-50%);width:min(980px,calc(100% - 32px));display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;animation:capIn .45s cubic-bezier(.2,.8,.2,1) .2s backwards}
-@keyframes capIn{from{transform:translate(-50%,30px);opacity:0}}
-.fx-cap b{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.2vw,60px);line-height:1.1;color:var(--g-ink)}
-.fx-cap span{font-size:clamp(18px,1.9vw,28px);font-weight:700;color:var(--g-ink);text-wrap:balance}
-.fx-cap.good b{color:var(--g-ok)}
-.fx-cap.evil b{color:var(--g-evil)}
-/* prices face off */
-.fx-vs{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(12px,3vw,48px);padding:0 clamp(16px,5vw,90px)}
-.fx-team{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;padding:clamp(18px,3vw,40px);border-radius:28px;background:var(--g-panel);border:3px solid var(--tc);box-shadow:0 0 70px -12px var(--tc)}
-.fx-team.t0{animation:fromL .55s cubic-bezier(.2,.9,.3,1.2) backwards}
-.fx-team.t1{animation:fromR .55s cubic-bezier(.2,.9,.3,1.2) backwards}
-@keyframes fromL{from{transform:translateX(-120%) rotate(-8deg);opacity:0}}
-@keyframes fromR{from{transform:translateX(120%) rotate(8deg);opacity:0}}
-.fx-team span{font-size:clamp(50px,9vh,96px);line-height:1}
-.fx-team b{font-family:var(--font-display);font-size:clamp(20px,2.4vw,34px);color:var(--tc);text-align:center;overflow-wrap:anywhere}
-.fx-team em{font-style:normal;font-family:var(--font-display);font-weight:800;font-size:clamp(48px,7vw,112px);line-height:1;color:var(--g-ink);white-space:nowrap;animation:flipIn .5s ease .7s backwards}
-.fx-x{font-family:var(--font-display);font-weight:800;font-size:clamp(40px,5vw,84px);color:var(--g-gold);text-shadow:0 0 34px var(--g-gold);animation:vsPop .5s cubic-bezier(.2,1.6,.4,1) .4s backwards}
-@keyframes vsPop{from{transform:scale(3) rotate(-20deg);opacity:0}}
+/* prices face off: two team colours split by a lightning bolt */
+.fx-vsrow{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(12px,3vw,48px);padding:0 clamp(16px,5vw,90px)}
+.fx-scene.fx-vs::before{left:50%;width:auto;height:auto;inset:0;margin:0;background:repeating-linear-gradient(-60deg,rgba(255,255,255,.16) 0 18px,transparent 18px 40px),linear-gradient(90deg,var(--team-a) 0 50%,var(--team-b) 50% 100%);animation:none}
+.fx-scene.fx-vs::after{background:radial-gradient(circle at 50% 50%,transparent 45%,rgba(22,17,14,.4) 100%),radial-gradient(rgba(22,17,14,.13) 24%,transparent 27%) 0 0/16px 16px}
+.fx-bolt-split{position:absolute;z-index:1;left:50%;top:-4%;height:108%;width:clamp(80px,9vw,140px);margin-left:calc(clamp(80px,9vw,140px) / -2);overflow:visible;animation:boltIn .3s steps(3) .25s backwards}
+@keyframes boltIn{from{opacity:0;transform:scaleY(.2)}}
+.fx-team{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:clamp(16px,2.6vw,36px);border-radius:26px;background:#fff;border:6px solid var(--ink);box-shadow:12px 12px 0 var(--ink);color:var(--ink)}
+.fx-team.t0{transform:rotate(-3deg);animation:fromL .6s cubic-bezier(.2,1.5,.4,1) backwards}
+.fx-team.t1{transform:rotate(3deg);animation:fromR .6s cubic-bezier(.2,1.5,.4,1) backwards}
+@keyframes fromL{from{transform:translateX(-130%) rotate(-25deg)}}
+@keyframes fromR{from{transform:translateX(130%) rotate(25deg)}}
+.fx-team span{font-size:clamp(54px,10vh,104px);line-height:1;filter:drop-shadow(4px 5px 0 rgba(22,17,14,.35))}
+.fx-team b{font-family:var(--font-display);font-weight:900;font-size:clamp(20px,2.4vw,34px);color:var(--tc);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-align:center;overflow-wrap:anywhere}
+.fx-team em{font-style:normal;font-family:var(--font-display);font-weight:900;font-size:clamp(50px,7vw,116px);line-height:1;color:var(--ink);white-space:nowrap;animation:boing .7s cubic-bezier(.3,1.3,.5,1) .75s backwards}
+.fx-vs .fx-pow{--pw:clamp(150px,15vw,230px);position:relative;z-index:3;top:auto;left:auto;margin:0;--pf:#F0302E;--pt:#FFE14D;--pd:.45s}
+.fx-vs .fx-pow b{--fs:.3!important}
 /* advertising: the megaphone shouts, people come running */
-.fx-ring{position:absolute;left:50%;top:50%;width:170px;height:170px;margin:-85px 0 0 -85px;border-radius:50%;border:5px solid var(--tc);opacity:0;animation:ring 1.3s ease-out var(--d,0s) infinite}
-.fx-ring.flash{border-color:#fff;animation:ring .7s ease-out .55s 1 forwards}
+.fx-ring{position:absolute;left:50%;top:50%;width:170px;height:170px;margin:-85px 0 0 -85px;border-radius:50%;border:7px solid #fff;box-shadow:0 0 0 3px var(--ink),inset 0 0 0 3px var(--ink);opacity:0;animation:ring 1.3s ease-out var(--d,0s) infinite}
+.fx-ring.flash{animation:ring .7s ease-out .55s 1 forwards}
 @keyframes ring{from{transform:scale(.4);opacity:1}to{transform:scale(3.2);opacity:0}}
-.fx-shout{animation:pop .45s cubic-bezier(.2,1.5,.4,1),wobble .28s ease-in-out .45s 5}
-@keyframes wobble{50%{transform:rotate(-12deg) scale(1.08)}}
-.fx-p{position:absolute;left:50%;top:50%;z-index:1;margin:-.5em 0 0 -.5em;font-style:normal;font-size:clamp(28px,5vh,46px);line-height:1;transform:translate(var(--x1),var(--y1));animation:comeIn .9s cubic-bezier(.3,.7,.3,1) var(--d) backwards}
+.fx-shout{animation:boing .75s cubic-bezier(.3,1.3,.5,1),wobble .26s ease-in-out .75s 5}
+@keyframes wobble{50%{transform:rotate(-14deg) scale(1.12)}}
+.fx-p{position:absolute;left:50%;top:50%;z-index:2;margin:-.5em 0 0 -.5em;font-style:normal;font-size:clamp(30px,5.5vh,50px);line-height:1;transform:translate(var(--x1),var(--y1));animation:comeIn .9s cubic-bezier(.3,1.4,.4,1) var(--d) backwards}
 @keyframes comeIn{from{transform:translate(var(--x0),var(--y0)) scale(.6);opacity:0}}
 /* discount: a supply truck drives in */
-.fx-truck{position:absolute;top:36%;z-index:1;font-size:clamp(100px,17vh,180px);line-height:1}
-.fx-truck::after{content:"💨";position:absolute;left:100%;bottom:0;font-size:.45em;opacity:.8}
-.fx-truck.go0{left:105%;animation:driveL 1.3s cubic-bezier(.25,.7,.3,1) forwards}
-.fx-truck.go1{left:-25%;transform:scaleX(-1);animation:driveR 1.3s cubic-bezier(.25,.7,.3,1) forwards}
-@keyframes driveL{to{left:14%}}
-@keyframes driveR{to{left:64%}}
-.fx-tag{position:relative;z-index:2;margin-top:-34vh;padding:.15em .5em;border-radius:16px;background:var(--g-ok);color:var(--g-bg);font-family:var(--font-display);font-weight:800;font-size:clamp(36px,5vw,72px);animation:stampIn .45s cubic-bezier(.3,1.4,.5,1) 1.15s backwards}
+.fx-truck{position:absolute;top:38%;z-index:2;font-size:clamp(110px,19vh,200px);line-height:1}
+.fx-truck.go0{left:105%;animation:driveL 1.2s cubic-bezier(.25,.7,.3,1.15) forwards}
+.fx-truck.go1{left:-25%;transform:scaleX(-1);animation:driveR 1.2s cubic-bezier(.25,.7,.3,1.15) forwards}
+@keyframes driveL{to{left:13%}}
+@keyframes driveR{to{left:63%}}
+.fx-tag{position:relative;z-index:3;margin-top:-30vh;padding:.12em .5em;border-radius:18px;border:5px solid var(--ink);background:#2BD67B;color:#fff;box-shadow:8px 8px 0 var(--ink);font-family:var(--font-display);font-weight:900;font-size:clamp(40px,5.4vw,80px);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;transform:rotate(-6deg);animation:stampIn .5s cubic-bezier(.3,1.6,.5,1) 1.1s backwards}
+.fx-discount .fx-pow{--py:16%}
+.fx-discount.on0 .fx-pow{--px:57%}
+.fx-discount.on1 .fx-pow{--px:43%}
 /* rumor: cockroaches everywhere, buyers walk away */
-.fx-roach{position:absolute;top:var(--y);left:-12%;z-index:1;font-style:normal;font-size:clamp(30px,5.5vh,56px);line-height:1;transform:rotate(var(--r));animation:scurry var(--t) linear var(--d) both}
+.fx-roach{position:absolute;top:var(--y);left:-12%;z-index:2;font-style:normal;font-size:clamp(34px,6vh,60px);line-height:1;transform:rotate(var(--r));animation:scurry var(--t) linear var(--d) both}
 @keyframes scurry{to{left:108%}}
-.fx-walk{position:absolute;top:58%;z-index:2;display:flex;gap:2px;font-size:clamp(28px,5vh,46px);line-height:1;animation:1.3s ease-in-out .8s both}
-.fx-walk i{font-style:normal;display:inline-block}
+.fx-walk{position:absolute;top:60%;z-index:3;display:flex;gap:2px;font-size:clamp(30px,5.5vh,50px);line-height:1;animation:1.3s ease-in-out .8s both}
+.fx-walk i{font-style:normal;display:inline-block;animation:hop .3s ease-in-out infinite alternate}
+.fx-walk i:nth-child(2n){animation-delay:.15s}
+@keyframes hop{to{translate:0 -8px}}
 .fx-walk.w0{left:16%;animation-name:walkR}
 .fx-walk.w0 i{transform:scaleX(-1)}
 .fx-walk.w1{left:60%;animation-name:walkL}
 @keyframes walkR{to{left:62%}}
 @keyframes walkL{to{left:16%}}
 /* tax: the inspector's stamp slams down, money flies away */
-.fx-stamp{position:relative;z-index:1;padding:.2em .55em;border:6px solid var(--g-bad);border-radius:16px;color:var(--g-bad);background:color-mix(in srgb,var(--g-bad) 12%,transparent);font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4.4vw,68px);line-height:1.05;text-align:center;transform:rotate(-12deg);animation:slam .45s cubic-bezier(.3,1.4,.5,1) .3s backwards}
-@keyframes slam{from{transform:scale(2.6) rotate(-24deg);opacity:0}}
-.fx-tax .fx-side{animation:shake .45s ease .7s}
-.fx-money{position:absolute;left:50%;top:55%;z-index:2;font-style:normal;font-size:clamp(30px,5vh,48px);animation:flyUp 1.3s ease-out var(--d) both}
+.fx-stamp{position:relative;z-index:2;padding:.25em .6em;border:7px solid #E5262B;outline:4px solid var(--ink);outline-offset:3px;border-radius:18px;color:#E5262B;background:#fff;box-shadow:12px 12px 0 var(--ink);font-family:var(--font-display);font-weight:900;font-size:clamp(24px,3.3vw,52px);line-height:1.05;text-align:center;transform:rotate(-12deg);animation:slam .4s cubic-bezier(.3,1.5,.5,1) .3s backwards}
+@keyframes slam{from{transform:scale(3) rotate(-28deg);opacity:0}}
+.fx-tax .fx-side{animation:quake .5s ease .62s}
+.fx-money{position:absolute;left:50%;top:55%;z-index:3;font-style:normal;font-size:clamp(34px,5.5vh,54px);animation:flyUp 1.3s ease-out var(--d) both}
 @keyframes flyUp{from{transform:translate(0,0);opacity:0}15%{opacity:1}to{transform:translate(var(--x),-58vh) rotate(var(--r));opacity:0}}
 /* power cut: the lights flicker and go out */
-.fx-power .fx-side::after{content:"";position:absolute;inset:0;background:#000;animation:blackout 1.5s steps(1) .2s both}
-@keyframes blackout{0%{opacity:0}12%{opacity:.9}20%{opacity:.15}28%{opacity:.95}36%{opacity:.3}46%,100%{opacity:.9}}
-.fx-bulb{z-index:2;animation:pop .45s cubic-bezier(.2,1.5,.4,1),bulbOff 1.5s steps(1) .2s forwards}
-@keyframes bulbOff{12%{filter:brightness(.3)}20%{filter:none}28%,100%{filter:grayscale(1) brightness(.35)}}
-.fx-bolt{position:absolute;left:58%;top:30%;z-index:3;font-style:normal;font-size:clamp(50px,9vh,90px);animation:zap .9s steps(2) .2s 2 both}
+.fx-power .fx-side::after{content:"";position:absolute;inset:0;background:#05040A;animation:blackout 1.5s steps(1) .2s both}
+@keyframes blackout{0%{opacity:0}12%{opacity:.9}20%{opacity:.15}28%{opacity:.95}36%{opacity:.3}46%,100%{opacity:.82}}
+.fx-bulb{z-index:2;animation:boing .75s cubic-bezier(.3,1.3,.5,1),bulbOff 1.5s steps(1) .2s forwards}
+@keyframes bulbOff{12%{opacity:.4}20%{opacity:1}28%,100%{opacity:.55}}
+.fx-bolt{position:absolute;left:56%;top:26%;z-index:3;font-style:normal;font-size:clamp(60px,11vh,110px);animation:zap .9s steps(2) .2s 2 both}
 @keyframes zap{0%{opacity:1;transform:scale(1.3) rotate(-10deg)}50%{opacity:0}100%{opacity:1;transform:scale(.9) rotate(8deg)}}
+.fx-power .fx-pow{--pf:#FFF27A;--pt:#2A2D52;--pd:.45s}
 /* guard: a harm card flies in and bounces off the shield */
-.fx-guard{filter:drop-shadow(0 0 30px color-mix(in srgb,var(--tc) 80%,transparent));animation:pop .45s cubic-bezier(.2,1.5,.4,1) .3s backwards,pulse 1s ease-in-out .8s infinite}
-.fx-missile{position:absolute;top:38%;z-index:3;font-size:clamp(70px,12vh,130px);line-height:1;animation:1.5s cubic-bezier(.45,0,.55,1) forwards}
+.fx-guard{animation:boing .75s cubic-bezier(.3,1.3,.5,1) .3s backwards,pulse .9s ease-in-out 1.05s infinite}
+.fx-missile{position:absolute;top:38%;z-index:3;font-size:clamp(80px,13vh,140px);line-height:1;animation:1.5s cubic-bezier(.45,0,.55,1) forwards}
 .fx-missile.m0{left:80%;animation-name:hitL}
 .fx-missile.m1{left:10%;animation-name:hitR}
 @keyframes hitL{40%{left:30%;top:38%;transform:rotate(-15deg)}100%{left:95%;top:-25%;transform:rotate(600deg) scale(.4);opacity:0}}
 @keyframes hitR{40%{left:58%;top:38%;transform:rotate(15deg)}100%{left:-5%;top:-25%;transform:rotate(-600deg) scale(.4);opacity:0}}
+.fx-block .fx-side{animation:quake .4s ease .6s}
 /* the final drumroll */
-.fx-drum{position:absolute;inset:0;display:grid;place-items:center}
-.fx-drum .fx-big{animation:pop .45s cubic-bezier(.2,1.5,.4,1),drumHit .12s ease-in-out .45s infinite}
-@keyframes drumHit{50%{transform:scale(1.06) rotate(-3deg)}}
-/* final screen: light rays behind the trophy, the winners glow */
-.over-h .trophy{position:relative;isolation:isolate}
-.over-h .trophy::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:4.2em;height:4.2em;margin:-2.1em 0 0 -2.1em;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--g-gold) 40%,transparent) 0 9deg,transparent 9deg 18deg);-webkit-mask:radial-gradient(closest-side,#000 25%,transparent);mask:radial-gradient(closest-side,#000 25%,transparent);animation:spin 14s linear infinite}
+.fx-drumset{position:absolute;inset:0;display:grid;place-items:center;padding-top:8vh}
+.fx-drumset .fx-big{font-size:clamp(130px,25vh,250px)}
+.fx-drumset .fx-big{animation:boing .75s cubic-bezier(.3,1.3,.5,1),drumHit .12s ease-in-out .75s infinite}
+@keyframes drumHit{50%{transform:scale(1.07,.94) rotate(-3deg)}}
+.fx-drum .fx-pow{--py:2%}
+.fx-drum .fx-pow.p2{--px:76%;--py:22%;--pw:clamp(150px,16vw,240px);--pf:#fff;--pd:.9s}
+.fx-drum .fx-pow.p1{--px:24%;--py:22%;--pw:clamp(150px,16vw,240px);--pf:#7ADFFF;--pd:.5s}
+/* round won: a comic burst on the winning card */
+.res{position:relative}
+.res-pow{--pw:clamp(130px,12vw,190px);top:22%;left:auto;right:-6px;margin:0;--pd:0s;pointer-events:none}
+.res .fx-star{--s:34px}
+/* final screen: cartoon rays behind the trophy, the winners glow */
+.over-h{position:relative}
+.over-h h1{position:relative;z-index:1}
+.over-h .trophy{position:relative;isolation:isolate;filter:drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 4px 0 #fff) drop-shadow(0 -4px 0 #fff) drop-shadow(6px 8px 0 rgba(0,0,0,.6));animation:boing .8s cubic-bezier(.3,1.3,.5,1),pulse 1.6s ease-in-out .8s infinite}
+.over-h .trophy::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:4.6em;height:4.6em;margin:-2.3em 0 0 -2.3em;border-radius:50%;opacity:.75;background:repeating-conic-gradient(#FFD23F 0 10deg,#FF8A00 10deg 20deg,#FF5FA2 20deg 30deg,#2EC4F1 30deg 40deg,#2BD67B 40deg 50deg,#B36BFF 50deg 60deg);-webkit-mask:radial-gradient(closest-side,#000 30%,transparent);mask:radial-gradient(closest-side,#000 30%,transparent);animation:spin 12s linear infinite}
+.over-pow{--pw:clamp(130px,12vw,170px);--py:-40px;--px:calc(50% + clamp(200px,24vw,340px));--pf:#FF5FA2;--pt:#FFE14D;--pd:.2s}
+.over-pow.l{--px:calc(50% - clamp(200px,24vw,340px));--pf:#2EC4F1;--pd:.45s}
 .over .res.win{animation:glow 2.2s ease-in-out infinite}
-@media (prefers-reduced-motion:reduce){.over-h .trophy::before,.over .res.win{animation:none}}
+@media (prefers-reduced-motion:reduce){
+  .fx-scene::before,.fx-speed,.fx-pow,.fx-star,.fx-walk i,.over-h .trophy,.over-h .trophy::before,.over .res.win{animation:none}
+  .fx-tax .fx-side,.fx-block .fx-side{animation:none}
+}
 
 /* ---------- homework slide ---------- */
 .hw{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:clamp(12px,1.4vw,22px);align-items:start}
@@ -1954,32 +2018,40 @@ const Confetti = (() => {
   const cv = $('#confetti'), cx = cv.getContext('2d');
   let parts = [], raf = 0;
   function size() { const d = Math.min(2, devicePixelRatio || 1); cv.width = innerWidth * d; cv.height = innerHeight * d; cx.setTransform(d, 0, 0, d, 0, 0); }
-  function burst({ x = innerWidth / 2, y = innerHeight * .4, n = 150, spread = 1 } = {}) {
+  const TOON = ['#FFD23F', '#FF5FA2', '#2EC4F1', '#2BD67B', '#B36BFF', '#FF8A00'];
+  function burst({ x = innerWidth / 2, y = innerHeight * .4, n = 150, spread = 1, toon = false } = {}) {
     if (reduced) return;
     size();
     const gold = cssVar('--g-gold') || '#F2C14E', gold3 = cssVar('--g-gold-3') || '#9A6B10', green = cssVar('--g-ok') || '#2BD67B', bill = cssVar('--brand') || '#136447';
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2, s = (4 + Math.random() * 11) * spread;
-      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 7, r: 6 + Math.random() * 7, rot: Math.random() * 6.3, vr: (Math.random() - .5) * .35,
-        kind: Math.random() < .6 ? 'coin' : 'bill', c1: gold, c2: gold3, c3: Math.random() < .5 ? green : bill, life: 0 });
+      const q = Math.random(), kind = toon ? (q < .35 ? 'coin' : q < .65 ? 'star' : q < .85 ? 'dot' : 'bill') : q < .6 ? 'coin' : 'bill';
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 7, r: (toon ? 8 : 6) + Math.random() * 7, rot: Math.random() * 6.3, vr: (Math.random() - .5) * .35,
+        kind, toon, c1: gold, c2: toon ? '#16110E' : gold3, c3: toon ? TOON[i % TOON.length] : Math.random() < .5 ? green : bill, life: 0 });
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
   /* firework: a ring of glowing sparks in the given colours */
-  function spark({ x, y, colors, n = 70 }) {
+  function spark({ x, y, colors, n = 70, toon = false }) {
     if (reduced) return;
     if (!raf) size();
     for (let i = 0; i < n; i++) {
       const a = i / n * Math.PI * 2 + Math.random() * .2, s = 3 + Math.random() * 6;
-      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 2 + Math.random() * 2.5, kind: 'spark', c1: colors[i % colors.length], life: 0 });
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: toon ? 6 + Math.random() * 4 : 2 + Math.random() * 2.5, kind: 'spark', toon, rot: a, c1: toon ? TOON[i % TOON.length] : colors[i % colors.length], life: 0 });
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
-  function fireworks(colors, { shots = 7, gap = 320 } = {}) {
+  function fireworks(colors, { shots = 7, gap = 320, toon = false } = {}) {
     for (let k = 0; k < shots; k++) setTimeout(() => {
-      spark({ x: innerWidth * (.15 + Math.random() * .7), y: innerHeight * (.12 + Math.random() * .35), colors });
+      spark({ x: innerWidth * (.15 + Math.random() * .7), y: innerHeight * (.12 + Math.random() * .35), colors, n: toon ? 36 : 70, toon });
       SFX.boom();
     }, k * gap);
+  }
+  /* a five-point star with an ink outline, centred on the current origin */
+  function star(r) {
+    cx.beginPath();
+    for (let j = 0; j < 10; j++) { const a = j / 10 * Math.PI * 2 - Math.PI / 2, q = j % 2 ? r * .45 : r; cx.lineTo(Math.cos(a) * q, Math.sin(a) * q); }
+    cx.closePath(); cx.fill(); cx.strokeStyle = '#16110E'; cx.lineWidth = 2.5; cx.lineJoin = 'round'; cx.stroke();
   }
   function loop() {
     cx.clearRect(0, 0, innerWidth, innerHeight);
@@ -1987,7 +2059,9 @@ const Confetti = (() => {
       if (p.kind === 'spark') {
         p.vy += .07; p.vx *= .97; p.vy *= .97; p.x += p.vx; p.y += p.vy; p.life++;
         cx.globalAlpha = Math.max(0, 1 - p.life / 90); cx.fillStyle = p.c1;
-        cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 7); cx.fill(); cx.globalAlpha = 1;
+        if (p.toon) { cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot + p.life * .05); star(p.r); cx.restore(); }
+        else { cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 7); cx.fill(); }
+        cx.globalAlpha = 1;
         continue;
       }
       p.vy += .32; p.vx *= .985; p.vy *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
@@ -1995,10 +2069,16 @@ const Confetti = (() => {
       if (p.kind === 'coin') {
         const w = Math.max(1, Math.abs(Math.cos(p.rot)) * p.r);
         cx.fillStyle = p.c1; cx.beginPath(); cx.ellipse(0, 0, w, p.r, 0, 0, 7); cx.fill();
-        cx.strokeStyle = p.c2; cx.lineWidth = 1.5; cx.stroke();
+        cx.strokeStyle = p.c2; cx.lineWidth = p.toon ? 2.5 : 1.5; cx.stroke();
+      } else if (p.kind === 'star') {
+        cx.rotate(p.rot); cx.fillStyle = p.c3; star(p.r * 1.1);
+      } else if (p.kind === 'dot') {
+        cx.fillStyle = p.c3; cx.beginPath(); cx.arc(0, 0, p.r * .6, 0, 7); cx.fill();
+        cx.strokeStyle = '#16110E'; cx.lineWidth = 2.5; cx.stroke();
       } else {
         cx.rotate(p.rot); cx.scale(1, Math.abs(Math.sin(p.rot * 1.3)) * .8 + .2);
         cx.fillStyle = p.c3; cx.fillRect(-p.r * 1.3, -p.r * .65, p.r * 2.6, p.r * 1.3);
+        if (p.toon) { cx.strokeStyle = '#16110E'; cx.lineWidth = 2.5; cx.strokeRect(-p.r * 1.3, -p.r * .65, p.r * 2.6, p.r * 1.3); }
       }
       cx.restore();
     }
@@ -5277,6 +5357,15 @@ const Game = (() => {
   /* ---------- the show: both prices face off, then every card played, one scene after another ---------- */
   const SHOW = { vs: 1800, card: 2100, drum: 1900 };
   let show = null;
+  /* cartoon bits: a jagged comic burst with a word, a white cloud, a twinkling star */
+  const POW_D = (() => { let d = ''; for (let j = 0; j < 32; j++) { const a = j / 32 * Math.PI * 2 - Math.PI / 2, r = j % 2 ? 31 + (j * 7 % 5) : 50 - (j * 3 % 4); d += (j ? 'L' : 'M') + (50 + Math.cos(a) * r * 1.25).toFixed(1) + ' ' + (50 + Math.sin(a) * r).toFixed(1); } return d + 'Z'; })();
+  const pow = (word, cls = '', st = '') => `<div class="fx-pow ${cls}" style="${st}"><svg viewBox="-14 -2 128 104" aria-hidden="true"><path d="${POW_D}"/></svg><b style="--fs:${Math.min(.2, .9 / [...word].length).toFixed(3)}">${word}</b></div>`;
+  const CLOUD = [[30, 42, 22], [52, 30, 26], [74, 44, 21], [42, 55, 20], [64, 56, 19]];
+  const cloudSvg = `<svg viewBox="0 0 100 70" aria-hidden="true"><g fill="#16110E">${CLOUD.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r + 4}"/>`).join('')}</g><g fill="#fff">${CLOUD.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g><circle cx="44" cy="26" r="6" fill="#E9F4FF"/></svg>`;
+  const puff = (x, y, s, d) => `<i class="fx-puff" style="--x:${x}%;--y:${y}%;--s:${s}px;--d:${d}s">${cloudSvg}</i>`;
+  const starSvg = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 2C55 38 62 45 98 50C62 55 55 62 50 98C45 62 38 55 2 50C38 45 45 38 50 2Z" fill="#FFF27A" stroke="#16110E" stroke-width="6" stroke-linejoin="round"/></svg>';
+  const stars = (cx, spots) => spots.map(([dx, y, s, d]) => `<i class="fx-star" style="--x:${cx + dx}%;--y:${y}%;--s:${s}px;--d:${d}s">${starSvg}</i>`).join('');
+  const BOLT = '<svg class="fx-bolt-split" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><polyline points="62,0 34,230 66,400 30,620 64,790 42,1000" fill="none" stroke="#16110E" stroke-width="30" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/><polyline points="62,0 34,230 66,400 30,620 64,790 42,1000" fill="none" stroke="#fff" stroke-width="16" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>';
   function scenes(r) {
     const X = r.teams, out = [{ k: 'vs' }];
     X.forEach((x, i) => { if (x.card === 'ad' || x.card === 'discount') out.push({ k: x.card, i }); });
@@ -5303,26 +5392,30 @@ const Game = (() => {
     const ring = j => `<i class="fx-ring" style="--d:${j * .35}s"></i>`;
     const walk = n => n > 0 ? `<div class="fx-walk w${i}">${rep(Math.min(n, 6), () => '<i>🚶</i>')}</div>` : '';
     const top = s.k === 'vs' ? 'Вскрываем решения!' : s.k === 'drum' ? '' : `Карта ${k} из ${total}`;
+    const c = i ? 75 : 25, speed = '<i class="fx-speed"></i>';
     let html = '';
-    if (s.k === 'vs') html = `<div class="fx-vs">${[0, 1].map(j => `<div class="fx-team t${j}"><span>${T[j].emoji}</span><b>${esc(T[j].name)}</b><em>${X[j].price}&nbsp;₽</em></div>`).join('<div class="fx-x">VS</div>')}</div>`;
-    else if (s.k === 'drum') html = '<div class="fx-drum"><div class="fx-big">🥁</div></div>' + cap('', 'Считаем деньги в кассах…', 'И побеждает…');
-    else if (s.k === 'ad') html = side(i, rep(3, ring) + '<div class="fx-big fx-shout">📣</div>' + rep(C.AD, j => {
+    if (s.k === 'vs') html = speed + BOLT + `<div class="fx-vsrow">${[0, 1].map(j => `<div class="fx-team t${j}"><span>${T[j].emoji}</span><b>${esc(T[j].name)}</b><em>${X[j].price}&nbsp;₽</em></div>`).join(pow('VS'))}</div>`
+      + stars(50, [[-7, 22, 54, .6], [8, 74, 44, .9], [-36, 80, 40, 1.1], [38, 18, 46, .8]]);
+    else if (s.k === 'drum') html = speed + '<div class="fx-drumset"><div class="fx-big">🥁</div></div>' + pow('ТРАМ-ТАМ!', '', '--pd:.15s') + pow('БУМ!', 'p1') + pow('ТЫЩ!', 'p2')
+      + stars(50, [[-38, 50, 50, .2], [36, 52, 44, .5], [-20, 36, 36, .8], [22, 34, 40, 1]]) + cap('', 'Считаем деньги в кассах…', 'И побеждает…');
+    else if (s.k === 'ad') html = speed + pow('ЭЙ, СЮДА!', '', '--pd:.4s') + side(i, rep(3, ring) + '<div class="fx-big fx-shout">📣</div>' + rep(C.AD, j => {
         const a = j / C.AD * 6.283, R = 140 + (j % 2) * 50;
         return `<i class="fx-p" style="--x0:${(Math.cos(a) * 55).toFixed(1)}vw;--y0:${(Math.sin(a) * 55).toFixed(1)}vh;--x1:${(Math.cos(a) * R).toFixed(0)}px;--y1:${(Math.sin(a) * R * .75).toFixed(0)}px;--d:${(.35 + j * .07).toFixed(2)}s">🧍</i>`;
       })) + cap('good', '📣 Реклама', `${nm(i)} — ещё ${ppl(C.AD)} пришли по рекламе`);
-    else if (s.k === 'discount') html = `<span class="fx-truck go${i}">🚚</span>` + side(i, `<div class="fx-tag">−${C.DISCOUNT}&nbsp;₽</div>`)
+    else if (s.k === 'discount') html = `<span class="fx-truck go${i}">🚚</span>` + side(i, `<div class="fx-tag">−${C.DISCOUNT}&nbsp;₽</div>`) + pow('БИП-БИП!', '', '--pd:1s')
+      + (i ? puff(60, 58, 130, .95) + puff(55, 64, 100, 1.05) : puff(31, 58, 130, .95) + puff(36, 64, 100, 1.05)) + stars(c, [[-14, 30, 44, 1.3], [16, 62, 38, 1.5]])
       + cap('good', '🚚 Скидка на зёрна', `${nm(i)} — чашка обходится на ${C.DISCOUNT} ₽ дешевле`);
-    else if (s.k === 'rumor') html = side(i, rep(14, () => `<i class="fx-roach" style="--y:${rnd(6, 88)}%;--t:${rnd(.7, 1.3)}s;--d:${rnd(0, 1)}s;--r:${rnd(70, 110)}deg">🪳</i>`)) + walk(C.RUMOR)
+    else if (s.k === 'rumor') html = pow('ФУ-У!', '', '--pf:#9BEA5B;--pd:.3s') + side(i, '<div class="fx-big">🪳</div>' + rep(14, () => `<i class="fx-roach" style="--y:${rnd(6, 88)}%;--t:${rnd(.7, 1.3)}s;--d:${rnd(0, 1)}s;--r:${rnd(70, 110)}deg">🪳</i>`)) + walk(C.RUMOR)
       + cap('evil', '🪳 Слух про таракана', `Слух от ${nm(1 - i)}: ${nm(i)} теряет ${ppl(C.RUMOR)}`);
-    else if (s.k === 'tax') html = side(i, '<div class="fx-stamp">НАЛОГОВАЯ<br>ПРОВЕРКА</div>' + rep(9, j => `<i class="fx-money" style="--x:${rnd(-22, 22)}vw;--r:${rnd(-120, 120)}deg;--d:${(.55 + j * .09).toFixed(2)}s">💸</i>`))
+    else if (s.k === 'tax') html = pow('БАХ!', '', '--pd:.36s') + puff(c - 11, 60, 150, .4) + puff(c + 12, 62, 130, .45) + side(i, '<div class="fx-stamp">НАЛОГОВАЯ<br>ПРОВЕРКА</div>' + rep(9, j => `<i class="fx-money" style="--x:${rnd(-22, 22)}vw;--r:${rnd(-120, 120)}deg;--d:${(.55 + j * .09).toFixed(2)}s">💸</i>`))
       + cap('evil', '🧾 Налоговая проверка', `${nm(i)} отдаёт 30% выручки`);
-    else if (s.k === 'power') html = side(i, '<div class="fx-big fx-bulb">💡</div><i class="fx-bolt">⚡</i>') + walk(X[i].cut)
+    else if (s.k === 'power') html = pow('ЩЁЛК!') + side(i, '<div class="fx-big fx-bulb">💡</div><i class="fx-bolt">⚡</i>') + walk(X[i].cut)
       + cap('evil', '🔌 Отключили свет', `${nm(i)} продаст не больше ${C.POWER_CAP} чашек`);
-    else if (s.k === 'block') html = `<span class="fx-missile m${i}">${C.CARDS[s.h].e}</span>` + side(i, '<i class="fx-ring flash"></i><div class="fx-big fx-guard">🛡️</div>')
+    else if (s.k === 'block') html = speed + pow('ДЗЫНЬ!', '', '--pd:.58s') + puff(i ? 64 : 36, 46, 150, .55) + stars(c, [[-15, 28, 46, .8], [15, 70, 40, 1], [17, 30, 34, 1.2]]) + `<span class="fx-missile m${i}">${C.CARDS[s.h].e}</span>` + side(i, '<i class="fx-ring flash"></i><div class="fx-big fx-guard">🛡️</div>')
       + cap('good', '🛡️ Охрана сработала!', `${nm(i)} отбивает «${C.CARDS[s.h].n}»`);
-    else if (s.k === 'shield') html = side(i, rep(2, ring) + '<div class="fx-big fx-guard">🛡️</div>')
+    else if (s.k === 'shield') html = pow('НАДЁЖНО!') + stars(c, [[-15, 30, 46, .5], [15, 68, 40, .8], [16, 30, 34, 1], [-14, 66, 36, 1.2]]) + side(i, rep(2, ring) + '<div class="fx-big fx-guard">🛡️</div>')
       + cap('good', '🛡️ Охрана', `${nm(i)} под охраной, но пакостей не было`);
-    return `<div class="fx-scene fx-${s.k}">${top ? `<div class="fx-count">${top}</div>` : ''}${html}</div>`;
+    return `<div class="fx-scene fx-${s.k}${i == null ? '' : ` on${i}`}">${top ? `<div class="fx-count">${top}</div>` : ''}${html}</div>`;
   }
   /* plays scenes over the game screen; a click skips to the end */
   function runShow(list, r, done) {
@@ -5355,7 +5448,11 @@ const Game = (() => {
   function finale() {
     const wi = winner(), team = j => cssVar(j ? '--team-b' : '--team-a'), gold = cssVar('--g-gold') || '#F2C14E';
     const colors = wi < 0 ? [team(0), team(1), gold] : [team(wi), gold, '#FFFFFF'];
-    const party = () => { if (G.phase !== 'over') return; Confetti.burst({ n:220 }); Confetti.fireworks(colors); SFX.fanfare(); };
+    const party = () => {
+      if (G.phase !== 'over') return;
+      if (!reduced) $('.over-h', scr)?.insertAdjacentHTML('beforeend', pow('УРА!', 'over-pow l') + pow(wi < 0 ? 'НИЧЬЯ!' : 'ПОБЕДА!', 'over-pow'));
+      Confetti.burst({ n:220, toon: true }); Confetti.fireworks(colors, { toon: true }); SFX.fanfare();
+    };
     reduced ? party() : runShow([{ k: 'drum' }], null, party);
   }
   function next() {
@@ -5555,8 +5652,9 @@ const Game = (() => {
       setTimeout(() => {
         const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (!c || G.phase !== 'reveal') return;
         c.classList.add('win');
+        if (!reduced) c.insertAdjacentHTML('beforeend', pow('ПОБЕДА!', 'res-pow') + stars(0, [[8, 12, 34, .3], [92, 86, 30, .6], [55, 6, 26, .9]]));
         const b = c.getBoundingClientRect();
-        Confetti.burst({ x: b.left + b.width / 2, y: b.top + b.height * .35, n: 90, spread: .75 }); SFX.coin();
+        Confetti.burst({ x: b.left + b.width / 2, y: b.top + b.height * .35, n: 90, spread: .75, toon: true }); SFX.coin();
       }, 1700);
     });
   }

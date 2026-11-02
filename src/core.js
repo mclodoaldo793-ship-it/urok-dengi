@@ -80,32 +80,40 @@ const Confetti = (() => {
   const cv = $('#confetti'), cx = cv.getContext('2d');
   let parts = [], raf = 0;
   function size() { const d = Math.min(2, devicePixelRatio || 1); cv.width = innerWidth * d; cv.height = innerHeight * d; cx.setTransform(d, 0, 0, d, 0, 0); }
-  function burst({ x = innerWidth / 2, y = innerHeight * .4, n = 150, spread = 1 } = {}) {
+  const TOON = ['#FFD23F', '#FF5FA2', '#2EC4F1', '#2BD67B', '#B36BFF', '#FF8A00'];
+  function burst({ x = innerWidth / 2, y = innerHeight * .4, n = 150, spread = 1, toon = false } = {}) {
     if (reduced) return;
     size();
     const gold = cssVar('--g-gold') || '#F2C14E', gold3 = cssVar('--g-gold-3') || '#9A6B10', green = cssVar('--g-ok') || '#2BD67B', bill = cssVar('--brand') || '#136447';
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2, s = (4 + Math.random() * 11) * spread;
-      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 7, r: 6 + Math.random() * 7, rot: Math.random() * 6.3, vr: (Math.random() - .5) * .35,
-        kind: Math.random() < .6 ? 'coin' : 'bill', c1: gold, c2: gold3, c3: Math.random() < .5 ? green : bill, life: 0 });
+      const q = Math.random(), kind = toon ? (q < .35 ? 'coin' : q < .65 ? 'star' : q < .85 ? 'dot' : 'bill') : q < .6 ? 'coin' : 'bill';
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 7, r: (toon ? 8 : 6) + Math.random() * 7, rot: Math.random() * 6.3, vr: (Math.random() - .5) * .35,
+        kind, toon, c1: gold, c2: toon ? '#16110E' : gold3, c3: toon ? TOON[i % TOON.length] : Math.random() < .5 ? green : bill, life: 0 });
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
   /* firework: a ring of glowing sparks in the given colours */
-  function spark({ x, y, colors, n = 70 }) {
+  function spark({ x, y, colors, n = 70, toon = false }) {
     if (reduced) return;
     if (!raf) size();
     for (let i = 0; i < n; i++) {
       const a = i / n * Math.PI * 2 + Math.random() * .2, s = 3 + Math.random() * 6;
-      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 2 + Math.random() * 2.5, kind: 'spark', c1: colors[i % colors.length], life: 0 });
+      parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: toon ? 6 + Math.random() * 4 : 2 + Math.random() * 2.5, kind: 'spark', toon, rot: a, c1: toon ? TOON[i % TOON.length] : colors[i % colors.length], life: 0 });
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
-  function fireworks(colors, { shots = 7, gap = 320 } = {}) {
+  function fireworks(colors, { shots = 7, gap = 320, toon = false } = {}) {
     for (let k = 0; k < shots; k++) setTimeout(() => {
-      spark({ x: innerWidth * (.15 + Math.random() * .7), y: innerHeight * (.12 + Math.random() * .35), colors });
+      spark({ x: innerWidth * (.15 + Math.random() * .7), y: innerHeight * (.12 + Math.random() * .35), colors, n: toon ? 36 : 70, toon });
       SFX.boom();
     }, k * gap);
+  }
+  /* a five-point star with an ink outline, centred on the current origin */
+  function star(r) {
+    cx.beginPath();
+    for (let j = 0; j < 10; j++) { const a = j / 10 * Math.PI * 2 - Math.PI / 2, q = j % 2 ? r * .45 : r; cx.lineTo(Math.cos(a) * q, Math.sin(a) * q); }
+    cx.closePath(); cx.fill(); cx.strokeStyle = '#16110E'; cx.lineWidth = 2.5; cx.lineJoin = 'round'; cx.stroke();
   }
   function loop() {
     cx.clearRect(0, 0, innerWidth, innerHeight);
@@ -113,7 +121,9 @@ const Confetti = (() => {
       if (p.kind === 'spark') {
         p.vy += .07; p.vx *= .97; p.vy *= .97; p.x += p.vx; p.y += p.vy; p.life++;
         cx.globalAlpha = Math.max(0, 1 - p.life / 90); cx.fillStyle = p.c1;
-        cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 7); cx.fill(); cx.globalAlpha = 1;
+        if (p.toon) { cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot + p.life * .05); star(p.r); cx.restore(); }
+        else { cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 7); cx.fill(); }
+        cx.globalAlpha = 1;
         continue;
       }
       p.vy += .32; p.vx *= .985; p.vy *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
@@ -121,10 +131,16 @@ const Confetti = (() => {
       if (p.kind === 'coin') {
         const w = Math.max(1, Math.abs(Math.cos(p.rot)) * p.r);
         cx.fillStyle = p.c1; cx.beginPath(); cx.ellipse(0, 0, w, p.r, 0, 0, 7); cx.fill();
-        cx.strokeStyle = p.c2; cx.lineWidth = 1.5; cx.stroke();
+        cx.strokeStyle = p.c2; cx.lineWidth = p.toon ? 2.5 : 1.5; cx.stroke();
+      } else if (p.kind === 'star') {
+        cx.rotate(p.rot); cx.fillStyle = p.c3; star(p.r * 1.1);
+      } else if (p.kind === 'dot') {
+        cx.fillStyle = p.c3; cx.beginPath(); cx.arc(0, 0, p.r * .6, 0, 7); cx.fill();
+        cx.strokeStyle = '#16110E'; cx.lineWidth = 2.5; cx.stroke();
       } else {
         cx.rotate(p.rot); cx.scale(1, Math.abs(Math.sin(p.rot * 1.3)) * .8 + .2);
         cx.fillStyle = p.c3; cx.fillRect(-p.r * 1.3, -p.r * .65, p.r * 2.6, p.r * 1.3);
+        if (p.toon) { cx.strokeStyle = '#16110E'; cx.lineWidth = 2.5; cx.strokeRect(-p.r * 1.3, -p.r * .65, p.r * 2.6, p.r * 1.3); }
       }
       cx.restore();
     }

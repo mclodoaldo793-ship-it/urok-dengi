@@ -88,6 +88,15 @@ const Game = (() => {
   /* ---------- the show: both prices face off, then every card played, one scene after another ---------- */
   const SHOW = { vs: 1800, card: 2100, drum: 1900 };
   let show = null;
+  /* cartoon bits: a jagged comic burst with a word, a white cloud, a twinkling star */
+  const POW_D = (() => { let d = ''; for (let j = 0; j < 32; j++) { const a = j / 32 * Math.PI * 2 - Math.PI / 2, r = j % 2 ? 31 + (j * 7 % 5) : 50 - (j * 3 % 4); d += (j ? 'L' : 'M') + (50 + Math.cos(a) * r * 1.25).toFixed(1) + ' ' + (50 + Math.sin(a) * r).toFixed(1); } return d + 'Z'; })();
+  const pow = (word, cls = '', st = '') => `<div class="fx-pow ${cls}" style="${st}"><svg viewBox="-14 -2 128 104" aria-hidden="true"><path d="${POW_D}"/></svg><b style="--fs:${Math.min(.2, .9 / [...word].length).toFixed(3)}">${word}</b></div>`;
+  const CLOUD = [[30, 42, 22], [52, 30, 26], [74, 44, 21], [42, 55, 20], [64, 56, 19]];
+  const cloudSvg = `<svg viewBox="0 0 100 70" aria-hidden="true"><g fill="#16110E">${CLOUD.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r + 4}"/>`).join('')}</g><g fill="#fff">${CLOUD.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g><circle cx="44" cy="26" r="6" fill="#E9F4FF"/></svg>`;
+  const puff = (x, y, s, d) => `<i class="fx-puff" style="--x:${x}%;--y:${y}%;--s:${s}px;--d:${d}s">${cloudSvg}</i>`;
+  const starSvg = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 2C55 38 62 45 98 50C62 55 55 62 50 98C45 62 38 55 2 50C38 45 45 38 50 2Z" fill="#FFF27A" stroke="#16110E" stroke-width="6" stroke-linejoin="round"/></svg>';
+  const stars = (cx, spots) => spots.map(([dx, y, s, d]) => `<i class="fx-star" style="--x:${cx + dx}%;--y:${y}%;--s:${s}px;--d:${d}s">${starSvg}</i>`).join('');
+  const BOLT = '<svg class="fx-bolt-split" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><polyline points="62,0 34,230 66,400 30,620 64,790 42,1000" fill="none" stroke="#16110E" stroke-width="30" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/><polyline points="62,0 34,230 66,400 30,620 64,790 42,1000" fill="none" stroke="#fff" stroke-width="16" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>';
   function scenes(r) {
     const X = r.teams, out = [{ k: 'vs' }];
     X.forEach((x, i) => { if (x.card === 'ad' || x.card === 'discount') out.push({ k: x.card, i }); });
@@ -114,26 +123,30 @@ const Game = (() => {
     const ring = j => `<i class="fx-ring" style="--d:${j * .35}s"></i>`;
     const walk = n => n > 0 ? `<div class="fx-walk w${i}">${rep(Math.min(n, 6), () => '<i>🚶</i>')}</div>` : '';
     const top = s.k === 'vs' ? 'Вскрываем решения!' : s.k === 'drum' ? '' : `Карта ${k} из ${total}`;
+    const c = i ? 75 : 25, speed = '<i class="fx-speed"></i>';
     let html = '';
-    if (s.k === 'vs') html = `<div class="fx-vs">${[0, 1].map(j => `<div class="fx-team t${j}"><span>${T[j].emoji}</span><b>${esc(T[j].name)}</b><em>${X[j].price}&nbsp;₽</em></div>`).join('<div class="fx-x">VS</div>')}</div>`;
-    else if (s.k === 'drum') html = '<div class="fx-drum"><div class="fx-big">🥁</div></div>' + cap('', 'Считаем деньги в кассах…', 'И побеждает…');
-    else if (s.k === 'ad') html = side(i, rep(3, ring) + '<div class="fx-big fx-shout">📣</div>' + rep(C.AD, j => {
+    if (s.k === 'vs') html = speed + BOLT + `<div class="fx-vsrow">${[0, 1].map(j => `<div class="fx-team t${j}"><span>${T[j].emoji}</span><b>${esc(T[j].name)}</b><em>${X[j].price}&nbsp;₽</em></div>`).join(pow('VS'))}</div>`
+      + stars(50, [[-7, 22, 54, .6], [8, 74, 44, .9], [-36, 80, 40, 1.1], [38, 18, 46, .8]]);
+    else if (s.k === 'drum') html = speed + '<div class="fx-drumset"><div class="fx-big">🥁</div></div>' + pow('ТРАМ-ТАМ!', '', '--pd:.15s') + pow('БУМ!', 'p1') + pow('ТЫЩ!', 'p2')
+      + stars(50, [[-38, 50, 50, .2], [36, 52, 44, .5], [-20, 36, 36, .8], [22, 34, 40, 1]]) + cap('', 'Считаем деньги в кассах…', 'И побеждает…');
+    else if (s.k === 'ad') html = speed + pow('ЭЙ, СЮДА!', '', '--pd:.4s') + side(i, rep(3, ring) + '<div class="fx-big fx-shout">📣</div>' + rep(C.AD, j => {
         const a = j / C.AD * 6.283, R = 140 + (j % 2) * 50;
         return `<i class="fx-p" style="--x0:${(Math.cos(a) * 55).toFixed(1)}vw;--y0:${(Math.sin(a) * 55).toFixed(1)}vh;--x1:${(Math.cos(a) * R).toFixed(0)}px;--y1:${(Math.sin(a) * R * .75).toFixed(0)}px;--d:${(.35 + j * .07).toFixed(2)}s">🧍</i>`;
       })) + cap('good', '📣 Реклама', `${nm(i)} — ещё ${ppl(C.AD)} пришли по рекламе`);
-    else if (s.k === 'discount') html = `<span class="fx-truck go${i}">🚚</span>` + side(i, `<div class="fx-tag">−${C.DISCOUNT}&nbsp;₽</div>`)
+    else if (s.k === 'discount') html = `<span class="fx-truck go${i}">🚚</span>` + side(i, `<div class="fx-tag">−${C.DISCOUNT}&nbsp;₽</div>`) + pow('БИП-БИП!', '', '--pd:1s')
+      + (i ? puff(60, 58, 130, .95) + puff(55, 64, 100, 1.05) : puff(31, 58, 130, .95) + puff(36, 64, 100, 1.05)) + stars(c, [[-14, 30, 44, 1.3], [16, 62, 38, 1.5]])
       + cap('good', '🚚 Скидка на зёрна', `${nm(i)} — чашка обходится на ${C.DISCOUNT} ₽ дешевле`);
-    else if (s.k === 'rumor') html = side(i, rep(14, () => `<i class="fx-roach" style="--y:${rnd(6, 88)}%;--t:${rnd(.7, 1.3)}s;--d:${rnd(0, 1)}s;--r:${rnd(70, 110)}deg">🪳</i>`)) + walk(C.RUMOR)
+    else if (s.k === 'rumor') html = pow('ФУ-У!', '', '--pf:#9BEA5B;--pd:.3s') + side(i, '<div class="fx-big">🪳</div>' + rep(14, () => `<i class="fx-roach" style="--y:${rnd(6, 88)}%;--t:${rnd(.7, 1.3)}s;--d:${rnd(0, 1)}s;--r:${rnd(70, 110)}deg">🪳</i>`)) + walk(C.RUMOR)
       + cap('evil', '🪳 Слух про таракана', `Слух от ${nm(1 - i)}: ${nm(i)} теряет ${ppl(C.RUMOR)}`);
-    else if (s.k === 'tax') html = side(i, '<div class="fx-stamp">НАЛОГОВАЯ<br>ПРОВЕРКА</div>' + rep(9, j => `<i class="fx-money" style="--x:${rnd(-22, 22)}vw;--r:${rnd(-120, 120)}deg;--d:${(.55 + j * .09).toFixed(2)}s">💸</i>`))
+    else if (s.k === 'tax') html = pow('БАХ!', '', '--pd:.36s') + puff(c - 11, 60, 150, .4) + puff(c + 12, 62, 130, .45) + side(i, '<div class="fx-stamp">НАЛОГОВАЯ<br>ПРОВЕРКА</div>' + rep(9, j => `<i class="fx-money" style="--x:${rnd(-22, 22)}vw;--r:${rnd(-120, 120)}deg;--d:${(.55 + j * .09).toFixed(2)}s">💸</i>`))
       + cap('evil', '🧾 Налоговая проверка', `${nm(i)} отдаёт 30% выручки`);
-    else if (s.k === 'power') html = side(i, '<div class="fx-big fx-bulb">💡</div><i class="fx-bolt">⚡</i>') + walk(X[i].cut)
+    else if (s.k === 'power') html = pow('ЩЁЛК!') + side(i, '<div class="fx-big fx-bulb">💡</div><i class="fx-bolt">⚡</i>') + walk(X[i].cut)
       + cap('evil', '🔌 Отключили свет', `${nm(i)} продаст не больше ${C.POWER_CAP} чашек`);
-    else if (s.k === 'block') html = `<span class="fx-missile m${i}">${C.CARDS[s.h].e}</span>` + side(i, '<i class="fx-ring flash"></i><div class="fx-big fx-guard">🛡️</div>')
+    else if (s.k === 'block') html = speed + pow('ДЗЫНЬ!', '', '--pd:.58s') + puff(i ? 64 : 36, 46, 150, .55) + stars(c, [[-15, 28, 46, .8], [15, 70, 40, 1], [17, 30, 34, 1.2]]) + `<span class="fx-missile m${i}">${C.CARDS[s.h].e}</span>` + side(i, '<i class="fx-ring flash"></i><div class="fx-big fx-guard">🛡️</div>')
       + cap('good', '🛡️ Охрана сработала!', `${nm(i)} отбивает «${C.CARDS[s.h].n}»`);
-    else if (s.k === 'shield') html = side(i, rep(2, ring) + '<div class="fx-big fx-guard">🛡️</div>')
+    else if (s.k === 'shield') html = pow('НАДЁЖНО!') + stars(c, [[-15, 30, 46, .5], [15, 68, 40, .8], [16, 30, 34, 1], [-14, 66, 36, 1.2]]) + side(i, rep(2, ring) + '<div class="fx-big fx-guard">🛡️</div>')
       + cap('good', '🛡️ Охрана', `${nm(i)} под охраной, но пакостей не было`);
-    return `<div class="fx-scene fx-${s.k}">${top ? `<div class="fx-count">${top}</div>` : ''}${html}</div>`;
+    return `<div class="fx-scene fx-${s.k}${i == null ? '' : ` on${i}`}">${top ? `<div class="fx-count">${top}</div>` : ''}${html}</div>`;
   }
   /* plays scenes over the game screen; a click skips to the end */
   function runShow(list, r, done) {
@@ -166,7 +179,11 @@ const Game = (() => {
   function finale() {
     const wi = winner(), team = j => cssVar(j ? '--team-b' : '--team-a'), gold = cssVar('--g-gold') || '#F2C14E';
     const colors = wi < 0 ? [team(0), team(1), gold] : [team(wi), gold, '#FFFFFF'];
-    const party = () => { if (G.phase !== 'over') return; Confetti.burst({ n:220 }); Confetti.fireworks(colors); SFX.fanfare(); };
+    const party = () => {
+      if (G.phase !== 'over') return;
+      if (!reduced) $('.over-h', scr)?.insertAdjacentHTML('beforeend', pow('УРА!', 'over-pow l') + pow(wi < 0 ? 'НИЧЬЯ!' : 'ПОБЕДА!', 'over-pow'));
+      Confetti.burst({ n:220, toon: true }); Confetti.fireworks(colors, { toon: true }); SFX.fanfare();
+    };
     reduced ? party() : runShow([{ k: 'drum' }], null, party);
   }
   function next() {
@@ -366,8 +383,9 @@ const Game = (() => {
       setTimeout(() => {
         const c = win >= 0 && $(`[data-res="${win}"]`, scr); if (!c || G.phase !== 'reveal') return;
         c.classList.add('win');
+        if (!reduced) c.insertAdjacentHTML('beforeend', pow('ПОБЕДА!', 'res-pow') + stars(0, [[8, 12, 34, .3], [92, 86, 30, .6], [55, 6, 26, .9]]));
         const b = c.getBoundingClientRect();
-        Confetti.burst({ x: b.left + b.width / 2, y: b.top + b.height * .35, n: 90, spread: .75 }); SFX.coin();
+        Confetti.burst({ x: b.left + b.width / 2, y: b.top + b.height * .35, n: 90, spread: .75, toon: true }); SFX.coin();
       }, 1700);
     });
   }
