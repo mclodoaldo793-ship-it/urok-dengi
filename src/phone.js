@@ -191,6 +191,32 @@ function status(t) {
   else if (sentOid) el.textContent = 'Отправляем…';
   else el.textContent = t.ready ? 'Решение уже отправлено с другого устройства или ведущим.' : 'Соперники не видят ваше решение.';
 }
+/* the homework, so nobody has to copy it from the screen */
+function homework(h) {
+  const m = h.must, x = h.extra;
+  main.innerHTML = `<div class="pp">
+    <p class="pp-sub">Домашнее задание</p>
+    <div class="card hw must"><span class="hw-tag">Обязательно для всех</span>
+      <div class="hw-h"><span>${m.e}</span><h1>${esc(m.t)}</h1></div>
+      <p>${esc(m.x)}</p>
+      <div class="hw-ex">${m.ex.map(([w, s, d, f]) => `<div><b>${esc(w)}</b><span>${esc(s)} · ${esc(d)}</span><em>${esc(f)}</em></div>`).join('')}<p class="muted small">…и ещё три своих</p></div>
+      <p class="muted small">Функции: ${h.funcs.map(esc).join(' · ')}</p>
+    </div>
+    <div class="card hw"><span class="hw-tag alt">По желанию</span>
+      <div class="hw-h"><span>${x.e}</span><h1>${esc(x.t)}</h1></div>
+      <p>${esc(x.x)}</p>
+      <p class="hw-tip">💡 ${esc(x.tip)}</p>
+    </div>
+    <button class="btn big" id="hwCopy">📋 Скопировать задание</button>
+    <p class="muted small center" id="hwSt">Или сделайте скриншот экрана.</p>
+  </div>`;
+  $('#hwCopy').addEventListener('click', async () => {
+    const text = `Домашнее задание по теме «Деньги и их функции»\n\nОбязательно: ${m.t}. ${m.x}\nПример: ${m.ex.map(([w, s, d, f]) => `${w}, ${s}, ${d} — ${f}`).join('; ')}.\n\nПо желанию: ${x.t}. ${x.x}`;
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {}
+    $('#hwSt').innerHTML = ok ? '<b class="good">✅ Скопировано.</b> Вставьте в заметки или в чат.' : 'Не получилось скопировать. Сделайте скриншот экрана.';
+  });
+}
 function claim(g) {
   main.innerHTML = `<div class="card center"><div class="big-e">☕</div><h1>Битва кофеен</h1>
     <p class="muted">У каждой команды один телефон. За какую кофейню играет этот?</p>
@@ -218,6 +244,7 @@ function render() {
   if (S.mode === 'gone') return idle(true);
   if (S.mode !== 'game') { form = null; formKey = ''; }
   if (S.mode === 'poll' && S.poll) return poll(S.poll);
+  if (S.mode === 'hw' && S.hw) return homework(S.hw);
   if (S.mode === 'game' && S.game) return game(S.game);
   idle();
 }

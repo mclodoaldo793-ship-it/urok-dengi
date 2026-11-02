@@ -300,7 +300,7 @@ document.addEventListener('keydown', e => {
     case 'ArrowLeft': case 'PageUp': e.preventDefault(); Deck.prev(); break;
     case 'Space': case 'Enter': if (!onButton) { e.preventDefault(); Deck.next(); } break;
     case 'Home': Deck.goTo('start'); break;
-    case 'End': Deck.goTo('final'); break;
+    case 'End': Deck.goTo('hw'); break;
     case 'KeyF': UI.toggleFull(); break;
     case 'KeyN': UI.toggleNotes(); break;
     case 'KeyM': UI.toggleSound(); break;

@@ -925,3 +925,22 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .over-h .trophy::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:4.2em;height:4.2em;margin:-2.1em 0 0 -2.1em;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--g-gold) 40%,transparent) 0 9deg,transparent 9deg 18deg);-webkit-mask:radial-gradient(closest-side,#000 25%,transparent);mask:radial-gradient(closest-side,#000 25%,transparent);animation:spin 14s linear infinite}
 .over .res.win{animation:glow 2.2s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.over-h .trophy::before,.over .res.win{animation:none}}
+
+/* ---------- homework slide ---------- */
+.hw{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:clamp(12px,1.4vw,22px);align-items:start}
+.hw-card{display:flex;flex-direction:column;gap:clamp(10px,1.3vh,16px)}
+.hw-card.must{border:2px solid var(--brand)}
+.hw-tag{align-self:flex-start;padding:5px 12px;border-radius:999px;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--brand);color:var(--on-brand)}
+.hw-card.extra .hw-tag{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.hw-h{display:flex;align-items:center;gap:12px}
+.hw-h .e{font-size:clamp(34px,3vw,50px);line-height:1}
+.hw-h h3{font-size:clamp(21px,2vw,32px)}
+.hw-tabw{overflow-x:auto}
+.hw-tab{width:100%;border-collapse:collapse;font-size:clamp(14px,1.05vw,18px)}
+.hw-tab th{text-align:left;padding:6px 10px;border-bottom:2px solid var(--line);font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.hw-tab td{padding:8px 10px;border-bottom:1px solid var(--line)}
+.hw-tab td b{color:var(--c);white-space:nowrap}
+.hw-tab .more td{border-bottom:0;color:var(--muted);font-style:italic}
+.hw-funcs .chip{color:var(--c);border-color:color-mix(in srgb,var(--c) 35%,transparent);background:color-mix(in srgb,var(--c) 8%,transparent)}
+.hw-tip{padding:12px 16px;border-radius:14px;background:var(--surface-2);font-weight:600;color:var(--ink-2)}
+@media (max-width:900px){.hw{grid-template-columns:minmax(0,1fr)}}

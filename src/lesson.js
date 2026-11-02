@@ -399,3 +399,30 @@
   };
   render();
 })();
+
+/* ---------- homework: the last slide; Homework.pub() is what the phones show ---------- */
+const Homework = (() => {
+  const H = HOMEWORK, F = FUNCS;
+  const fn = id => `${F[id].icon} ${F[id].name}`;
+  $('#hwBox').innerHTML = `
+    <div class="card hw-card must">
+      <span class="hw-tag">Обязательно для всех</span>
+      <div class="hw-h"><span class="e">${H.must.e}</span><h3>${H.must.t}</h3></div>
+      <p class="txt">${H.must.x}</p>
+      <div class="hw-tabw"><table class="hw-tab">
+        <thead><tr><th>Что</th><th>Сколько</th><th>Когда</th><th>Функция денег</th></tr></thead>
+        <tbody>${H.must.ex.map(([w, s, d, f]) => `<tr><td>${w}</td><td>${s}</td><td>${d}</td><td style="--c:${F[f].color}"><b>${fn(f)}</b></td></tr>`).join('')}
+          <tr class="more"><td colspan="4">…и ещё три своих</td></tr></tbody>
+      </table></div>
+      <div class="chips hw-funcs">${Object.values(F).map(f => `<span class="chip" style="--c:${f.color}">${f.icon} ${f.name}</span>`).join('')}</div>
+    </div>
+    <div class="card hw-card extra">
+      <span class="hw-tag">По желанию</span>
+      <div class="hw-h"><span class="e">${H.extra.e}</span><h3>${H.extra.t}</h3></div>
+      <p class="txt">${H.extra.x}</p>
+      <p class="hw-tip">💡 ${H.extra.tip}</p>
+    </div>`;
+  return {
+    pub: () => ({ must: { ...H.must, ex: H.must.ex.map(([w, s, d, f]) => [w, s, d, fn(f)]) }, extra: H.extra, funcs: Object.keys(F).map(fn) })
+  };
+})();

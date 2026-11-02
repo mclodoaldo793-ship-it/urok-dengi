@@ -136,6 +136,19 @@ h1{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.
 .party i{position:absolute;top:-50px;font-style:normal;line-height:1;animation:fall linear both}
 @keyframes fall{to{transform:translateY(calc(100vh + 80px)) rotate(540deg)}}
 @media (prefers-reduced-motion:reduce){.pres.win,.pres.hit,.pres.win.hit,.big-e.drum,.big-e.champ{animation:none}}
+/* homework */
+.card.hw{gap:10px}
+.card.hw.must{border:2px solid var(--brand)}
+.hw-tag{align-self:flex-start;padding:4px 10px;border-radius:999px;background:var(--brand);color:var(--on-brand);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.hw-tag.alt{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.hw-h{display:flex;align-items:center;gap:10px}
+.hw-h span{font-size:36px;line-height:1}
+.hw-ex{display:flex;flex-direction:column;gap:6px}
+.hw-ex div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
+.hw-ex b{font-size:15px}
+.hw-ex span{font-size:13px;color:var(--muted);white-space:nowrap;text-align:right}
+.hw-ex em{grid-column:1/-1;font-style:normal;font-weight:700;font-size:14px;color:var(--brand)}
+.hw-tip{padding:10px 12px;border-radius:12px;background:var(--surface-2);font-weight:600;font-size:15px}
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
 .cf{display:flex;flex-direction:column;gap:16px;color:var(--cf-ink);container-type:inline-size}
 .cf-goal{margin:0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 12%,transparent);font-size:16px;line-height:1.35}
@@ -555,6 +568,32 @@ function status(t) {
   else if (sentOid) el.textContent = 'Отправляем…';
   else el.textContent = t.ready ? 'Решение уже отправлено с другого устройства или ведущим.' : 'Соперники не видят ваше решение.';
 }
+/* the homework, so nobody has to copy it from the screen */
+function homework(h) {
+  const m = h.must, x = h.extra;
+  main.innerHTML = `<div class="pp">
+    <p class="pp-sub">Домашнее задание</p>
+    <div class="card hw must"><span class="hw-tag">Обязательно для всех</span>
+      <div class="hw-h"><span>${m.e}</span><h1>${esc(m.t)}</h1></div>
+      <p>${esc(m.x)}</p>
+      <div class="hw-ex">${m.ex.map(([w, s, d, f]) => `<div><b>${esc(w)}</b><span>${esc(s)} · ${esc(d)}</span><em>${esc(f)}</em></div>`).join('')}<p class="muted small">…и ещё три своих</p></div>
+      <p class="muted small">Функции: ${h.funcs.map(esc).join(' · ')}</p>
+    </div>
+    <div class="card hw"><span class="hw-tag alt">По желанию</span>
+      <div class="hw-h"><span>${x.e}</span><h1>${esc(x.t)}</h1></div>
+      <p>${esc(x.x)}</p>
+      <p class="hw-tip">💡 ${esc(x.tip)}</p>
+    </div>
+    <button class="btn big" id="hwCopy">📋 Скопировать задание</button>
+    <p class="muted small center" id="hwSt">Или сделайте скриншот экрана.</p>
+  </div>`;
+  $('#hwCopy').addEventListener('click', async () => {
+    const text = `Домашнее задание по теме «Деньги и их функции»\n\nОбязательно: ${m.t}. ${m.x}\nПример: ${m.ex.map(([w, s, d, f]) => `${w}, ${s}, ${d} — ${f}`).join('; ')}.\n\nПо желанию: ${x.t}. ${x.x}`;
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {}
+    $('#hwSt').innerHTML = ok ? '<b class="good">✅ Скопировано.</b> Вставьте в заметки или в чат.' : 'Не получилось скопировать. Сделайте скриншот экрана.';
+  });
+}
 function claim(g) {
   main.innerHTML = `<div class="card center"><div class="big-e">☕</div><h1>Битва кофеен</h1>
     <p class="muted">У каждой команды один телефон. За какую кофейню играет этот?</p>
@@ -582,6 +621,7 @@ function render() {
   if (S.mode === 'gone') return idle(true);
   if (S.mode !== 'game') { form = null; formKey = ''; }
   if (S.mode === 'poll' && S.poll) return poll(S.poll);
+  if (S.mode === 'hw' && S.hw) return homework(S.hw);
   if (S.mode === 'game' && S.game) return game(S.game);
   idle();
 }

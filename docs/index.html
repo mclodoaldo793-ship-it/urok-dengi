@@ -931,6 +931,25 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
 .over-h .trophy::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:4.2em;height:4.2em;margin:-2.1em 0 0 -2.1em;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--g-gold) 40%,transparent) 0 9deg,transparent 9deg 18deg);-webkit-mask:radial-gradient(closest-side,#000 25%,transparent);mask:radial-gradient(closest-side,#000 25%,transparent);animation:spin 14s linear infinite}
 .over .res.win{animation:glow 2.2s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.over-h .trophy::before,.over .res.win{animation:none}}
+
+/* ---------- homework slide ---------- */
+.hw{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:clamp(12px,1.4vw,22px);align-items:start}
+.hw-card{display:flex;flex-direction:column;gap:clamp(10px,1.3vh,16px)}
+.hw-card.must{border:2px solid var(--brand)}
+.hw-tag{align-self:flex-start;padding:5px 12px;border-radius:999px;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--brand);color:var(--on-brand)}
+.hw-card.extra .hw-tag{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.hw-h{display:flex;align-items:center;gap:12px}
+.hw-h .e{font-size:clamp(34px,3vw,50px);line-height:1}
+.hw-h h3{font-size:clamp(21px,2vw,32px)}
+.hw-tabw{overflow-x:auto}
+.hw-tab{width:100%;border-collapse:collapse;font-size:clamp(14px,1.05vw,18px)}
+.hw-tab th{text-align:left;padding:6px 10px;border-bottom:2px solid var(--line);font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.hw-tab td{padding:8px 10px;border-bottom:1px solid var(--line)}
+.hw-tab td b{color:var(--c);white-space:nowrap}
+.hw-tab .more td{border-bottom:0;color:var(--muted);font-style:italic}
+.hw-funcs .chip{color:var(--c);border-color:color-mix(in srgb,var(--c) 35%,transparent);background:color-mix(in srgb,var(--c) 8%,transparent)}
+.hw-tip{padding:12px 16px;border-radius:14px;background:var(--surface-2);font-weight:600;color:var(--ink-2)}
+@media (max-width:900px){.hw{grid-template-columns:minmax(0,1fr)}}
 /* ---------- coffee order form (phone + presenter's manual entry); colours come from --cf-* set by the page ---------- */
 .cf{display:flex;flex-direction:column;gap:16px;color:var(--cf-ink);container-type:inline-size}
 .cf-goal{margin:0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--cf-acc) 12%,transparent);font-size:16px;line-height:1.35}
@@ -995,6 +1014,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
       <button data-go="quiz">Задание</button>
       <button data-go="game" class="game-pill">🎮 Игра</button>
       <button data-go="final">Итоги</button>
+      <button data-go="hw">ДЗ</button>
     </nav>
     <div class="tools">
       <button class="live-btn live-only" id="btnLive" title="Телефоны учеников (Q)" aria-label="Телефоны учеников">📱 <b id="liveCount">0</b></button>
@@ -1565,15 +1585,35 @@ h3{font-family:var(--font-display);font-weight:700;font-size:clamp(17px,1.45vw,2
         </div>
         <div class="final-q"><span class="e">🎤</span><p>Какая суперсила денег самая полезная лично вам? Голосуйте с телефона или поднимите руку, а 2–3 человека пусть объяснят свой выбор.</p></div>
         <div class="cta-row">
-          <button class="btn btn-primary" data-go="start">↺ К началу</button>
+          <button class="btn btn-primary" data-go="hw">📒 Домашнее задание →</button>
           <button class="btn btn-ghost" data-action="open-game">⚔️ Вернуться к игре</button>
-          <span class="hint">Спасибо за урок!</span>
         </div>
       </div>
       <aside class="notes"><ul>
         <li>Главная мысль: деньги работают, потому что все согласны их брать и им доверяют.</li>
         <li>Рефлексия: на телефонах появится голосование «какая суперсила самая полезная лично вам». Попросите 2–3 человек объяснить выбор.</li>
         <li>Пасхалка: серийный номер с первой купюры — <b>АБ 1769535</b>. Кто догадался, что значат цифры?</li>
+      </ul></aside>
+    </section>
+
+    <!-- Homework -->
+    <section class="slide" id="hw" data-sec="hw">
+      <div class="slide-inner">
+        <header class="slide-head">
+          <div class="kicker">Домашнее задание</div>
+          <h2>Найдите деньги в своей жизни</h2>
+        </header>
+        <div class="hw" id="hwBox"></div>
+        <div class="cta-row">
+          <span class="chip live-only">📱 Задание уже на ваших телефонах</span>
+          <button class="btn btn-ghost" data-go="start">↺ К началу</button>
+          <span class="hint">Спасибо за урок!</span>
+        </div>
+      </div>
+      <aside class="notes"><ul>
+        <li>Задание сразу появляется на телефонах учеников, переписывать его не нужно. На телефоне есть кнопка «Скопировать».</li>
+        <li>Разберите пример из таблицы: шаурма — заплатил и сразу получил, это средство обращения; отложил на подарок — средство накопления.</li>
+        <li>Задание по желанию связано с калькулятором инфляции из урока.</li>
       </ul></aside>
     </section>
   </main>
@@ -1738,6 +1778,16 @@ const ROUTE = [
   { e:'🚄', at:'Китай', t:'Налоги попали в бюджет. Государство покупает в Китае новые поезда и платит юанями.', a:'world',
     x:'Деньги ушли в другую страну. Когда платят за границу, это мировые деньги.' }
 ];
+
+/* Домашнее задание: последний слайд, тот же текст уходит на телефоны */
+const HOMEWORK = {
+  must: { e:'📒', t:'Денежный дневник',
+    x:'Два дня записывайте свои покупки и платежи. Наберите пять: что, сколько и когда. Для каждой укажите, какую функцию выполнили деньги.',
+    ex:[['Шаурма на перемене', '250 ₽', 'пн', 'exchange'], ['Отложил на подарок маме', '500 ₽', 'вт', 'saving']] },
+  extra: { e:'👵', t:'Цены тогда и сейчас',
+    x:'Расспросите взрослого, сколько стоили хлеб или проезд 10–20 лет назад. Объясните разницу с помощью понятия «инфляция» в 5–7 предложениях.',
+    tip:'Вспомните калькулятор инфляции: со временем деньги «худеют».' }
+};
 /* ================= COFFEE BATTLE: shared rules (presenter + phones) ================= */
 const COFFEE = {
   START: 1000,
@@ -2124,7 +2174,7 @@ document.addEventListener('keydown', e => {
     case 'ArrowLeft': case 'PageUp': e.preventDefault(); Deck.prev(); break;
     case 'Space': case 'Enter': if (!onButton) { e.preventDefault(); Deck.next(); } break;
     case 'Home': Deck.goTo('start'); break;
-    case 'End': Deck.goTo('final'); break;
+    case 'End': Deck.goTo('hw'); break;
     case 'KeyF': UI.toggleFull(); break;
     case 'KeyN': UI.toggleNotes(); break;
     case 'KeyM': UI.toggleSound(); break;
@@ -4538,6 +4588,7 @@ const Live = (() => {
 
   function compose() {
     if (typeof Game !== 'undefined' && Game.isOpen()) return { mode:'game', game: Game.pub() };
+    if (Deck.current === 'hw') return { mode:'hw', hw: Homework.pub() };
     const el = Polls.current(), p = el ? Polls.pub(el) : Polls.held();
     return p ? { mode:'poll', poll: p } : { mode:'idle' };
   }
@@ -5108,6 +5159,33 @@ const Polls = (() => {
     }
   };
   render();
+})();
+
+/* ---------- homework: the last slide; Homework.pub() is what the phones show ---------- */
+const Homework = (() => {
+  const H = HOMEWORK, F = FUNCS;
+  const fn = id => `${F[id].icon} ${F[id].name}`;
+  $('#hwBox').innerHTML = `
+    <div class="card hw-card must">
+      <span class="hw-tag">Обязательно для всех</span>
+      <div class="hw-h"><span class="e">${H.must.e}</span><h3>${H.must.t}</h3></div>
+      <p class="txt">${H.must.x}</p>
+      <div class="hw-tabw"><table class="hw-tab">
+        <thead><tr><th>Что</th><th>Сколько</th><th>Когда</th><th>Функция денег</th></tr></thead>
+        <tbody>${H.must.ex.map(([w, s, d, f]) => `<tr><td>${w}</td><td>${s}</td><td>${d}</td><td style="--c:${F[f].color}"><b>${fn(f)}</b></td></tr>`).join('')}
+          <tr class="more"><td colspan="4">…и ещё три своих</td></tr></tbody>
+      </table></div>
+      <div class="chips hw-funcs">${Object.values(F).map(f => `<span class="chip" style="--c:${f.color}">${f.icon} ${f.name}</span>`).join('')}</div>
+    </div>
+    <div class="card hw-card extra">
+      <span class="hw-tag">По желанию</span>
+      <div class="hw-h"><span class="e">${H.extra.e}</span><h3>${H.extra.t}</h3></div>
+      <p class="txt">${H.extra.x}</p>
+      <p class="hw-tip">💡 ${H.extra.tip}</p>
+    </div>`;
+  return {
+    pub: () => ({ must: { ...H.must, ex: H.must.ex.map(([w, s, d, f]) => [w, s, d, fn(f)]) }, extra: H.extra, funcs: Object.keys(F).map(fn) })
+  };
 })();
 /* ================= GAME: Битва кофеен ================= */
 const Game = (() => {

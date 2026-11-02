@@ -24,6 +24,7 @@ const Live = (() => {
 
   function compose() {
     if (typeof Game !== 'undefined' && Game.isOpen()) return { mode:'game', game: Game.pub() };
+    if (Deck.current === 'hw') return { mode:'hw', hw: Homework.pub() };
     const el = Polls.current(), p = el ? Polls.pub(el) : Polls.held();
     return p ? { mode:'poll', poll: p } : { mode:'idle' };
   }
