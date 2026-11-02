@@ -5,13 +5,14 @@ const Game = (() => {
   let G = null, isOpen = false, form = null, formTeam = -1;
 
   /* ---------- state ---------- */
+  /* a new game starts clean: default names, no phones; only the number of rounds is kept */
   function fresh(prev) {
     return {
       phase:'lobby', round:0, rounds: prev?.rounds || 6, evs:[], res:null,
       teams:[0, 1].map(i => ({
-        name: prev?.teams[i].name || ['Кофейня А', 'Кофейня Б'][i],
-        emoji: prev?.teams[i].emoji || ['☕', '🧋'][i],
-        cap: prev?.teams[i].cap || null,
+        name: ['Кофейня А', 'Кофейня Б'][i],
+        emoji: ['☕', '🧋'][i],
+        cap: null,
         money: C.START, cards: Object.fromEntries(CARD_IDS.map(k => [k, true])),
         order:null, hist:[]
       }))
@@ -468,7 +469,7 @@ const Game = (() => {
       <div class="cta-row end"><button class="g-btn gold" data-close>Понятно</button></div>`);
   }
   function confirmNew() {
-    showModal(`<h3>Начать новую игру?</h3><p>Деньги и карты обнулятся. Названия команд и телефоны останутся.</p>
+    showModal(`<h3>Начать новую игру?</h3><p>Деньги, карты и названия команд сбросятся. Командам нужно будет заново выбрать свою кофейню на телефоне.</p>
       <div class="cta-row end"><button class="g-btn" data-close>Отмена</button><button class="g-btn gold" id="gNewYes">Начать заново</button></div>`);
   }
 
